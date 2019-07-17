@@ -1,0 +1,271 @@
+
+/* -------------------------------------------------- HEADER --------------------------------------------- */
+
+#header {
+	position: fixed;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	z-index: 999;
+
+	height: 50px;
+	width: 100%;
+	padding-right: 20px;
+
+	background-color: black;
+}
+
+/* --------------- Bouton "classiques" du header -------- */
+
+.header-button {
+	display: flex;
+	align-items: center;
+	background-color: black;
+	color: white;
+	text-decoration: none;
+
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: center;
+
+	font-size: 13px;
+	font-family: Arial;
+	transition: 0.3s;
+}
+.header-button:hover {
+	background-color: white;
+	color: black;
+}
+
+#header-button {
+	display: flex;
+	flex-direction: row;
+}
+
+/* --------------- Pop-up log-in / panier --------------- */
+
+.hide-pannel {
+	position: fixed;
+	top: 50px;
+	right: -350px;
+
+	width: 350px;
+	height: auto;
+	background-color: #1f1f1f;
+
+	cursor: auto;
+	transition: 0.3s;
+}
+.log-button {
+	cursor: pointer;
+}
+.cart-button {
+	cursor: pointer;
+}
+.hide-pannel.visible {
+	right: 0px;
+}
+
+/* -------------------- Barre de recherche ------------ */
+
+.search-button {
+	display: flex;
+	align-items: center;
+	color: white;
+	cursor: pointer;
+}
+.search-button input {
+	background-color: black;
+	border: none;
+	color: white;
+
+	height: 30px;
+	width: 0;
+	transition: 0.5s;
+}
+
+.search-button:hover input {
+	border-bottom: 2px solid white;
+	width: 200px;
+}
+
+/* --------------------- Icônes ---------------------- */
+
+.fas {
+	margin: 10px;
+}
+.fa-search {
+	padding: 0;
+	border:none;
+	background-color: black;
+	color: white;
+}
+
+/* -------------------- LOG POPUP --------------------- */
+
+.log-pannel {
+	display: flex;
+	flex-direction: column;
+	margin: 40px;
+	height: 220px;
+
+	text-align: left;
+	font-size: 14px;
+	font-family: Arial;
+	color: white;
+}
+
+.log-pannel label {
+	margin-bottom: 5px;
+}
+.log-pannel input {
+	height: 30px;
+	margin-bottom: 15px;
+	padding-left: 10px;
+
+	border: 2px solid grey;
+
+	font-family: Arial;
+	font-weight: 600;
+}
+
+.log-pannel #sign-up {
+	font-size: 12px;
+	font-weight: 0;
+	text-align: center;
+
+	margin-top: 15px;
+}
+
+.log-pannel #error-log {
+	color: red;
+	margin-bottom: 10px;
+	font-size: 12px;
+	text-align: center;
+}
+
+input[type="submit"] {
+	margin-bottom:0;
+	cursor: pointer;
+}
+
+input[type="submit"]:hover {
+	background-color: lightgreen;
+}
+
+a#sign-up {
+	color: white;
+	text-decoration: none;
+	background: none;
+
+	font-size: 12px;
+	transition: 0.3s;
+}
+a#sign-up:hover {
+	font-size: 13px;
+}
+
+/* -------------------- CART POPUP --------------------- */
+
+.cart-pannel {
+	display: flex;
+	flex-direction: column;
+	padding: 0;
+	margin: 10px;
+
+	text-align: left;
+	font-size: 14px;
+	font-family: Arial;
+	color: white;
+	list-style: none;
+}
+
+.cart-product {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+	width: 100%;
+	padding:5px;
+	margin-bottom: 5px;
+
+	background-color: black;
+}
+.cart-product-img {
+	width: 25%;
+}
+.cart-product-name {
+	width: 50%;
+	margin-left: 10px;
+	color:white;
+	text-decoration: none;
+}
+.cart-product-name:hover {
+	color: lightgrey;
+}
+.cart-product-price {
+	width: 20%;
+	text-align: right;
+	padding-right: 10px;
+}
+.cart-product-remove {
+	width: 5%;
+	border: 0;
+	background-color: black;
+	color: white;
+	cursor: pointer;
+	transition: 0.3s;
+}
+.cart-product-remove:hover {
+	color: red;
+}
+
+.cart-total {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+	width: 100%;
+	padding: 10px;
+	margin: 10px 0 10px 0;
+}
+.cart-total-title {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+.cart-total-title span:nth-of-type(1) {
+	font-size: 18px;
+}
+.cart-total-title span:nth-of-type(2) {
+	margin-left: 5px;
+	font-size: 10px;
+	color: lightgray;
+}
+.cart-total-price {
+	margin-right: 10px;
+	color: #dd1e35;
+	font-size: 18px;
+}
+.cart-check {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-around;
+}
+.cart-check button {
+	width: auto;
+	height: 30px;
+	margin-bottom: 15px;
+	padding-left: 10px;
+
+	border: 2px solid grey;
+
+	font-family: Arial;
+	font-weight: 600;
+	color: black;
+	cursor: pointer;
+}
+.cart-check button:hover {
+	background-color: lightgreen;
+}

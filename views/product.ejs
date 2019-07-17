@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <script src="https://kit.fontawesome.com/5f21f19d3f.js"></script>
+        <link rel="stylesheet" type="text/css" href="/css/style-product.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-header.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-footer.css">
+        <title>Hub principal du site</title>
+    </head>
+ 
+    <body>
+    	<% include header %>
+
+    	<div id="content">
+    		<div class="title-content">YDOGBE.</div>
+    		<div id="product">
+	    		<div class="product-img">
+	    			<div class="main-img">
+	    				<img src="/img/img6.jpg">
+	    			</div>
+	    			<div class="img-galery">
+	    				<div>
+	    					<img src="/img/img6.jpg">
+	    				</div>
+	    				<div>
+	    					<img src="/img/img3.jpg">
+	    				</div>
+	    				<div>
+	    					<img src="/img/img4.jpg">
+	    				</div>
+	    				<div>
+	    					<img src="/img/img5.jpg">
+	    				</div>
+	    			</div>
+	    		</div>
+	    		<div class="product-info">
+	    			<span class="title-product">(1966) chine: t-shirt blanc</span>
+	    			<span class="price-product">29.99€</span>
+	    			<span class="desc-product">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec nec luctus tortor, eget fringilla lectus. Vivamus porta neque eu facilisis ornare. Maecenas sagittis diam eu quam tincidunt, eu placerat eros accumsan. Phasellus luctus ornare felis, non luctus lacus suscipit et. Nullam dolor felis, volutpat ornare euismod at, vulputate ac nisi. Fusce facilisis velit dolor, at interdum nulla aliquet at.  </span>
+	    			<form class="form-product">
+	    				<div class="size">
+		    				<label for="select_taille" >TAILLE</label>
+		    				<select id="taille" name="select_taille" data-show_option_none="yes">
+		    					<option value="S" class="attached enabled">S</option>
+		    					<option value="M" class="attached enabled">M</option>
+		    					<option value="L" class="attached enabled">L</option>
+		    					<option value="XL" class="attached enabled">XL</option>
+		    					<option value="XXL" class="attached enabled">XXL</option>
+		    					<option value="XXXL" class="attached enabled">XXXL</option>
+		    				</select>
+	    				</div>
+	    				<button type="submit" name="add-cart">Ajouter au panier<i class="fas fa-cart-arrow-down"></i></button>
+	    				
+	    			</form>
+	    		</div>
+	    	</div>
+
+    	</div>
+
+    	<% include footer %>
+    </body>
+
+    <script src="/jquery-3.4.1.js"></script>
+	<script type="text/javascript">
+		/* Change l'image de la gallerie */
+		var imgGalery = $('.img-galery div').click(function () {
+			/* On met à jour les bordures (si l'image est selectionnée) */
+			$('.img-galery div').css('border-color', 'lightgray');
+			$(this).css('border-color', 'black');
+
+			/* on récupère l'image et on la remplace */
+			var pathImg = $(this.innerHTML).attr('src');
+			$('.main-img img').attr('src', pathImg);
+		});
+
+	</script>
+
+</html>

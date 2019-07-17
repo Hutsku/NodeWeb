@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <script src="https://kit.fontawesome.com/5f21f19d3f.js"></script>
+        <link rel="stylesheet" type="text/css" href="/css/style-subscribe.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-header.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-footer.css">
+        <title>Mon super site</title>
+    </head>
+ 
+    <body>
+    	<% include header %>
+
+    	<div id="content"> 
+    		<div class="title-content">YDOGBE.</div>
+			<form action="sign-up" method="post" class="subscribe-box">
+				<div class="input-section">
+					<div>
+						<span class="title-subscribe-section"> Détails personnels </span>
+						<label for="name">Nom et prenom</label>
+					    <input type="text" id="name" name="name">
+					    <label for="e-mail">E-Mail</label>
+					    <input type="email" id="e-mail" name="e-mail">
+					    <span id='error-details'></span>
+					</div>
+					<div>
+						<span class="title-subscribe-section"> Adresse </span>
+						<label for="adresse">Adresse</label>
+					    <input type="text" id="adresse" name="adresse">
+					    <label for="city">Code postale / Ville</label>
+					    <input type="text" id="city" name="city">
+					    <label for="city">Pays</label>
+					    <input type="text" id="country" name="country">
+					    <span id='error-adress'></span>
+					</div>
+					<div>
+						<span class="title-subscribe-section"> Mot de passe </span>
+						<label for="password">Mot de passe</label>
+					    <input type="password" id="password" name="password">
+					    <label for="password-repeat">Répétez le mot de passe</label>
+					    <input type="password" id="password-repeat" name="password-repeat">
+					    <span id='error-password'></span>
+					</div>
+				</div>
+				<div class="submit-section">
+					<div>
+						<input type="checkbox" id="subscribeNewsletter" name="newsletter" value="yes">
+	    				<label for="subscribeNewsletter">Je souhaite m'abonner à la newsletter.</label>
+	    			</div>
+	    			<div>
+	    				<input type="checkbox" id="acceptePrivacy" name="conditions" value="yes">
+	    				<label for="acceptePrivacy">J'ai lu et accepte les conditions d'utilisation.</label>
+	    			</div>
+	    			<span id='error-submit'></span>
+				    <input type="submit" name="subscribe" value="S'inscrire">
+				</div>		   
+			</form>
+		</div>
+
+		<% include footer %>
+    </body>
+
+ 	<script src="/jquery-3.4.1.js"></script>
+    <script type="text/javascript">
+		$('#content form').submit(function () {
+			var errorDetails = $('#error-details');
+			var errorAdresse = $('#error-adress');
+			var errorPassword = $('#error-password');
+			var errorSubmit = $('#error-submit');
+			errorDetails.text('');
+			errorAdresse.text('');
+			errorPassword.text('');
+			errorSubmit.text('');
+
+			if (!$('input#name').val()) {
+				errorDetails.text('Veuillez entrer un nom.');
+				return false;
+			}
+			else if (!$('input#e-mail').val()) {
+				errorDetails.text('Veuillez entrer e-mail valide.');
+				return false;
+			}
+			else if (!$('input#adresse').val()) {
+				errorAdresse.text('Veuillez entrer une adresse.');
+				return false;
+			}
+			else if (!$('input#city').val()) {
+				errorAdresse.text('Veuillez entrer une ville valide.');
+				return false;
+			}
+			else if (!$('input#country').val()) {
+				errorAdresse.text('Veuillez entrer un pays valide.');
+				return false;
+			}
+			else if (!$('.subscribe-box input#password').val()) {
+				console.log('password: '+$('input#password').val())
+				errorPassword.text('Veuillez entrer un mot de passe.');
+				return false;
+			}
+			else if (!$('input#password-repeat').val()) {
+				errorPassword.text('Veuillez entrer à nouveau votre mot de passe.');
+				return false;
+			}
+			else if ($('.subscribe-box input#password').val() != $('input#password-repeat').val()) {
+				errorPassword.text('Les mots de passe de correspondent pas.');
+				return false;
+			}
+			else if (!$('input#acceptePrivacy:checked').val()) {
+				errorSubmit.text('Vous devez accepter la CGU pour pouvoir continuer.');
+				return false;
+			} 
+		});
+   	</script>
+</html>
+
+<!--
+<?php 
+// Si les id de co sont mauvais (redirection)
+if (isset($_SESSION['subscribe-error'])) { 
+	switch ($_SESSION['subscribe-error']) {
+		case 'username':
+			echo "<span id='bad-id'> Ce pseudo est déjà utilisé. </span>";
+		break;
+
+		case 'password':
+			echo "<span id='bad-id'> Les mots de passe ne correspondent pas. </span>";
+		break;
+
+		case 'field':
+			echo "<span id='bad-id'> Veuillez remplir tous les champs. </span>";
+		break;
+	}
+	$_SESSION['subscribe-error'] = false; // on remet par défaut
+}
+?>
+-->

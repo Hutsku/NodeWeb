@@ -1,0 +1,96 @@
+body {
+	margin: 0;
+}
+
+/* ----------------------------------------------- CONTENT ----------------------------------------------- */
+
+#content {
+	padding-top: 50px;
+}
+#content .title-content {
+	padding: 30px;
+
+	text-align: center;
+	font-size: 60px;
+	font-weight: 600;
+	font-family: Arial;
+}
+
+/* -------------------- Structure globale --------------------- */
+
+.subscribe-box {
+	display: flex;
+	flex-direction: column;
+	margin: 40px;
+}
+.subscribe-box .input-section {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin: 0px 50px 0 50px;
+}
+.subscribe-box .submit-section {
+	display: flex;
+	flex-direction: column;
+	margin: 0px 50px 0 50px;
+}
+.input-section div {
+	display: flex;
+	flex-direction: column;
+	width: 25%;
+}
+.submit-section div {
+	margin-bottom: 10px;
+}
+.title-subscribe-section {
+	font-family: arial;
+	font-size: 20px;
+	border-bottom: 1px solid black;
+	margin-bottom: 10px;
+}
+
+/* -------------------- Design des input --------------------- */
+
+label {
+	margin-bottom: 5px;
+}
+input[type='text'], input[type='submit'], input[type='email'], input[type='password'] {
+	height: 25px;
+	margin-bottom: 15px;
+	padding-left: 10px;
+
+	border: 2px solid grey;
+
+	font-family: Arial;
+	font-weight: 600;
+}
+
+.subscribe-box #sign-up {
+	font-size: 12px;
+	font-weight: 0;
+	text-align: center;
+
+	margin-top: 15px;
+}
+
+.subscribe-box #error-log {
+	color: red;
+	margin-bottom: 10px;
+	font-size: 12px;
+	text-align: center;
+}
+
+input[type="submit"] {
+	cursor: pointer;
+	width: 150px;
+	height: 30px;
+}
+
+input[type="submit"]:hover {
+	background-color: lightgreen;
+}
+
+span[id^=error] {
+	color: red;
+	margin-bottom: 10px;
+}

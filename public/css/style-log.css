@@ -1,0 +1,61 @@
+.log-pannel {
+	display: flex;
+	flex-direction: column;
+	margin: 40px;
+	height: 220px;
+
+	text-align: left;
+	font-size: 14px;
+	font-family: Arial;
+	color: white;
+}
+
+.log-pannel label {
+	margin-bottom: 5px;
+}
+.log-pannel input {
+	height: 25px;
+	margin-bottom: 15px;
+	padding-left: 10px;
+
+	border: 2px solid grey;
+
+	font-family: Arial;
+	font-weight: 600;
+}
+
+.log-pannel #sign-up {
+	font-size: 12px;
+	font-weight: 0;
+	text-align: center;
+
+	margin-top: 15px;
+}
+
+.log-pannel #error-log {
+	color: red;
+	margin-bottom: 10px;
+	font-size: 12px;
+	text-align: center;
+}
+
+input[type="submit"] {
+	margin-bottom:0;
+	cursor: pointer;
+}
+
+input[type="submit"]:hover {
+	background-color: lightgreen;
+}
+
+a#sign-up {
+	color: white;
+	text-decoration: none;
+	background: none;
+
+	font-size: 12px;
+	transition: 0.3s;
+}
+a#sign-up:hover {
+	font-size: 13px;
+}

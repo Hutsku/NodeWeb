@@ -1,0 +1,109 @@
+<div id="header">
+	<a href="/mainpage" class="header-button title-button">
+		<i class="fas fa-bars"></i>
+		<span> YDOGBE </span>
+	</a>
+	<div id="header-button">
+		<div class="search-button">
+    		<form action="/search" method="POST">
+                <input type="search" placeholder="Search by keyword" name="search">
+                <button class="fas fa-search"></button>
+                <!--<a href="/index.php?page=products&section=all" class="pull-right">View All Products</a>-->
+            </form>
+		</div>
+		<a href="" class="header-button product-button">
+			<span> PRODUITS </span>
+		</a>
+		<a href="" class="header-button info-button">
+			<span> A PROPOS </span>
+		</a>
+		<span tabindex="1" class="header-button log-button">
+			<span> LOG IN </span>
+			<i class="fas fa-sign-in-alt"></i>
+		</span>
+		<div id="loginPannel" class="hide-pannel">
+			<form action="log-in" method="post" class="log-pannel">
+			    <label for="username">Pseudo</label>
+			    <input type="text" id="username" name="username">
+			    <label for="password">Mot de passe</label>
+			    <input type="password" id="password" name="password">
+			    <span id='error-log'></span>
+			    <input type="submit" name="connexion" value="Se connecter">
+			    <a href="/subscribe" id="sign-up"> Créer un compte <i class="fas fa-user-plus"></i></a>
+			</form>
+		</div>
+		<span tabindex="1" class="header-button cart-button">
+			<span> 0 </span>
+			<i class="fas fa-shopping-cart"></i>
+		</span>
+		<div id="cartPannel" class="hide-pannel">
+			<ul class="cart-pannel">
+			    <li class="cart-product"> 
+			    	<img class="cart-product-img" src="/img/img2.jpg">
+			    	<a href="/product/3" class="cart-product-name">1 x (1966) Chine</a>
+			    	<span class="cart-product-price">29.99€</span>
+			    	<button class="cart-product-remove fas fa-trash-alt"></button>
+			    </li>
+			    <li class="cart-product"> 
+			    	<img class="cart-product-img" src="/img/img3.jpg">
+			    	<a href="/product/3" class="cart-product-name">1 x (1966) Chine</a>
+			    	<span class="cart-product-price">29.99€</span>
+			    	<button class="cart-product-remove fas fa-trash-alt"></button>
+			    </li>
+			    <li class="cart-total">
+			    	<div class="cart-total-title">
+				    	<span>TOTAL</span>
+				    	<span>(Hors livraison)</span>
+			    	</div>
+			    	<span class="cart-total-price">34.87€</span>
+			    </li>
+			    <li class="cart-check">
+			    	<button class="cart-total-view">Voir le panier</button>
+			    	<button class="cart-total-checkout">Valider la commande</button>
+			    </li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<script src="/jquery-3.4.1.js"></script>
+<script type="text/javascript">
+	/* Affiche le menu de login lors du clique */
+	$('.log-button').click(function () {
+		var hidePannel = $('#loginPannel');
+		var otherPannel = $('#cartPannel');
+		if (!hidePannel.hasClass('visible')) {
+			hidePannel.addClass('visible');
+			otherPannel.removeClass('visible');
+		} 
+		else {
+			hidePannel.removeClass('visible');
+		}
+	});
+
+	/* Affiche le panier lors du clique */
+	$('.cart-button').click(function () {
+		var hidePannel = $('#cartPannel');
+		var otherPannel = $('#loginPannel');
+		if (!hidePannel.hasClass('visible')) {
+			hidePannel.addClass('visible');
+			otherPannel.removeClass('visible');
+		} 
+		else {
+			hidePannel.removeClass('visible');
+		}
+	});
+
+	/* Erreur à afficher pour le login */
+	$('form[action=log-in]').submit(function () {
+		var username = $('input#username').val();
+		var password = $('input#password').val();
+		var errorSpan = $('#error-log');
+
+		if (!(username && password)) {
+			errorSpan.text("Veuillez remplir tout les champs.");
+			return false;
+		}
+		 
+	});
+</script>
