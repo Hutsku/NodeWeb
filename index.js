@@ -1,13 +1,20 @@
 
 // Variables d'initalisation de Node
 var express = require('express');
-var session = require('cookie-session');
+var session = require('express-session');
 var bodyParser = require("body-parser");
+var bcrypt = require('bcrypt');
 var app = express();
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
+app.use(session({ 
+        secret: 'keyboard cat', 
+        cookie: { maxAge: 60000 },
+        resave: false,
+        saveUninitialized: true
+    })
+);
 app.use(express.static(__dirname + '/public'));
-app.use(session({secret: 'todotopsecret'}))
 
 var mysql      = require('mysql');
 var connection = mysql.createConnection({
@@ -17,30 +24,63 @@ var connection = mysql.createConnection({
     database : 'ydogbe'
 });
 
-// ========================================== FONCTION MYSQL =============================================
+// ======================================== FONCTIONS SIMPLES ============================================
 
-function addUser (username, password, adresse, newsletter, email) {
-    var req = `INSERT INTO users (id, name, password, subscribe_date, adresse, newsletter, email) 
-               VALUES (NULL, "${username}", "${password}", NOW(), "${adresse}", "${newsletter}", "${email}")`;
-    connection.query(req, function(err, rows, fields) {
-        if (err) throw err;
-        console.log(rows);
+function subscribe(req, res, username, password, adresse, newsletter, email) {
+    // On hash le mot de passe à enregistrer dansla DB
+    bcrypt.hash(password, 10, function(err, hashedPassword) {
+        // On construit la requête et on l'envoit (avec check d'erreur)
+        var getUser = `SELECT * FROM users WHERE email='${email}'`; 
+        var addUser = `INSERT INTO users (id, name, password, subscribe_date, adresse, newsletter, email) 
+                   VALUES (NULL, "${username}", "${hashedPassword}", NOW(), "${adresse}", "${newsletter}", "${email}")`;  
+
+        connection.query(getUser, function(err, rows, fields) {
+            if (err) throw err;
+
+            // Si l'adresse email n'est pas encore utilisé ...
+            if (!rows.length) {
+                connection.query(addUser, function(err, rows, fields) {
+                    if (err) throw err;
+                    console.log("Utilisateur ajouté");
+                    logIn(req, email, password)  // On log l'utilisateur ensuite
+                    res.redirect('/');  // on redirige vers le menu
+                });
+            }
+            else {
+                console.log("L'adresse mail est déjà utilisé");
+                res.redirect('back');  // on reload la page
+                req.session.error = "L'adresse mail est déjà utilisé"; // on stock l'erreur dans la seesion (pour créer une notif)
+            }
+        });
     });
 }
 
-// ======================================== FONCTIONS SIMPLES ============================================
+function logIn(req, email, password) {
+    // On construit la requête et on l'envoit
+    var requestMysql = `SELECT * FROM users WHERE email='${email}'`;
+    connection.query(requestMysql, function(err, rows, fields) {
+        if (err) throw err;
+        var user = rows[0]; // on prend seulement 1 utilisateur (le seul en théorie)
 
-function subscribe(req, username, password, adresse, newsletter, email) {
-    addUser(username, password, adresse, newsletter,email);
-    logIn(req, username, password)
+        // Si l'email donné est bien enregistré ...
+        if (user) {
+            bcrypt.compare(password, user.password, function(err, res) {
+                // Si les mots de passe correspondent ...
+                if (res) {
+                    req.session.username = user.username;
+                    req.session.logged = true; 
+                    console.log("logged !");
+                }  
+            });
+        }
+        else {
+            console.log("aucun utilisateur");
+            // Les id ne correspondent pas
+        }
+    });    
 }
 
-function logIn(req, username, password) {
-	req.session.username = username;
-	req.session.logged = true;
-}
-
-function logOut(req, username) {
+function logOut(req, email) {
 	req.session.username = '';
 	req.session.logged = false;
 }
@@ -74,8 +114,8 @@ app.get('/', function(req, res) {
 // ============================================= POST ===================================================
 
 .post('/login', urlencodedParser, function(req, res) {
-    logIn(req, req.body.username, req.body.password);
-    res.redirect('/mainpage');
+    logIn(req, req.body.email, req.body.password);
+    res.redirect('back');
 })
 
 .post('/sign-up', urlencodedParser, function(req, res) {
@@ -86,13 +126,12 @@ app.get('/', function(req, res) {
         req.body.newsletter = "no";
     }
     console.log(req.body.newsletter);
-    subscribe(req, req.body.name, req.body.password, adresse, req.body.newsletter, req.body['e-mail']);
-    res.redirect('/'); 
+    subscribe(req, res, req.body.name, req.body.password, adresse, req.body.newsletter, req.body.email);
 })
 
 .post('/logout', urlencodedParser, function(req, res) {
     logOut(req, req.body.username);
-    res.redirect('/log');
+    res.redirect('back');
 });
 
 // ========================================================================================================
