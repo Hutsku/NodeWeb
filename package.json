@@ -5,12 +5,12 @@
   "author": "Hutsku",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "ejs": "latest",
-    "express-session": "latest",
-    "express": "latest",
+    "bcryptjs": "^2.4.3",
     "body-parser": "latest",
-    "mysql": "latest",
-    "bcrypt": "latest"
+    "ejs": "latest",
+    "express": "latest",
+    "express-session": "latest",
+    "mysql": "latest"
   },
   "repository": {
     "type": "git",
