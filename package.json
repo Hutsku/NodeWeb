@@ -1,7 +1,9 @@
 {
-  "name": "ydogbe website",
+  "name": "@hutsku/ydogbe-website",
   "version": "0.0.1",
-  "private": true,
+  "description": "test site web",
+  "author": "Hutsku",
+  "license": "BSD-2-Clause",
   "dependencies": {
     "ejs": "latest",
     "express-session": "latest",
@@ -9,6 +11,10 @@
     "body-parser": "latest",
     "mysql": "latest",
     "bcrypt": "latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:/Hutsku/NodeWeb.git"
   },
   "scripts": {
     "start": "node index.js"
