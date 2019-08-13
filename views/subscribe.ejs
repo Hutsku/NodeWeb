@@ -84,7 +84,7 @@
 
 	<script type="text/javascript">
 	    /* Erreur à afficher pour le login */
-	    $('form[action="sign-up"]').submit(function () {
+	    $('form[action="/sign-up"]').submit(function () {
 	    	var nameInput = $('.subscribe-pannel input[name="name"]');
 	        var emailInput = $('.subscribe-pannel input[name="email"]');
 	        var adresseInput = $('.subscribe-pannel input[name="email"]');
@@ -148,7 +148,7 @@
 	            $('.subscribe-pannel input[name="cgu"]').removeClass('is-invalid').addClass('is-valid');
 	        }
 
-	        $.post("sign-up", {
+	        $.post("/sign-up", {
 	        	name: nameInput.val(),
 	            email: emailInput.val(),
 	            adresse: `${adresseInput.val()} ${cityInput.val()} ${countryInput.val()}`,

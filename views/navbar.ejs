@@ -175,7 +175,7 @@
     $.post("resetNotif");
 
     /* Erreur à afficher pour le login */
-    $('form[action="login"]').submit(function () {
+    $('form[action="/login"]').submit(function () {
         var emailInput = $('.log-pannel input[type="text"]');
         var passwordInput = $('.log-pannel input[type="password"]');
 
@@ -193,7 +193,7 @@
             passwordInput.removeClass('is-invalid').addClass('is-valid');
         }
 
-        $.post("login", {
+        $.post("/login", {
             email: emailInput.val(),
             password: passwordInput.val()
         })
@@ -202,6 +202,7 @@
                 emailInput.removeClass('is-valid').addClass('is-invalid');
             }
             else if (data == "badPassword") {
+                console.log("bad password")
                 passwordInput.removeClass('is-valid').addClass('is-invalid');
             }
             else {
