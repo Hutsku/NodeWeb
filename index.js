@@ -21,8 +21,8 @@ app.set('view engine', 'ejs');
 var mysql      = require('mysql');
 var connection = mysql.createConnection({
     host     : 'localhost',
-    user     : 'hutsku',
-    password : 'please',
+    user     : 'root',
+    password : '',
     database : 'ydogbe'
 });
 
