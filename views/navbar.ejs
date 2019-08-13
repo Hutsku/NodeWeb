@@ -199,6 +199,7 @@
         })
         .done( function (data) {
             if (data == "badEmail") {
+                console.log("bad email")
                 emailInput.removeClass('is-valid').addClass('is-invalid');
             }
             else if (data == "badPassword") {
