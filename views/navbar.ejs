@@ -41,7 +41,7 @@
                     <div class="dropdown-menu dropdown-menu-right w-auto" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="#">Mon profil</a>
                         <a class="dropdown-item" href="#"><i class="fa fa-tools mr-2"></i> Paramètres</a>
-                        <a class="dropdown-item" href="quit"><i class="fa fa-power-off mr-2"></i>Se deconnecter</a>
+                        <a class="dropdown-item" href="/quit"><i class="fa fa-power-off mr-2"></i>Se deconnecter</a>
                     </div>
                 </li>
             <% } else { %>
@@ -141,7 +141,7 @@
             </div>
 
             <div class="modal-body p-4">
-                <form action="login" method="post" class="log-pannel offset-2 col-8 offset-2">
+                <form action="/login" method="post" class="log-pannel offset-2 col-8 offset-2">
                     <div class="form-group form-row">
                         <input type="text" placeholder="Adresse email" class="form-control" name="email">
                         <div class="invalid-feedback">Veuillez rentrer une adresse email valide</div>
