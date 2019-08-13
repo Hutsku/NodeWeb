@@ -1,0 +1,215 @@
+
+<!-- BREAKPOINT : MEDIUM -->
+
+<nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark d-flex">
+    <!-- Toggle Menu when navbar is collapsed -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <a class="navbar-brand" href="/">Ydogbe.</a>
+
+    <form class="form-inline my-2 mw-100" id="searchForm">
+        <button class="btn color-white fas fa-search" type="submit"></button>
+        <input class="" type="search" placeholder="Search" aria-label="Search" action="/search" method="POST">
+    </form>
+
+    <!-- Navbar content -->
+    <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Produit</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">À propos</a>
+            </li>
+            <!-- VISIBLE EN MOBILE UNIQUEMENT -->
+            <li class="nav-item d-md-none">
+                <a class="nav-link" href="#"> Se connecter</a>
+            </li>
+            <li class="nav-item d-md-none">
+                <a class="nav-link" href="#">Voir le panier</a>
+            </li>
+            <!---------------------------------->
+
+            <!-- SWITCH BETWEEN ACCOUNT && LOGIN PANNEL -->
+            <% if (session.logged) { %>
+                <li class="dropdown nav-item d-none d-md-block">
+                    <a class="nav-link dropdown-toggle" href="#" id="acccountDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-user"></i> <%= session.username %>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right w-auto" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">Mon profil</a>
+                        <a class="dropdown-item" href="#"><i class="fa fa-tools mr-2"></i> Paramètres</a>
+                        <a class="dropdown-item" href="quit"><i class="fa fa-power-off mr-2"></i>Se deconnecter</a>
+                    </div>
+                </li>
+            <% } else { %>
+                <li class="nav-item d-none d-md-block">
+                    <a class="nav-link" href="#" data-toggle="modal" data-target="#exampleModal"> 
+                        Sign in <i class="fa fa-sign-in-alt"></i>
+                    </a>
+                </li>
+            <% } %>
+            <li class="dropdown nav-item d-none d-md-block">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    0 <i class="fa fa-shopping-cart"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right p-0" aria-labelledby="navbarDropdownMenuLink">
+                    <div class="cart-pannel container">
+                        <div class="cart-product row align-items-center"> 
+                            <img class="p-2 col-3" src="/img/img2.jpg">
+                            <a href="/product/2" class="cart-product-name col">(1966) CHINE : Pull-over - Blanc</a>
+                            <span class="cart-product-price col-3">29.99€</span>
+                            <button type="button" class="close col-1" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="cart-product row align-items-center bg-light"> 
+                            <img class="p-2 col-3" src="/img/img3.jpg">
+                            <a href="/product/3" class="cart-product-name col">(1966) CHINE : Pull-over - Rouge</a>
+                            <span class="cart-product-price col-3">29.99€</span>
+                            <button type="button" class="close col-1" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="cart-total p-3 d-flex justify-content-between">
+                            <div class="cart-total-title">
+                                <big>TOTAL</big>
+                                <small>(Hors livraison)</small>
+                            </div>
+                            <span class="cart-total-price">34.87€</span>
+                        </div>
+                        <div class="cart-check pb-3 row justify-content-center">
+                            <button type="button" class="btn btn-secondary btn-sm col-4">Voir le panier</button>
+                            <button type="button" class="btn btn-primary btn-sm offset-1 col-4">Valider</button>
+                        </div>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- NOTIFICATION -->
+<% if (session.alert) { 
+    switch (session.alert) {
+        case 'login':
+            var type = 'success';
+            var quote = 'Vous connection a été effectuée avec succès !';
+            var quoteTitle = 'Connecté !';
+            break;
+
+        case 'logout':
+            var type = 'success';
+            var quote = 'Vous avez bien été deconnecté !';
+            var quoteTitle = 'Deconnecté !';
+            break;
+
+        case 'signup':
+            var type = 'success';
+            var quote = "L'inscription au site est réussie !";
+            var quoteTitle = 'Bienvenue !';
+            break;
+
+        case 'email already used':
+            var type = 'danger';
+            var quote = "L'email est déjà utilisé par un autre compte ...";
+            var quoteTitle = 'Erreur !';
+            break;
+        } %>
+        <div class="notif-container row w-100 justify-content-center">
+            <div class="alert alert-<%= type %> alert-dismissible fade show col-8" role="alert">
+                <strong><%= quoteTitle %></strong> <%= quote %>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="w-100"></div>
+        </div>
+<% } %>
+
+<!-- MODAL -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Se connecter à Ydogbe</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body p-4">
+                <form action="login" method="post" class="log-pannel offset-2 col-8 offset-2">
+                    <div class="form-group form-row">
+                        <input type="text" placeholder="Adresse email" class="form-control" name="email">
+                        <div class="invalid-feedback">Veuillez rentrer une adresse email valide</div>
+                    </div>
+
+                    <div class="form-group form-row">
+                        <input type="password" placeholder="Mot de passe" class="form-control" name="password">
+                        <div class="invalid-feedback">Veuillez rentrer un mot de passe valide</div>
+                    </div>
+
+                    <div class="form-check form-row">
+                        <input class="form-check-input" type="checkbox" id="logRemember" name="newsletter" value="yes">
+                        <label for="logRemember">Rester connecté</label>
+                    </div>
+                    <div class="form-row">
+                        <button type="submit" class="btn btn-primary w-100" data-dismiss="">Se connecter</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <span class="text-center w-100"> Pas encore de compte ? <a href="/subscribe">Créez un compte !</a></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+    /* On efface les cookies de session pour les notifications */
+    $.post("resetNotif");
+
+    /* Erreur à afficher pour le login */
+    $('form[action="login"]').submit(function () {
+        var emailInput = $('.log-pannel input[type="text"]');
+        var passwordInput = $('.log-pannel input[type="password"]');
+
+        // On check les erreurs et on ajoute la classe en consequant
+        if (!emailInput.val()) {
+            emailInput.removeClass('is-valid').addClass('is-invalid');
+            return false;
+        } else {
+            emailInput.removeClass('is-invalid').addClass('is-valid');
+        }
+        if (!passwordInput.val()) {
+            passwordInput.removeClass('is-valid').addClass('is-invalid');
+            return false;
+        } else {
+            passwordInput.removeClass('is-invalid').addClass('is-valid');
+        }
+
+        $.post("login", {
+            email: emailInput.val(),
+            password: passwordInput.val()
+        })
+        .done( function (data) {
+            if (data == "badEmail") {
+                emailInput.removeClass('is-valid').addClass('is-invalid');
+            }
+            else if (data == "badPassword") {
+                passwordInput.removeClass('is-valid').addClass('is-invalid');
+            }
+            else {
+                location.reload();
+            }
+        });
+
+        return false; // on execute pas le submit normal
+         
+    });
+</script>

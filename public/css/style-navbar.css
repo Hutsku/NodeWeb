@@ -1,0 +1,54 @@
+body {
+	padding: 0;
+}
+
+#searchForm button {
+	color: white;
+}
+
+#searchForm input {
+	background-color: rgb(0, 0, 0, 0);
+	border: none;
+	color: white;
+
+	height: 30px;
+	width: 0;
+	transition: 0.5s;
+}
+
+#searchForm:hover input {
+	border-bottom: 2px solid white;
+	width: 200px;
+}
+
+li.nav-item {
+	width: auto;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.modal-content {
+	color: grey;
+}
+
+/* CART DROPDOWN */
+
+.cart-product img {
+	border-radius: 10px;
+}
+.dropdown-menu {
+	width: 400px;
+}
+.cart-total-price {
+	color: red;
+}
+.cart-total-title small, .cart-product-name {
+	color: grey;
+}
+
+/* NOTIF CONTAINER */
+.notif-container {
+	z-index: 15;
+	top: 70px;
+	position: fixed;
+}

@@ -17,21 +17,15 @@
 		<a href="" class="header-button info-button">
 			<span> A PROPOS </span>
 		</a>
-		<span tabindex="1" class="header-button log-button">
-			<span> LOG IN </span>
-			<i class="fas fa-sign-in-alt"></i>
-		</span>
-		<div id="loginPannel" class="hide-pannel">
-			<form action="login" method="post" class="log-pannel">
-			    <label for="email">E-mail</label>
-			    <input type="text" id="email" name="email">
-			    <label for="password">Mot de passe</label>
-			    <input type="password" id="password" name="password">
-			    <span id='error-log'></span>
-			    <input type="submit" name="connexion" value="Se connecter">
-			    <a href="/subscribe" id="sign-up"> Créer un compte <i class="fas fa-user-plus"></i></a>
-			</form>
-		</div>
+
+		<!-- SWITCH BETWEEN ACCOUNT && LOGIN PANNEL -->
+		<% if (session.logged) { %>
+				<% include header-account %>
+		<% } else { %>
+				<% include header-login %>
+		<% } %>
+
+
 		<span tabindex="1" class="header-button cart-button">
 			<span> 0 </span>
 			<i class="fas fa-shopping-cart"></i>
@@ -68,32 +62,6 @@
 
 <script src="/jquery-3.4.1.js"></script>
 <script type="text/javascript">
-	/* Affiche le menu de login lors du clique */
-	$('.log-button').click(function () {
-		var hidePannel = $('#loginPannel');
-		var otherPannel = $('#cartPannel');
-		if (!hidePannel.hasClass('visible')) {
-			hidePannel.addClass('visible');
-			otherPannel.removeClass('visible');
-		} 
-		else {
-			hidePannel.removeClass('visible');
-		}
-	});
-
-	/* Affiche le panier lors du clique */
-	$('.cart-button').click(function () {
-		var hidePannel = $('#cartPannel');
-		var otherPannel = $('#loginPannel');
-		if (!hidePannel.hasClass('visible')) {
-			hidePannel.addClass('visible');
-			otherPannel.removeClass('visible');
-		} 
-		else {
-			hidePannel.removeClass('visible');
-		}
-	});
-
 	/* Erreur à afficher pour le login */
 	$('form[action=log-in]').submit(function () {
 		var username = $('input#username').val();

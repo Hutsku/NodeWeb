@@ -1,127 +1,53 @@
-body {
-	margin: 0;
-}
-
-/* -------------------------------------------------- PRODUCT --------------------------------------------- */
-
-#content {
-	padding-top: 50px;
-	height: 800px;
-	width: 100%;
-}
-div.title-content {
-	padding-top: 30px;
-	padding-bottom: 50px;
-
-	text-align: center;
+.jumbotron {
 	font-size: 60px;
 	font-weight: 600;
-	font-family: Arial;
 }
-div#product {
-	display: flex;
-	flex-direction: row;
+.title-product {
+	font-size: 20px;
+	font-weight: 600;
 }
-
-/* ----------- GALLERIE IMAGE -------------- */
-
-div.product-img {
-	margin-left: 50px;
-	height: 600px;
-	width: 50%;
-}
-div.product-img .main-img {
-	height: 80%;
-	border: 1px solid lightgray;
-	border-radius: 3px;
-	overflow: hidden;
-}
-.main-img img {
-	height: 100%;
-}
-div.product-img .img-galery {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	width: 100%;
-	height: 100px;
-}
-.img-galery div {
-	margin-top: 20px;
-	width: 20%;
-	overflow: hidden;
-
-	border: 1px solid lightgray;
-	border-radius: 3px;
-	transition: 0.3s;
-}
-.img-galery img {
-	width: 100%;
-	cursor: pointer;
-	transition: 0.3s;
-}
-.img-galery img:hover {
-	filter: opacity(0.8);
-}
-
-/* ------------ INFO PRODUIT -------------- */
-
-.product-info {
-	display: flex;
-	flex-direction: column;
-
-	margin-right: 50px;
-	padding-left: 40px;
-	width: 50%;
-	max-height: 500px;
-}
-.product-info .title-product {
-	margin-bottom: 20px;
-
-	font-family: arial;
-	font-size: 30px;
-	text-transform: uppercase;
-}
-.product-info .price-product {
-	margin-bottom: 20px;
-	
-	font-family: arial;
+.price-product {
 	font-size: 20px;
 	color: red;
 }
-.product-info .desc-product {
-	font-family: Open Sans;
-}
-.product-info .form-product {
-	display: flex;
-	flex-direction: column;
-	margin-top: 30px;
-}
-.product-info .form-product div.size label {
-	font-family: arial;
-	margin-right: 10px;
-}
-.product-info .form-product div.size select {
-	border: 1px solid lightgray;
-	height: 35px;
-	width: 150px;
-	border-radius: 3px;
-	padding: 5px;
 
-	appearance: none;
-	-moz-appearance: none;
-	background: url('/arrow.svg') 94% / 8% no-repeat white;
+.product-payout .title-product, .product-payout .price-product {
+	font-size: 15px;
 }
-.form-product button {
-	margin-top: 20px;
-	width: 220px;
-	background-color: white;
-	border: 1px solid lightgray;
-	border-radius: 3px;
 
+.storage-info.valid {
+	color: green;
+}
+.storage-info.invalid {
+	color: grey;
+}
+.info-product div span:nth-of-type(1) {
+	text-transform: uppercase;
+	font-size: 13px;
+	font-weight: 600;
+}
+.info-product div span:nth-of-type(2) {
+	font-size: 13px;
+	color: grey
+}
+
+.sticky-offset {
+	top: 100px;
+}
+
+.carousel-indicators {
+    height: 15%;
+}
+.carousel-indicators div {
+	opacity: 0.4;
+	transition: 0.3s;
+}
+.carousel-indicators div.active {
+    opacity: 1;
+}
+.carousel-indicators img {
 	cursor: pointer;
-	transition: 0.2s;
-}
-.form-product button:hover {
-	background-color: lightgreen;
+    position: absolute;
+    height: 100%;
+    left: 0;
 }
