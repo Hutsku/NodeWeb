@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Import CSS Bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- Import custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/style-product.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-navbar.css">
+        <title>Hub principal du site</title>
+    </head>
+ 
+    <body>
+        <header>
+            <% include navbar %>
+        </header>
+
+        <main class="bg-light py-5 px-3">
+            <div class="bg-light my-4">
+                <h1>Connexion</h1>
+            </div>
+            <div class="rounded bg-light border">
+                <div class="p-4">
+                    <form action="/login" method="post">
+                        <div class="form-group form-row">
+                            <input type="text" placeholder="Adresse email" class="form-control" name="email">
+                            <div class="invalid-feedback">Veuillez rentrer une adresse email valide</div>
+                        </div>
+
+                        <div class="form-group form-row">
+                            <input type="password" placeholder="Mot de passe" class="form-control" name="password">
+                            <div class="invalid-feedback">Veuillez rentrer un mot de passe valide</div>
+                        </div>
+
+                        <div class="form-check form-row">
+                            <input class="form-check-input" type="checkbox" id="logRemember" name="newsletter" value="yes">
+                            <label for="logRemember">Rester connecté</label>
+                        </div>
+                        <div class="form-row">
+                            <button type="submit" class="btn btn-primary w-100" data-dismiss="">Se connecter</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <small class="text-center w-100"> Pas encore de compte ? <a href="/subscribe">Créez un compte !</a></small>
+                </div>
+            </div>
+        </main>
+    </body>
+
+    <script type="text/javascript">
+        /* Erreur à afficher pour le login */
+        $('.log-box form').submit(function () {
+            var emailInput = $('.log-box input[type="text"]');
+            var passwordInput = $('.log-box input[type="password"]');
+
+            // On check les erreurs et on ajoute la classe en consequant
+            if (!emailInput.val()) {
+                emailInput.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            } else {
+                emailInput.removeClass('is-invalid').addClass('is-valid');
+            }
+            if (!passwordInput.val()) {
+                passwordInput.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            } else {
+                passwordInput.removeClass('is-invalid').addClass('is-valid');
+            }
+
+            $.post("/login", {
+                email: emailInput.val(),
+                password: passwordInput.val()
+            })
+            .done( function (data) {
+                if (data == "badEmail") {
+                    console.log("bad email")
+                    emailInput.removeClass('is-valid').addClass('is-invalid');
+                }
+                else if (data == "badPassword") {
+                    console.log("bad password")
+                    passwordInput.removeClass('is-valid').addClass('is-invalid');
+                }
+                else {
+                    location.reload();
+                }
+            });
+
+            return false; // on execute pas le submit normal
+        });
+    </script>
+</html>

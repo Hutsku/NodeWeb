@@ -20,7 +20,7 @@
         <main class="bg-light py-5">
             <div class="jumbotron text-center bg-light m-0 ">YDOGBE.</div>
     		<div class="container-fluid row m-0">
-    			<div class="product-left col-md-8 px-5  mb-5 pb-5">
+    			<div class="product-left col-md-8 px-md-5 mb-5 pb-5">
     				<div id="carouselProduct" class="carousel slide" data-ride="carousel">
 					  	<div class="carousel-indicators row mb-3">
 						    <div data-target="#carouselProduct" data-slide-to="0" class="col">
@@ -107,7 +107,7 @@
 	    		</div>
 
 	    		<!---------------------- MOBILE ONLY ---------------------------->
-	    		<div class="fixed-bottom product-payout d-md-none d-block w-100 p-3 bg-light shadow">
+	    		<div class="fixed-bottom product-payout d-md-none d-block w-100 p-3 bg-light shadow-lg">
     				<div class="row mx-2 mb-2">
     					<span class="title-product col-10 p-0">(1966) CHINE : T-Shirt manches courtes - Blanc</span>
     					<span class="price-product col-2 p-0 text-right">29.99€</span>
@@ -120,7 +120,7 @@
 	    					<option value="L" class="attached enabled">L</option>
 	    					<option value="XL" class="attached enabled">XL</option>
 				      	</select>
-	    				<button class="btn btn-primary col ml-2" type="submit" name="add-cart">
+	    				<button class="btn btn-primary col ml-2 text-truncate" type="submit" name="add-cart">
 	    					Ajouter au panier <i class="fas fa-cart-arrow-down"></i>
 	    				</button>
 	    			</form>
@@ -129,13 +129,7 @@
         </main>
     </body>
 
-    <!-- Import JS Bootstrap dependencies -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-	<!-- Import Font Awesome -->
-    <script src="https://kit.fontawesome.com/5f21f19d3f.js"></script>
-
-	<script type="text/javascript">
+    <script type="text/javascript">
 		/* Change l'image de la gallerie */
 		var imgGalery = $('.img-galery div').click(function () {
 			/* On met à jour les bordures (si l'image est selectionnée) */

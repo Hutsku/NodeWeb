@@ -2,6 +2,10 @@ body {
 	padding: 0;
 }
 
+.navbar-collapse {
+	transition: 0.3s;
+}
+
 #searchForm button {
 	color: white;
 }

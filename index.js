@@ -32,8 +32,8 @@ app.get('/', function(req, res) {
     res.redirect('/mainpage');
 })
 
-.get('/log', function(req, res) {
-    res.render('log.ejs', {session: req.session});
+.get('/login', function(req, res) {
+    res.render('login.ejs', {session: req.session});
 })
 
 .get('/quit', function(req, res) {

@@ -11,9 +11,16 @@
 	color: red;
 }
 
-.product-payout .title-product, .product-payout .price-product {
-	font-size: 15px;
+/* ==================== RESPONSIVE TEXT ======================= */
+
+.sticky-top .title-product, .sticky-top .price-product {
+	font-size: 20px;
 }
+
+.fixed-bottom .title-product, .fixed-bottom .price-product {
+	font-size: 3.3vw;
+}
+/* ============================================================ */
 
 .storage-info.valid {
 	color: green;
