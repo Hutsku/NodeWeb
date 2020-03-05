@@ -2,6 +2,10 @@ body {
 	padding: 0;
 }
 
+.navbar-brand img {
+	height:35px;
+}
+
 .navbar-collapse {
 	transition: 0.3s;
 }
