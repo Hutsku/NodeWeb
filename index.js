@@ -107,6 +107,19 @@ app.get('/', function(req, res) {
 
 // ============================================= POST ===================================================
 
+.post('/add-cart', urlencodedParser, function(req, res) {
+    console.log("creating cookies");
+
+    // si il n'y a pas encore cookies de panier, on en créer un
+    if (!req.session.cart) {
+        req.session.cart = [];
+    }
+    console.log(req.body);
+    req.session.cart.push(req.body);
+    req.session.alert = "cart";
+    res.redirect('back');
+})
+
 .post('/login', urlencodedParser, function(req, res) {
     var password = req.body.password;
     var email = req.body.email;

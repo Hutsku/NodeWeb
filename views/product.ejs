@@ -128,7 +128,7 @@
 	    			<div class="row mx-2 mb-2">
 	    				<small class="storage-info valid"><i class="fas fa-box"></i> En stock</small>
 	    			</div>
-	    			<form class="form-product row w-100">
+	    			<form class="form-product row w-100" action="/add-cart" method="post">
 	    				<!--<select class="custom-select size col ml-4">
 					        <option selected disabled>Sélectionnez la taille</option>
 							<option value="S" class="attached enabled">S</option>
@@ -157,6 +157,68 @@
 			$('.main-img img').attr('src', pathImg);
 		});
 
-	</script>
+
+        /* Ajoute un produit au panier */;
+        $('form.form-product').submit(function () {
+        	$.post("/add-cart", {
+                id: <%= id %>, 
+	            reference: <%= reference %>,
+	            name: "<%= name %>",
+	            stocks: <%= stocks %>,
+	            price: <%= price %>,
+	            description: "<%= description %>",
+	            size: "<%= size %>",
+	            printing: "<%= printing %>",
+	            category: "<%= category %>",
+            })
+            .done( function (data) {
+                if (data == "error") {
+                    console.log(data)
+                }
+                else {
+                    console.log("cart added");
+                    location.reload();;
+                }
+            });
+
+            return false; // on n'execute pas le submit normal
+
+        	/*
+            var emailInput = $('.log-box input[type="text"]');
+            var passwordInput = $('.log-box input[type="password"]');
+
+            // On check les erreurs et on ajoute la classe en consequant
+            if (!emailInput.val()) {
+                emailInput.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            } else {
+                emailInput.removeClass('is-invalid').addClass('is-valid');
+            }
+            if (!passwordInput.val()) {
+                passwordInput.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            } else {
+                passwordInput.removeClass('is-invalid').addClass('is-valid');
+            }
+
+            $.post("/login", {
+                email: emailInput.val(),
+                password: passwordInput.val()
+            })
+            .done( function (data) {
+                if (data == "badEmail") {
+                    console.log("bad email")
+                    emailInput.removeClass('is-valid').addClass('is-invalid');
+                }
+                else if (data == "badPassword") {
+                    console.log("bad password")
+                    passwordInput.removeClass('is-valid').addClass('is-invalid');
+                }
+                else {
+                    location.reload();
+                }
+            });*/
+        });
+    </script>
 
 </html>

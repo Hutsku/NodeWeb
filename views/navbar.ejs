@@ -61,7 +61,11 @@
             <% } %>
             <li class="dropdown nav-item d-none d-md-block">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    0 <i class="fa fa-shopping-cart"></i>
+                    <% if (session.cart) { %>
+                        <%= session.cart.length %> <i class="fa fa-shopping-cart"></i>
+                    <% } else { %>
+                        0 <i class="fa fa-shopping-cart"></i>
+                    <% } %>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right p-0" aria-labelledby="navbarDropdownMenuLink">
                     <div class="cart-pannel container">
@@ -124,6 +128,12 @@
             var type = 'danger';
             var quote = "L'email est déjà utilisé par un autre compte ...";
             var quoteTitle = 'Erreur !';
+            break;
+
+        case 'cart':
+            var type = 'success';
+            var quote = "Le produit a bien été ajouté au panier";
+            var quoteTitle = 'Ajouté !';
             break;
         } %>
         <div class="notif-container col-12">
