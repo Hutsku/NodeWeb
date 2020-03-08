@@ -16,6 +16,7 @@ app.use(session({
     })
 );
 app.use(express.static(__dirname + '/public'));
+app.use('/scripts', express.static(__dirname + '/node_modules/'));
 app.set('view engine', 'ejs');
 
 var mysql      = require('mysql');
@@ -55,6 +56,10 @@ app.get('/', function(req, res) {
     res.render('product.ejs', {id: req.params.id, session: req.session});
 })
 
+.get('/cart', function(req, res) {
+    res.render('cart.ejs', {session: req.session});
+})
+
 .get('/mainpage', function(req, res) {
     // On remet les variables de session par defaut si besoin
 	res.render('mainpage.ejs', {session: req.session});
@@ -67,6 +72,8 @@ app.get('/', function(req, res) {
     var email = req.body.email;
 
     // On construit la requête et on l'envoit
+    //var requestMysql = `SELECT * FROM users WHERE email='${email}'`;
+    console.log(email);
     var requestMysql = `SELECT * FROM users WHERE email='${email}'`;
     connection.query(requestMysql, function(err, rows, fields) {
         if (err) throw err;

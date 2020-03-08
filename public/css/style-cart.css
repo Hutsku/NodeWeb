@@ -1,0 +1,45 @@
+.cart-product-qty .input-group button {
+	min-width: 0 !important; 
+	border: none; 
+}
+
+.cart-product-qty .input-group input {
+	padding: 0; 
+}
+
+.cart-product-img img {
+	border-radius: 3px ;
+}
+
+.cart-product-name a {
+	color: grey;
+}
+
+.cart-payout .title {
+	font-size: 12px;
+	font-weight: 700;
+}
+.cart-payout .price {
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.cart-payout .total {
+	font-size: 18px;
+}
+.cart-payout .total.price {
+	color: #c12020;
+	font-size: 18px;
+}
+
+
+
+/* ==================== RESPONSIVE TEXT ======================= */
+
+.sticky-top .title-product, .sticky-top .price-product {
+	font-size: 20px;
+}
+
+.fixed-bottom .title-product, .fixed-bottom .price-product {
+	font-size: 3.3vw;
+}

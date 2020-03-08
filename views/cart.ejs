@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Import CSS Bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- Import custom CSS -->
+        <!--<link rel="stylesheet" type="text/css" href="/css/style-product.css">-->
+        <link rel="stylesheet" type="text/css" href="/css/style-navbar.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-cart.css">
+        <title>Hub principal du site</title>
+    </head>
+ 
+    <body>
+    	<header>
+            <% include navbar %>
+        </header>
+
+        <main class="bg-light py-5">
+            <div class="jumbotron bg-light m-0 w-100 text-center">
+                <a class="logo-img" href="/mainpage">
+                    <img class="col-md-6" src="/img/logo1.png">
+                </a>
+            </div>
+    		<div class="container-fluid row m-0">
+    			<div class="cart-left col-md-8 px-md-5 mb-5 pb-5">
+
+    				<div class="cart-pannel container">
+
+						<div class="w-100 border-bottom my-3"></div>
+                        <div class="cart-product row align-items-center">
+                        	<div class="cart-product-img p-2 col-3">
+                        		<img class="w-100" src="/img/img2.jpg">
+                        	</div>
+                        	<div class="cart-product-name col-md-5 col">
+                        		<a href="/product/2">(1966) CHINE : Pull-over - Blanc</a>
+                        	</div>
+                        	<div class="w-100 d-md-none d-block"></div>
+                        	<div class="cart-product-qty col-md-2 offset-md-0 offset-3 col-4">
+                        		<input type="number" value="1" min="1" max="99" step="1"/>
+                        	</div>
+                        	<div class="cart-product-price col-md-1 col-3">
+                        		<span>29.99€</span>
+                        	</div>
+                        	<div class="product-remove col-md-1 col-1">
+                        		<button type="button" class="close" aria-label="Close">
+                                	<span aria-hidden="true">&times;</span>
+                            	</button>
+                        	</div>     
+                        </div>
+
+						<div class="w-100 border-bottom my-3"></div>
+                        <div class="cart-product row align-items-center">
+                        	<div class="cart-product-img p-2 col-3">
+                        		<img class="w-100" src="/img/img3.jpg">
+                        	</div>
+                        	<div class="cart-product-name col-md-5 col">
+                        		<a href="/product/2">(1966) CHINE : Pull-over - Rouge</a>
+                        	</div>
+                        	<div class="w-100 d-md-none d-block"></div>
+                        	<div class="cart-product-qty col-md-2 offset-md-0 offset-3 col-4">
+                        		<input type="number" value="1" min="1" max="99" step="1"/>
+                        	</div>
+                        	<div class="cart-product-price col-md-1 col-3">
+                        		<span>29.99€</span>
+                        	</div>
+                        	<div class="product-remove col-md-1 col-1">
+                        		<button type="button" class="close" aria-label="Close">
+                                	<span aria-hidden="true">&times;</span>
+                            	</button>
+                        	</div>   
+                        </div>
+
+                        <div class="w-100 border-bottom my-3"></div>
+                        <div class="cart-product row align-items-center">
+                        	<div class="cart-product-img p-2 col-3">
+                        		<img class="w-100" src="/img/img4.jpg">
+                        	</div>
+                        	<div class="cart-product-name col-md-5 col">
+                        		<a href="/product/2">(1966) CHINE : Pull-over - Bleu</a>
+                        	</div>
+                        	<div class="w-100 d-md-none d-block"></div>
+                        	<div class="cart-product-qty col-md-2 offset-md-0 offset-3 col-4">
+                        		<input type="number" value="1" min="1" max="99" step="1"/>
+                        	</div>
+                        	<div class="cart-product-price col-md-1 col-3">
+                        		<span>29.99€</span>
+                        	</div>
+                        	<div class="product-remove col-md-1 col-1">
+                        		<button type="button" class="close" aria-label="Close">
+                                	<span aria-hidden="true">&times;</span>
+                            	</button>
+                        	</div>     
+                        </div>
+               		</div>
+    			</div>
+    			
+    			<!---------------------------------------------------------------------->
+
+	    		<div class="cart-payout col-md-4">
+	    			<div class="sticky-top sticky-offset bg-light shadow rounded p-4">
+	    				<div class="row">
+	    					<span class="title col-5">TOTAL PANIER</span>
+		    			</div>
+		    			<div class="w-100 border-bottom my-3"></div>
+		    			<div class="row py-3">
+		    				<span class="title col-5">SOUS-TOTAL</span>
+		    				<span class="price">34.87€</span>
+		    			</div>
+		    			<div class="row py-3">
+		    				<span class="title col-5">LIVRAISON</span>
+		    				<span class="price">6.00€</span>
+		    			</div>
+		    			<div class="w-100 border-bottom my-3"></div>
+		    			<div class="row pb-5">
+			    			<span class="title total col-5">TOTAL</span>
+			    			<span class="price total">40.87€</span>
+			    		</div>
+			    		<div class="text-center">
+				    		<button class="w-100 btn btn-dark mb-3" type="submit" name="add-cart">
+		    					Passer au payement
+		    				</button>
+		    				<button class="btn btn-light" type="submit" name="add-cart">
+		    					Continuer le shopping
+		    				</button>
+	    				</div>
+	    			</div>
+	    		</div>
+
+	    		<!---------------------- MOBILE ONLY ---------------------------->
+	    		<!--<div class="fixed-bottom product-payout d-md-none d-none w-100 p-3 bg-light shadow-lg">
+    				<div class="row mx-2 mb-2">
+    					<span class="title-product col-10 p-0">(1966) CHINE : T-Shirt manches courtes - Blanc</span>
+    					<span class="price-product col-2 p-0 text-right">29.99€</span>
+	    			</div>
+	    			<form class="form-product row w-100">
+	    				<select class="custom-select size col ml-4">
+					        <option selected disabled>Sélectionnez la taille</option>
+							<option value="S" class="attached enabled">S</option>
+	    					<option value="M" class="attached enabled">M</option>
+	    					<option value="L" class="attached enabled">L</option>
+	    					<option value="XL" class="attached enabled">XL</option>
+				      	</select>
+	    				<button class="btn btn-primary col ml-2 text-truncate" type="submit" name="add-cart">
+	    					Ajouter au panier <i class="fas fa-cart-arrow-down"></i>
+	    				</button>
+	    			</form>
+	    		</div>-->
+	    	</div>
+        </main>
+    </body>
+
+	<script src="scripts/bootstrap-input-spinner/src/bootstrap-input-spinner.js"></script>
+	<script>
+	    $("input[type='number']").inputSpinner()
+	</script>
+
+    <script type="text/javascript">
+		/* Change l'image de la gallerie */
+		var imgGalery = $('.img-galery div').click(function () {
+			/* On met à jour les bordures (si l'image est selectionnée) */
+			$('.img-galery div').css('border-color', 'lightgray');
+			$(this).css('border-color', 'black');
+
+			/* on récupère l'image et on la remplace */
+			var pathImg = $(this.innerHTML).attr('src');
+			$('.main-img img').attr('src', pathImg);
+		});
+
+	</script>
+
+</html>
