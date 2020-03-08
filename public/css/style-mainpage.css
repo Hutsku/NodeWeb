@@ -17,10 +17,12 @@
 	filter: brightness(120%);
 	transform: scale(1.05);
 }
-.product-name a, .product-name p {
-	color: #5b5b5b;
-	text-decoration: none;
+.product-name a{
+	font-size: 18px;
+	font-weight: 700;
+	color: black;
 }
 .product-name p {
 	color: black;
+	text-decoration: none;
 }
