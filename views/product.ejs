@@ -28,18 +28,18 @@
     				<div id="carouselProduct" class="carousel slide" data-ride="carousel">
 					  	<div class="carousel-indicators row mb-3">
 						    <div data-target="#carouselProduct" data-slide-to="0" class="col">
-						    	<img class="offset-3" src="/img/img1-1.jpg" alt="First slide">
+						    	<img class="offset-3" src="/img/img<%= id %>-1.jpg" alt="First slide">
 						    </div>
 						    <div data-target="#carouselProduct" data-slide-to="1" class="col">
-						    	<img class="offset-3" src="/img/img2-1.jpg" alt="Second slide">
+						    	<img class="offset-3" src="/img/img<%= id %>-1.jpg" alt="Second slide">
 						    </div>
 					  	</div>
 					  	<div class="carousel-inner rounded">
 					    	<div class="carousel-item active">
-					      		<img class="d-block w-100" src="/img/img1-1.jpg" alt="First slide">
+					      		<img class="d-block w-100" src="/img/img<%= id %>-1.jpg" alt="First slide">
 					    	</div>
 					    	<div class="carousel-item">
-					      		<img class="d-block w-100" src="/img/img2-1.jpg" alt="Second slide">
+					      		<img class="d-block w-100" src="/img/img<%= id %>-1.jpg" alt="Second slide">
 					    	</div>
 					  	</div>
 					  	<a class="carousel-control-prev" href="#carouselProduct" role="button" data-slide="prev">
@@ -54,19 +54,19 @@
 	    			<div class="info-product d-md-none d-block">
 	    				<div class="w-100 border-bottom my-4"></div>
 		    			<span class="desc mb-3 ml">
-		    				Petite description rapide du produit. N'est pas censé exceder 1 à 2 lignes.
+		    				<%= description %>
 		    			</span>
 		    			<div class="material mb-1">
 		    				<span>Impression </span>
-		    				<span>Impression sur papier 250g</span>
+		    				<span>Impression sur papier <%= printing %></span>
 		    			</div>
 		    			<div class="size mb-1">
 		    				<span>Dimension </span>
-		    				<span>Affiche A3</span>
+		    				<span>Affiche <%= size %></span>
 		    			</div>
 		    			<div class="ref mb-1">
 		    				<span>Reference </span>
-		    				<span>0722437001</span>
+		    				<span><%= reference %></span>
 		    			</div>
     				</div>
     			</div>
@@ -75,27 +75,27 @@
 	    		<div class="product-payout col-md-4 d-none d-md-block p-0">
 	    			<div class="sticky-top sticky-offset">
 	    				<div class="row pb-2">
-	    					<span class="title-product">(1966) CHINE : T-Shirt manches courtes - Blanc</span>
+	    					<span class="title-product"><%= name %></span>
 		    			</div>
 		    			<div class="row pb-3">
-		    				<span class="price-product">14.99€</span>
+		    				<span class="price-product"><%= price %>€</span>
 		    			</div>
 		    			<div class="w-100 border-bottom my-4"></div>
 		    			<div class="info-product">
 			    			<span class="row desc mb-3">
-			    				Petite description rapide du produit. N'est pas censé exceder 1 à 2 lignes.
+			    				<%= description %>
 			    			</span>
 			    			<div class="row material mb-1">
 			    				<span>Impression </span>
-			    				<span>Impression sur papier 250g</span>
+			    				<span>Impression sur papier <%= printing %></span>
 			    			</div>
 			    			<div class="row size mb-1">
 			    				<span>Dimension </span>
-			    				<span>Affiche A3</span>
+			    				<span>Affiche <%= size %></span>
 			    			</div>
 			    			<div class="row ref mb-1">
 			    				<span>Reference </span>
-			    				<span>0722437001</span>
+			    				<span><%= reference %></span>
 			    			</div>
 	    				</div>
 	    				<div class="w-100 border-bottom my-4"></div>
@@ -122,8 +122,8 @@
 	    		<!---------------------- MOBILE ONLY ---------------------------->
 	    		<div class="fixed-bottom product-payout d-md-none d-block w-100 p-3 bg-light shadow-lg">
     				<div class="row mx-2 mb-2">
-    					<span class="title-product col-10 p-0">(1966) CHINE : T-Shirt manches courtes - Blanc</span>
-    					<span class="price-product col-2 p-0 text-right">14.99€</span>
+    					<span class="title-product col-10 p-0"><%= name %></span>
+    					<span class="price-product col-2 p-0 text-right"><%= price %>€</span>
 	    			</div>
 	    			<div class="row mx-2 mb-2">
 	    				<small class="storage-info valid"><i class="fas fa-box"></i> En stock</small>

@@ -53,7 +53,28 @@ app.get('/', function(req, res) {
 })
 
 .get('/product/:id', function(req, res) {
-    res.render('product.ejs', {id: req.params.id, session: req.session});
+    // on construit la requete mysql
+    var requestMysql = `SELECT * FROM products WHERE id='${req.params.id}'`;
+    connection.query(requestMysql, function(err, rows, fields) {
+        if (err) throw err;
+        var product = rows[0]; // on prend seulement 1 produit (le seul en théorie)
+
+        // On envoit les données du produit à la page
+        res.render('product.ejs', {
+            id: product.id, 
+            reference: product.reference,
+            name: product.name,
+            stocks: product.stocks,
+            price: product.price,
+            description: product.description,
+            size: product.size,
+            printing: product.printing,
+            category: product.category,
+            session: req.session
+        });
+    }); 
+
+    
 })
 
 .get('/cart', function(req, res) {
@@ -61,8 +82,27 @@ app.get('/', function(req, res) {
 })
 
 .get('/mainpage', function(req, res) {
-    // On remet les variables de session par defaut si besoin
-	res.render('mainpage.ejs', {session: req.session});
+    // on construit la requete mysql:on selectionne tout les produits disponibles
+    var requestMysql = `SELECT * FROM products`;
+    connection.query(requestMysql, function(err, rows, fields) {
+        if (err) throw err;
+
+        var products = []; // on initialise la liste des produit
+        for (var i=0; i< rows.length; i++) {
+            products.push({
+                id: rows[i].id, 
+                reference: rows[i].reference,
+                name: rows[i].name,
+                price: rows[i].price,
+            })
+        }
+
+        // On envoit les données du produit à la page
+        res.render('mainpage.ejs', {
+            products: products, 
+            session: req.session
+        });
+    }); 
 })
 
 // ============================================= POST ===================================================
