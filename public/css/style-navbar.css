@@ -48,7 +48,7 @@ li.nav-item {
 	width: 400px;
 }
 .cart-total-price {
-	color: red;
+	color: #c12020;
 }
 .cart-total-title small, .cart-product-name {
 	color: grey;

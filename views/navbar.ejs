@@ -60,42 +60,63 @@
                 </li>
             <% } %>
             <li class="dropdown nav-item d-none d-md-block">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <% if (session.cart) { %>
-                        <%= session.cart.length %> <i class="fa fa-shopping-cart"></i>
+                <a class="nav-link dropdown-toggle cart-dropdown" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <% if (session.cart) { 
+                        var nb_total = 0;
+                        for (var i=0; i< session.cart.length; i++) {
+                            nb_total += parseInt(session.cart[i].cart_qty);
+                        }
+                    %>
+                        <span><%= nb_total %></span>
                     <% } else { %>
-                        0 <i class="fa fa-shopping-cart"></i>
+                        <span>0</span> 
                     <% } %>
+                    <i class="fa fa-shopping-cart"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right p-0" aria-labelledby="navbarDropdownMenuLink">
                     <div class="cart-pannel container">
-                        <div class="cart-product row align-items-center"> 
-                            <img class="p-2 col-3" src="/img/img2.jpg">
-                            <a href="/product/2" class="cart-product-name col">(1966) CHINE : Pull-over - Blanc</a>
-                            <span class="cart-product-price col-3">29.99€</span>
-                            <button type="button" class="close col-1" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="cart-product row align-items-center bg-light"> 
-                            <img class="p-2 col-3" src="/img/img3.jpg">
-                            <a href="/product/3" class="cart-product-name col">(1966) CHINE : Pull-over - Rouge</a>
-                            <span class="cart-product-price col-3">29.99€</span>
-                            <button type="button" class="close col-1" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="cart-total p-3 d-flex justify-content-between">
-                            <div class="cart-total-title">
-                                <big>TOTAL</big>
-                                <small>(Hors livraison)</small>
+                        <% if (session.cart) {
+                            var price_total = 0;
+                            for (var i=0; i < session.cart.length; i++) { 
+                                var price_product = parseFloat(session.cart[i].price);
+                                var cart_qty = parseInt(session.cart[i].cart_qty);
+                                price_total += price_product * cart_qty; %>
+                                <div class="cart-product row align-items-center" product_id="<%= session.cart[i].id %>"> 
+                                    <img class="p-2 col-3" src="/img/img<%= session.cart[i].id %>-1.jpg">
+                                    <div class="col">
+                                        <a href="/product/<%= session.cart[i].id %>" class="cart-product-name">
+                                            <%= session.cart[i].name %>
+                                        </a>
+                                        <span class="ml-2">x</span>
+                                        <span class="qty"><%= cart_qty %> </span>
+                                    </div>
+                                    <span class="cart-product-price col-3"><%= price_product %>€</span>
+                                    <form class="form-remove-cart col-1" action="/remove-cart" method="post" product_id="<%= session.cart[i].id %>">
+                                        <button type="submit" name="remove-cart" class="close" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            <% } %>
+                            <div class="cart-total p-3 d-flex justify-content-between">
+                                <div class="cart-total-title">
+                                    <big>TOTAL</big>
+                                    <small>(Hors livraison)</small>
+                                </div>
+                                <span class="cart-total-price"><%= price_total %>€</span>
                             </div>
-                            <span class="cart-total-price">34.87€</span>
-                        </div>
-                        <div class="cart-check pb-3 row justify-content-center">
-                            <a href="/cart" class="btn btn-secondary btn-sm col-4">Voir le panier</a>
-                            <button type="button" class="btn btn-primary btn-sm offset-1 col-4">Valider</button>
-                        </div>
+                            <div class="cart-check pb-3 row justify-content-center">
+                                <a href="/cart" class="btn btn-secondary btn-sm col-4">Voir le panier</a>
+                                <button type="button" class="btn btn-primary btn-sm offset-1 col-4">
+                                    Valider
+                                </button>
+                                </form>
+                            </div>
+                        <% } else { %>
+                            <div class="cart-empty row align-items-center"> 
+                                <span class="m-5 col"> Aucun produit dans le panier ...</span>
+                            </div>
+                        <% } %>
                     </ul>
                 </div>
             </li>
@@ -236,6 +257,33 @@
         });
 
         return false; // on execute pas le submit normal
-         
+    });
+
+    // Pour supprimer un objet du panier
+    $('form.form-remove-cart').submit(function () {
+        console.log("remove");
+        var product_id = $(this).attr('product_id');
+        var nb = parseFloat($('.cart-dropdown span').text());
+        var div_empty = `<div class="cart-empty row align-items-center"> 
+                                <span class="m-5 col"> Aucun produit dans le panier ...</span>
+                            </div>`
+
+        $.post("/remove-cart", {
+            id: product_id, 
+        })
+        .done( function (data) {
+            // on modifie le panier dynamiquement
+            $('div.cart-product[product_id='+product_id+']').remove(); 
+            $('.cart-dropdown span').text(nb-1);
+
+            // s'il n'y a plus rien dans le panier, on supprime le total et on ajoute le texte de vide
+            if (!$('.cart-product').length) {
+                $('.cart-total').remove();
+                $('.cart-check').remove();
+                $('.cart-pannel').append(div_empty);
+
+            }
+        });
+        return false; // on n'execute pas le submit normal
     });
 </script>

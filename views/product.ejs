@@ -170,54 +170,108 @@
 	            size: "<%= size %>",
 	            printing: "<%= printing %>",
 	            category: "<%= category %>",
+	            cart_qty: 1,
             })
             .done( function (data) {
                 if (data == "error") {
-                    console.log(data)
+                    console.log("error occured")
                 }
                 else {
                     console.log("cart added");
-                    location.reload();;
-                }
+                    //location.reload();
+
+                    if ($('.cart-product[product_id=<%= id %>]').length) {
+                    	var qty = parseInt($('.cart-product[product_id=<%= id %>] span.qty').text());
+                    	$('.cart-product[product_id=<%= id %>] span.qty').text(qty+1);
+                    }
+                    else {
+	                    var cart_product = 
+	                    	`<div class="cart-product row align-items-center" product_id="<%= id %>"> 
+	                            <img class="p-2 col-3" src="/img/img<%= id %>-1.jpg">
+	                            <div class="col">
+		                            <a href="/product/<%= id %>" class="cart-product-name">
+		                                <%= name %>
+		                            </a>
+		                            <span class="ml-2">x</span>
+		                            <span class="qty">1</span>
+		                        </div>
+	                            <span class="cart-product-price col-3"><%= price %>€</span>
+	                            <form class="form-remove-cart col-1" action="/remove-cart" method="post" product_id="<%= id %>">
+	                                <button type="submit" name="remove-cart" class="close" aria-label="Close">
+	                                    <span aria-hidden="true">&times;</span>
+	                                </button>
+	                            </form>
+	                        </div>`
+
+	                    // on modifie le panier dynamiquement
+	                    if ($('div.cart-empty').length) {
+	                    	$('div.cart-empty').after(
+	                    	`<div class="cart-total p-3 d-flex justify-content-between">
+	                                <div class="cart-total-title">
+	                                    <big>TOTAL</big>
+	                                    <small>(Hors livraison)</small>
+	                                </div>
+	                                <span class="cart-total-price">0€</span>
+	                            </div>
+	                            <div class="cart-check pb-3 row justify-content-center">
+	                                <a href="/cart" class="btn btn-secondary btn-sm col-4">Voir le panier</a>
+	                                <button type="button" class="btn btn-primary btn-sm offset-1 col-4">Valider</button>
+	                            </div>`);
+	                    	$('div.cart-empty').remove()
+	                    }
+	                	// on ajoute le produit ...
+	                	$('div.cart-total').before(cart_product)
+	                	$('form.form-remove-cart[product_id=<%= id %>]').submit(function () {
+					        console.log("remove");
+					        var product_id = $(this).attr('product_id');
+					        var nb = parseFloat($('.cart-dropdown span').text());
+					        var div_empty = `<div class="cart-empty row align-items-center"> 
+					                                <span class="m-5 col"> Aucun produit dans le panier ...</span>
+					                            </div>`
+
+					        $.post("/remove-cart", {
+					            id: product_id, 
+					        })
+					        .done( function (data) {
+					            // on modifie le panier dynamiquement
+					            $('div.cart-product[product_id='+product_id+']').remove(); 
+					            $('.cart-dropdown span').text(nb-1);
+
+					            // s'il n'y a plus rien dans le panier, on supprime le total et on ajoute le texte de vide
+					            if (!$('.cart-product').length) {
+					                $('.cart-total').remove();
+					                $('.cart-check').remove();
+					                $('.cart-pannel').append(div_empty);
+
+					            }
+					        });
+					        return false; // on n'execute pas le submit normal
+					    });
+	                }
+
+                	// ... et on modifie les prix total
+                	var price_total = parseFloat($('.cart-total-price').text());
+                	$('.cart-total-price').text(price_total+<%= price %>+"€");
+                   	
+                   	// puis on ajoute +1 au compteur du panier
+                   	var nb = parseFloat($('.cart-dropdown span').text());
+                   	$('.cart-dropdown span').text(nb+1);
+
+                   	// on ajoute la notification
+                   	var notif = $(`<div class="notif-container col-12">
+						            <div class="alert alert-success alert-dismissible fade show" role="alert">
+						                <strong>Ajouté ! </strong> "<%= name %>" a bien été ajouté au panier
+						                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						                    <span aria-hidden="true">&times;</span>
+						                </button>
+						            </div>
+						        </div>`);
+
+                   	notif.insertBefore('#exampleModal');
+
+                }	
             });
-
             return false; // on n'execute pas le submit normal
-
-        	/*
-            var emailInput = $('.log-box input[type="text"]');
-            var passwordInput = $('.log-box input[type="password"]');
-
-            // On check les erreurs et on ajoute la classe en consequant
-            if (!emailInput.val()) {
-                emailInput.removeClass('is-valid').addClass('is-invalid');
-                return false;
-            } else {
-                emailInput.removeClass('is-invalid').addClass('is-valid');
-            }
-            if (!passwordInput.val()) {
-                passwordInput.removeClass('is-valid').addClass('is-invalid');
-                return false;
-            } else {
-                passwordInput.removeClass('is-invalid').addClass('is-valid');
-            }
-
-            $.post("/login", {
-                email: emailInput.val(),
-                password: passwordInput.val()
-            })
-            .done( function (data) {
-                if (data == "badEmail") {
-                    console.log("bad email")
-                    emailInput.removeClass('is-valid').addClass('is-invalid');
-                }
-                else if (data == "badPassword") {
-                    console.log("bad password")
-                    passwordInput.removeClass('is-valid').addClass('is-invalid');
-                }
-                else {
-                    location.reload();
-                }
-            });*/
         });
     </script>
 

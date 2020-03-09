@@ -114,9 +114,37 @@ app.get('/', function(req, res) {
     if (!req.session.cart) {
         req.session.cart = [];
     }
-    console.log(req.body);
-    req.session.cart.push(req.body);
-    req.session.alert = "cart";
+
+    var product_id = req.body.id;
+    var match = false;
+    // Si le produit est déjà dans le panier, on l'incremente
+    for (var i=0; i<req.session.cart.length; i++) {
+        if (req.session.cart[i].id == product_id) {
+            req.session.cart[i].cart_qty++;
+            match = true;
+        }
+    }
+    // Si le produit n'est pas déjà dans le panier, on l'ajoute
+    if (!match) req.session.cart.push(req.body); 
+
+    console.log(req.session.cart);
+    res.send('back');
+})
+
+.post('/remove-cart', urlencodedParser, function(req, res) {
+    // si il n'y a pas de cookies, on ne fait rien
+    if (!req.session.cart) {
+        res.redirect('back');
+    }
+    if (req.session.id) {
+        for (var i=0; i<req.session.cart.length; i++) {
+            if (req.session.cart[i].id == req.body.id) req.session.cart.splice(i, 1);
+        }
+    }
+    if (!req.session.cart.length) {
+        req.session.cart = 0;
+    }
+    console.log(req.session.cart);
     res.redirect('back');
 })
 
