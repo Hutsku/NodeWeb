@@ -32,7 +32,9 @@
 	font-size: 18px;
 }
 
-
+.cart-empty span {
+	font-size: 18px;
+}
 
 /* ==================== RESPONSIVE TEXT ======================= */
 
