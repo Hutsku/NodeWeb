@@ -58,10 +58,6 @@ app.get('/', function(req, res) {
 	res.render('subscribe.ejs', {session: req.session});
 })
 
-.get('/:username/info', function(req, res) {
-    res.render('account_info.ejs', {username: req.params.username, session: req.session});
-})
-
 .get('/product/:id', function(req, res) {
     // on construit la requete mysql
     var requestMysql = `SELECT * FROM products WHERE id='${req.params.id}'`;
@@ -119,30 +115,16 @@ app.get('/', function(req, res) {
     res.redirect('/account/overview');
 })
 
-
-.get('/account/overview', function(req, res) {
-    // on construit la requete mysql:on selectionne tout les produits disponibles
-    /*var requestMysql = `SELECT * FROM products`;
-    connection.query(requestMysql, function(err, rows, fields) {
-        if (err) throw err;
-
-        var products = []; // on initialise la liste des produit
-        for (var i=0; i< rows.length; i++) {
-            products.push({
-                id: rows[i].id, 
-                reference: rows[i].reference,
-                name: rows[i].name,
-                price: rows[i].price,
-            })
-        }
-
-        // On envoit les données du produit à la page
-        res.render('mainpage.ejs', {
-            products: products, 
-            session: req.session
-        });
-    }); */
-    res.render('account.ejs', {session: req.session});
+.get('/account/:link', function(req, res) {
+    // on vérifie que l'utilisateur est bien connecté
+    console.log("verification log")
+    if (req.session.logged) {
+        res.render('account.ejs', {session: req.session, link: req.params.link});
+    }
+    else {
+        // sinon on redirige vers l'écran de connexion
+        res.redirect('/login');
+    }
 })
 
 // ============================================= POST ===================================================
@@ -219,6 +201,7 @@ app.get('/', function(req, res) {
                 // Si les mots de passe correspondent ...
                 if (response) {
                     req.session.username = user.name;
+                    req.session.account = user;
                     req.session.logged = true;
                     req.session.alert = "login";
                     console.log("logged !");
@@ -255,8 +238,8 @@ app.get('/', function(req, res) {
     bcrypt.hash(password, 10, function(err, hashedPassword) {
         // On construit la requête et on l'envoit (avec check d'erreur)
         var getUser = `SELECT * FROM users WHERE email='${email}'`; 
-        var addUser = `INSERT INTO users (id, name, password, subscribe_date, adresse, newsletter, email) 
-                   VALUES (NULL, "${username}", "${hashedPassword}", NOW(), "${adresse}", "${newsletter}", "${email}")`;  
+        var addUser = `INSERT INTO users (id, name, password, subscribe_date, adresse, city, country, newsletter, email) 
+                   VALUES (NULL, "${username}", "${hashedPassword}", NOW(), "${adresse}", "${city}", "${country}", "${newsletter}", "${email}")`;  
 
         connection.query(getUser, function(err, rows, fields) {
             if (err) throw err;
@@ -282,7 +265,7 @@ app.get('/', function(req, res) {
 .post('/logout', urlencodedParser, function(req, res) {
     req.session.username = '';
     req.session.logged = false;
-    res.redirect('back');
+    res.redirect('/');
 })
 
 .post('/resetNotif', urlencodedParser, function(req, res) {

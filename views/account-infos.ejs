@@ -32,9 +32,9 @@
     var telInput = $('.account-input input[name="tel"]');
     var regex = new RegExp("[0-9]{10}");
 
-    nameInput.val("Armel Rouxel");
-    emailInput.val("arouxel.trash@outlook.fr");
-    telInput.val("0680067781");
+    nameInput.val("<%= session.account.name %>");
+    emailInput.val("<%= session.account.email %>");
+    telInput.val("<%= session.account.tel %>");
 
     /* Erreur à afficher pour le login */
     $('form[action="/edit-infos"]').submit(function () {
@@ -64,7 +64,7 @@
         $.post("/edit-infos", {
             name: nameInput.val(),
             email: emailInput.val(),
-            number: telInput.val()
+            tel: telInput.val()
         })
         .done( function (data) {
             if (data == "badInfos") {

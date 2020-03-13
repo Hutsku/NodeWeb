@@ -18,8 +18,8 @@
         </header>
 
         <main class="bg-light pt-5 mt-3">
-    		<div class="container-fluid row m-0 ">
-    			<div class="account-left col-md-3 p-0 shadow-lg mt-3">
+    		<div class="account-content container-fluid row m-0 ">
+    			<div class="account-left sticky-top sticky-offset col-md-3 p-0 shadow mt-3">
 					<div>
 						<span href="#" class="link-title text-center p-3">
 							<i class="fa fa-user"></i> ESPACE CLIENT </a>
@@ -27,10 +27,10 @@
 					</div>
     				<ul class="account-link">
     					<li>
-    						<a href="#" class="p-3"> MES COMMANDES </a>
-    					</li>
-    					<li">
     						<a href="/account/infos" class="p-3"> INFOS PERSONNELLES </a>
+    					</li>
+    					<li>
+    						<a href="/account/order" class="p-3"> MES COMMANDES </a>
     					</li>
     					<li>
     						<a href="/account/adress" class="p-3">MON ADRESSE </a>
@@ -39,13 +39,34 @@
     						<a href="/account/password" class="p-3"> MOT DE PASSE </a>
     					</li>
     					<li>
-    						<a href="#" class="p-3"> NEWSLETTER </a>
+    						<a href="/account/newsletter" class="p-3"> NEWSLETTER </a>
     					</li>
 
     				</ul>
     			</div>
     			<div class="account-right col-md-9 mt-3">
-    				<% include account-newsletter %>
+    				<% switch (link) {
+    					case "overview": %>
+	    					<%- include account-overview %>
+	    					<% break;
+	    					case "infos": %>
+	    					<%- include account-infos %>
+	    					<% break;
+    					case "order": %>
+	    					<%- include account-order %>
+	    					<% break;
+    					case "adress": %>
+	    					<%- include account-adress %>
+	    					<% break;
+    					case "password": %>
+	    					<%- include account-password %>
+	    					<% break;
+    					case "newsletter": %>
+	    					<%- include account-newsletter %>
+	    					<% break;
+	    				default: %>
+	    					<%- include account-overview %>
+	    			<% } %>
     			</div>
 	    	</div>
         </main>

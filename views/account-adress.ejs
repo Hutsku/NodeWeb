@@ -31,9 +31,9 @@
     var cityInput = $('.account-input input[name="city"]');
     var countryInput = $('.account-input input[name="country"]');
 
-    adresseInput.val("28 rue de l'avignou");
-    cityInput.val("Plaisir 78370");
-    countryInput.val("France");
+    adresseInput.val("<%= session.account.adress %>");
+    cityInput.val("<%= session.account.city %>");
+    countryInput.val("<%= session.account.country %>");
 
     /* Erreur à afficher pour le login */
     $('form[action="/edit-adress"]').submit(function () {
@@ -58,7 +58,9 @@
         }
 
         $.post("/edit-adress", {
-            adress: `${adresseInput.val()} ${cityInput.val()} ${countryInput.val()}`,
+            adresse: adresseInput.val(),
+            city: cityInput.val(),
+            country: countryInput.val(),
         })
         .done( function (data) {
             if (data == "badAdress") {

@@ -148,7 +148,9 @@
 	        $.post("/sign-up", {
 	        	name: nameInput.val(),
 	            email: emailInput.val(),
-	            adresse: `${adresseInput.val()} ${cityInput.val()} ${countryInput.val()}`,
+	            adresse: adresseInput.val(),
+	            city: cityInput.val(),
+	            country: countryInput.val(),
 	            password: passwordInput.val(),
 	            newsletter: newsletterInput.val()
 	        })

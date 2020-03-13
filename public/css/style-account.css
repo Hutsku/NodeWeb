@@ -1,6 +1,11 @@
+div.account-content {
+	min-height: 100vh;
+}
+
 .account-left {
 	color: black;
 	font-weight: 700;
+	height: max-content;
 }
 
 ul.account-link {
