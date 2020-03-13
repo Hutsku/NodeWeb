@@ -20,9 +20,6 @@
     <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#">Produit</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="#">À propos</a>
             </li>
             <!-- VISIBLE EN MOBILE UNIQUEMENT -->
@@ -47,15 +44,15 @@
                         <i class="fa fa-user"></i> <%= session.username %>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right w-auto" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">Mon profil</a>
-                        <a class="dropdown-item" href="#"><i class="fa fa-tools mr-2"></i> Paramètres</a>
+                        <a class="dropdown-item" href="/account/overview">Mon profil</a>
+                        <a class="dropdown-item" href="/account/edit"><i class="fa fa-tools mr-2"></i> Paramètres</a>
                         <a class="dropdown-item" href="/quit"><i class="fa fa-power-off mr-2"></i>Se deconnecter</a>
                     </div>
                 </li>
             <% } else { %>
                 <li class="nav-item d-none d-md-block">
                     <a class="nav-link" href="#" data-toggle="modal" data-target="#exampleModal"> 
-                        Sign in <i class="fa fa-sign-in-alt"></i>
+                        Se connecter <i class="fa fa-sign-in-alt"></i>
                     </a>
                 </li>
             <% } %>

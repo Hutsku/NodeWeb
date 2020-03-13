@@ -1,0 +1,92 @@
+<form action="/edit-infos" method="post" class="">
+	<div class="mb-5"> 
+		<span href="#" class="link-title p-2 pl-4">
+			Modification des informations personelles
+		</span>
+	</div>
+
+	<div class="m-4 account-input">
+	    <input type="text" placeholder="Nom et prénom" class="form-control" name="name">
+        <div class="invalid-feedback">Veuillez rentrer un nom valide</div>
+	</div>
+
+	<div class="m-4 account-input">
+	    <input type="text" placeholder="Adresse email" class="form-control" name="email">
+        <div class="invalid-feedback">Veuillez rentrer une adresse email valide</div>
+	</div>
+
+    <div class="m-4 account-input">
+        <input type="tel" placeholder="Téléphone (mobile de préférence)" class="form-control" name="tel">
+        <div class="invalid-feedback">Veuillez rentrer un numéro valide valide</div>
+    </div>
+
+	<div class="m-4 confirmation-button">
+		<button type="submit" class="btn btn-success mt-3" data-dismiss="">Confirmer</button>
+	</div>
+</form>
+
+<script type="text/javascript">
+    // on préremplis les champs
+    var nameInput = $('.account-input input[name="name"]');
+    var emailInput = $('.account-input input[name="email"]');
+    var telInput = $('.account-input input[name="tel"]');
+    var regex = new RegExp("[0-9]{10}");
+
+    nameInput.val("Armel Rouxel");
+    emailInput.val("arouxel.trash@outlook.fr");
+    telInput.val("0680067781");
+
+    /* Erreur à afficher pour le login */
+    $('form[action="/edit-infos"]').submit(function () {
+        // On check les erreurs et on ajoute la classe en consequant
+        if (!nameInput.val()) {
+            nameInput.removeClass('is-valid').addClass('is-invalid');
+            return false;
+        } else {
+            nameInput.removeClass('is-invalid').addClass('is-valid');
+        }
+        if (!emailInput.val()) {
+            emailInput.removeClass('is-valid').addClass('is-invalid');
+            return false;
+        } else {
+            emailInput.removeClass('is-invalid').addClass('is-valid');
+        }
+        if (!telInput.val()) {
+            telInput.removeClass('is-valid').addClass('is-invalid');
+            return false;
+        } else if (!telInput.val().match(regex)) {
+            telInput.removeClass('is-valid').addClass('is-invalid');
+        }
+        else {
+            telInput.removeClass('is-invalid').addClass('is-valid');
+        }
+
+        $.post("/edit-infos", {
+            name: nameInput.val(),
+            email: emailInput.val(),
+            number: telInput.val()
+        })
+        .done( function (data) {
+            if (data == "badInfos") {
+                emailInput.removeClass('is-valid').addClass('is-invalid'); // l'email est déjà utilisé
+                $('header').append(
+                	`<div class="notif-container row w-100 justify-content-center">
+			            <div class="alert alert-danger alert-dismissible fade show col-8" role="alert">
+			                <strong>Erreur !</strong> L'email est déjà utilisé par un autre compte ...
+			                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			                    <span aria-hidden="true">&times;</span>
+			                </button>
+			            </div>
+			            <div class="w-100"></div>
+			        </div>`
+                	)
+            }
+            else {
+                location.reload();
+            }
+        });
+
+        return false; // on execute pas le submit normal
+         
+    });
+</script>

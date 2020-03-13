@@ -1,0 +1,86 @@
+<form action="/edit-adress" method="post" class="">
+	<div class="mb-5"> 
+		<span href="#" class="link-title p-2 pl-4">
+			Modification de l'adresse
+		</span>
+	</div>
+
+	<div class="m-4 account-input">
+	    <input type="text" placeholder="Adresse" class="form-control" name="adresse" >
+        <div class="invalid-feedback">Veuillez rentrer une adresse valide</div>
+	</div>
+
+	<div class="m-4 account-input">
+	    <input type="text" placeholder="Code postal / Ville" class="form-control" name="city">
+        <div class="invalid-feedback">Veuillez rentrer une ville valide</div>
+	</div>
+
+    <div class="m-4 account-input">
+        <input type="text" placeholder="Pays" class="form-control" name="country">
+        <div class="invalid-feedback">Veuillez rentrer un pays valide</div>
+    </div>
+
+	<div class="m-4 confirmation-button">
+		<button type="submit" class="btn btn-success mt-3" data-dismiss="">Confirmer</button>
+	</div>
+</form>
+
+<script type="text/javascript">
+    // on préremplis les champs
+    var adresseInput = $('.account-input input[name="adresse"]');
+    var cityInput = $('.account-input input[name="city"]');
+    var countryInput = $('.account-input input[name="country"]');
+
+    adresseInput.val("28 rue de l'avignou");
+    cityInput.val("Plaisir 78370");
+    countryInput.val("France");
+
+    /* Erreur à afficher pour le login */
+    $('form[action="/edit-adress"]').submit(function () {
+        // On check les erreurs et on ajoute la classe en consequant
+        if (!adresseInput.val()) {
+            adresseInput.removeClass('is-valid').addClass('is-invalid');
+            return false;
+        } else {
+            adresseInput.removeClass('is-invalid').addClass('is-valid');
+        }
+        if (!cityInput.val()) {
+            cityInput.removeClass('is-valid').addClass('is-invalid');
+            return false;
+        } else {
+            cityInput.removeClass('is-invalid').addClass('is-valid');
+        }
+        if (!countryInput.val()) {
+            countryInput.removeClass('is-valid').addClass('is-invalid');
+            return false;
+        } else {
+            countryInput.removeClass('is-invalid').addClass('is-valid');
+        }
+
+        $.post("/edit-adress", {
+            adress: `${adresseInput.val()} ${cityInput.val()} ${countryInput.val()}`,
+        })
+        .done( function (data) {
+            if (data == "badAdress") {
+                emailInput.removeClass('is-valid').addClass('is-invalid'); // l'email est déjà utilisé
+                $('header').append(
+                	`<div class="notif-container row w-100 justify-content-center">
+			            <div class="alert alert-danger alert-dismissible fade show col-8" role="alert">
+			                <strong>Erreur !</strong> L'email est déjà utilisé par un autre compte ...
+			                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			                    <span aria-hidden="true">&times;</span>
+			                </button>
+			            </div>
+			            <div class="w-100"></div>
+			        </div>`
+                	)
+            }
+            else {
+                location.reload();
+            }
+        });
+
+        return false; // on execute pas le submit normal
+         
+    });
+</script>

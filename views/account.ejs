@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Import CSS Bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- Import custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/style-account.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-navbar.css">
+        <title>YDOGBE</title>
+    </head>
+ 
+    <body>
+    	<header>
+            <% include navbar %>
+        </header>
+
+        <main class="bg-light pt-5 mt-3">
+    		<div class="container-fluid row m-0 ">
+    			<div class="account-left col-md-3 p-0 shadow-lg mt-3">
+					<div>
+						<span href="#" class="link-title text-center p-3">
+							<i class="fa fa-user"></i> ESPACE CLIENT </a>
+						</span>
+					</div>
+    				<ul class="account-link">
+    					<li>
+    						<a href="#" class="p-3"> MES COMMANDES </a>
+    					</li>
+    					<li">
+    						<a href="/account/infos" class="p-3"> INFOS PERSONNELLES </a>
+    					</li>
+    					<li>
+    						<a href="/account/adress" class="p-3">MON ADRESSE </a>
+    					</li>
+    					<li>
+    						<a href="/account/password" class="p-3"> MOT DE PASSE </a>
+    					</li>
+    					<li>
+    						<a href="#" class="p-3"> NEWSLETTER </a>
+    					</li>
+
+    				</ul>
+    			</div>
+    			<div class="account-right col-md-9 mt-3">
+    				<% include account-newsletter %>
+    			</div>
+	    	</div>
+        </main>
+    </body>
+
+    <script type="text/javascript">
+    </script>
+
+</html>

@@ -1,0 +1,59 @@
+<form action="/edit-newsletter" method="post" class="">
+	<div class="mb-5"> 
+		<span href="#" class="link-title p-2 pl-4">
+			Abonnement à la Newsletter
+		</span>
+	</div>
+
+	<div class="m-4 account-input">
+	    <span>
+            S'abonner à la Newsletter pour recevoir des notifications sur les nouveautés et collections de YDOGBE. 
+            Nous vous certifions que votre adresse ne sera pas utilisé à des fins commerciales autres que celle-ci.
+        </span>
+	</div>
+
+	<div class="m-4 account-newsletter">
+        <input class="" type="checkbox" id="subscribeNewsletter" name="newsletter" value="yes">
+        <label for="subscribeNewsletter">Je souhaite m'abonner à la newsletter</label>
+	</div>
+
+	<div class="m-4 confirmation-button">
+		<button type="submit" class="btn btn-success mt-3" data-dismiss="">Confirmer</button>
+	</div>
+</form>
+
+<script type="text/javascript">
+    // on préremplis les champs
+    var newsletterInput = $('.account-newsletter input[name="newsletter"]');
+    newsletterInput.val("yes");
+    newsletterInput.prop('checked', true);
+
+    /* Erreur à afficher pour le login */
+    $('form[action="/edit-newsletter"]').submit(function () {
+        $.post("/edit-newsletter", {
+            newsletter: newsletterInput.val(),
+        })
+        .done( function (data) {
+            if (data == "Error") {
+                emailInput.removeClass('is-valid').addClass('is-invalid'); // l'email est déjà utilisé
+                $('header').append(
+                	`<div class="notif-container row w-100 justify-content-center">
+			            <div class="alert alert-danger alert-dismissible fade show col-8" role="alert">
+			                <strong>Erreur !</strong> L'email est déjà utilisé par un autre compte ...
+			                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			                    <span aria-hidden="true">&times;</span>
+			                </button>
+			            </div>
+			            <div class="w-100"></div>
+			        </div>`
+                	)
+            }
+            else {
+                location.reload();
+            }
+        });
+
+        return false; // on execute pas le submit normal
+         
+    });
+</script>

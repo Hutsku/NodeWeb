@@ -3,16 +3,26 @@
 var express = require('express');
 var session = require('express-session');
 var bodyParser = require("body-parser");
+//var redis = require("redis");
+//var redisStore = require("connect-redis")(session);
 var bcrypt = require('bcryptjs');
+
+//var client = redis.createClient();
 var app = express();
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 app.use(session({ 
         name: "ydogbe",
         secret: 'keyboard cat', 
-        cookie: { maxAge: 60000 },
+        /*store: new redisStore({
+            host: 'localhost',
+            port: 6379,
+            client: client,
+            ttl: 260
+        }),*/
+        cookie: { maxAge: 5*60*1000 }, // in millisecond
         resave: false,
-        saveUninitialized: true
+        saveUninitialized: false
     })
 );
 app.use(express.static(__dirname + '/public'));
@@ -105,6 +115,36 @@ app.get('/', function(req, res) {
     }); 
 })
 
+.get('/account', function(req, res) {
+    res.redirect('/account/overview');
+})
+
+
+.get('/account/overview', function(req, res) {
+    // on construit la requete mysql:on selectionne tout les produits disponibles
+    /*var requestMysql = `SELECT * FROM products`;
+    connection.query(requestMysql, function(err, rows, fields) {
+        if (err) throw err;
+
+        var products = []; // on initialise la liste des produit
+        for (var i=0; i< rows.length; i++) {
+            products.push({
+                id: rows[i].id, 
+                reference: rows[i].reference,
+                name: rows[i].name,
+                price: rows[i].price,
+            })
+        }
+
+        // On envoit les données du produit à la page
+        res.render('mainpage.ejs', {
+            products: products, 
+            session: req.session
+        });
+    }); */
+    res.render('account.ejs', {session: req.session});
+})
+
 // ============================================= POST ===================================================
 
 .post('/add-cart', urlencodedParser, function(req, res) {
@@ -146,6 +186,19 @@ app.get('/', function(req, res) {
     }
     console.log(req.session.cart);
     res.redirect('back');
+})
+
+.post('/edit-password', urlencodedParser, function(req, res) {
+    console.log("change password");
+    res.send('back');
+})
+.post('/edit-adress', urlencodedParser, function(req, res) {
+    console.log("change adress");
+    res.send('back');
+})
+.post('/edit-infos', urlencodedParser, function(req, res) {
+    console.log("change infos");
+    res.send('back');
 })
 
 .post('/login', urlencodedParser, function(req, res) {

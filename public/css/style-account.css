@@ -1,0 +1,61 @@
+.account-left {
+	color: black;
+	font-weight: 700;
+}
+
+ul.account-link {
+	background-color: white;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+ul.account-link a {
+	display: block;
+
+	color: black;
+	outline: none;
+  	text-decoration: none;
+	border-bottom: solid 1px lightgrey;
+	border-left: 1px solid white;
+	padding-left: 0;
+
+	transition: 0.2s;
+}
+ul.account-link a:hover {
+	border-left: 7px solid #343a40;
+	padding-left: 20px;
+	background-color: #f8f9fa;
+}
+
+ul.account-link a.header-link {
+	color: white;
+	background-color: #343a40;
+	border-left: 1px solid #343a40;
+	border-bottom: solid 1px lightgrey;
+}
+ul.account-link a.header-link:hover {
+	background-color: #343a40;
+	opacity: 0.8;
+
+	border:0;
+	border-bottom: solid 1px lightgrey;
+	padding:0;
+}
+
+.link-title {
+	background-color: #343a40;
+	color: white;
+	display: block;
+	text-transform: uppercase;
+	font-weight: 700;
+}
+
+/* PASSWORD EDIT */
+.account-input input {
+	min-width: 450px;
+	width: auto;
+}
+.confirmation-button button {
+	min-width: 150px;
+}
