@@ -5,22 +5,22 @@
 		</span>
 	</div>
 
-	<div class="m-4 account-input">
-	    <input type="text" placeholder="Adresse" class="form-control" name="adresse" >
+	<div class="m-2 my-4 account-input row">
+	    <input type="text" placeholder="Adresse" class="form-control col-md-5 col" name="adresse" >
         <div class="invalid-feedback">Veuillez rentrer une adresse valide</div>
 	</div>
 
-	<div class="m-4 account-input">
-	    <input type="text" placeholder="Code postal / Ville" class="form-control" name="city">
+	<div class="m-2 my-4 account-input row">
+	    <input type="text" placeholder="Code postal / Ville" class="form-control col-md-5 col" name="city">
         <div class="invalid-feedback">Veuillez rentrer une ville valide</div>
 	</div>
 
-    <div class="m-4 account-input">
-        <input type="text" placeholder="Pays" class="form-control" name="country">
+    <div class="m-2 my-4 account-input row">
+        <input type="text" placeholder="Pays" class="form-control col-md-5 col" name="country">
         <div class="invalid-feedback">Veuillez rentrer un pays valide</div>
     </div>
 
-	<div class="m-4 confirmation-button">
+	<div class="m-2 my-4 account-input row">
 		<button type="submit" class="btn btn-success mt-3" data-dismiss="">Confirmer</button>
 	</div>
 </form>
@@ -58,7 +58,7 @@
         }
 
         $.post("/edit-adress", {
-            adresse: adresseInput.val(),
+            adress: adresseInput.val(),
             city: cityInput.val(),
             country: countryInput.val(),
         })

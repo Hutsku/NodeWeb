@@ -79,8 +79,6 @@ app.get('/', function(req, res) {
             session: req.session
         });
     }); 
-
-    
 })
 
 .get('/cart', function(req, res) {
@@ -117,7 +115,6 @@ app.get('/', function(req, res) {
 
 .get('/account/:link', function(req, res) {
     // on vérifie que l'utilisateur est bien connecté
-    console.log("verification log")
     if (req.session.logged) {
         res.render('account.ejs', {session: req.session, link: req.params.link});
     }
@@ -172,15 +169,157 @@ app.get('/', function(req, res) {
 
 .post('/edit-password', urlencodedParser, function(req, res) {
     console.log("change password");
-    res.send('back');
+
+    var id = req.session.account.id;
+    var oldPassword = req.body.oldPassword;
+    var newPassword = req.body.newPassword;
+
+    // On construit la requête et on l'envoit (avec check d'erreur)
+    var getUser = `SELECT * FROM users WHERE id='${id}'`; 
+
+    // on vérifie d'abord que l'ancien mdp est valide ...
+    connection.query(getUser, function(err, rows, fields) {
+        if (err) throw err;
+        var user = rows[0]; // on prend seulement 1 utilisateur (le seul en théorie)
+
+        // Si l'id donné est bien enregistré ...
+        if (user) {
+            // on compare les mdp ...
+            bcrypt.compare(oldPassword, user.password, function(err, response) {
+                if (response) {
+                    // On hash le nouveau mot de passe à enregistrer dans la DB
+                    bcrypt.hash(newPassword, 10, function(err, hashedPassword) {
+                        var editUser = `UPDATE users SET password = '${hashedPassword}' WHERE users.id = '${id}';`
+                        
+                        // on modifie le nouveau mot de passe
+                        connection.query(editUser, function(err, rows, fields) {
+                            if (err) throw err;
+
+                            // Si l'utilisateur a été trouvé
+                            if (!rows.length) {
+                                // on met à jour les cookies
+                                req.session.alert = "edit account";
+                                req.session.account.password = hashedPassword;
+
+                                console.log("password changed !");
+                                res.send('ok'); // on recharge la page
+                            }
+                            else {
+                                console.log("La modification a échoué");
+                                //req.session.alert = "email already used"; // on stock l'erreur dans la seesion
+                                res.send('badEdit');
+                            }
+                        });
+                    });
+                } 
+                else {
+                    req.session.error = "Bad password";
+                    console.log("faux mot de passe"); // Les id ne correspondent pas
+                    res.send('badPassword');
+                }
+            });
+        }
+        else {
+            req.session.error = "Unknown user";
+            console.log("aucun utilisateur"); // Les id ne correspondent pas
+            res.send('badUser');
+        }
+    });
 })
+
 .post('/edit-adress', urlencodedParser, function(req, res) {
     console.log("change adress");
-    res.send('back');
+
+    var id = req.session.account.id;
+    var adress = req.body.adress;
+    var city = req.body.city;
+    var country = req.body.country;
+
+    // On construit la requête et on l'envoit (avec check d'erreur)
+    var editUser = `UPDATE users SET adress = '${adress}', city = '${city}', country = '${country}' WHERE users.id = '${id}';`
+
+    connection.query(editUser, function(err, rows, fields) {
+        if (err) throw err;
+
+        // Si l'utilisateur a été trouvé
+        if (!rows.length) {
+            // onmet à jour les cookies
+            req.session.alert = "edit account";
+            req.session.account.adress = adress;
+            req.session.account.city = city;
+            req.session.account.country = country;
+
+            console.log("adress changed !");
+            res.send('ok'); // on recharge la page
+        }
+        else {
+            console.log("La modification a échoué");
+            //req.session.alert = "email already used"; // on stock l'erreur dans la seesion
+            res.send('badAdress');
+        }
+    });
 })
+
 .post('/edit-infos', urlencodedParser, function(req, res) {
     console.log("change infos");
-    res.send('back');
+
+    var name = req.body.name;
+    var email = req.body.email;
+    var tel = req.body.tel;
+
+    // On construit la requête et on l'envoit (avec check d'erreur)
+    var getUser = `SELECT * FROM users WHERE email='${email}'`; 
+    var editUser = `UPDATE users SET name = '${name}', email = '${email}', tel = '${tel}' WHERE users.email = '${email}';`
+
+    connection.query(editUser, function(err, rows, fields) {
+        if (err) throw err;
+
+        // Si l'utilisateur a été trouvé
+        if (!rows.length) {
+            // onmet à jour les cookies
+            req.session.alert = "edit account";
+            req.session.account.name = name;
+            req.session.account.email = email;
+            req.session.account.tel = tel;
+
+            console.log("infos changed !");
+            res.send('ok'); // on recharge la page
+        }
+        else {
+            console.log("La modification a échoué");
+            //req.session.alert = "email already used"; // on stock l'erreur dans la seesion
+            res.send('badInfos');
+        }
+    });
+})
+
+.post('/edit-newsletter', urlencodedParser, function(req, res) {
+    console.log("change newsletter");
+
+    var id = req.session.account.id;
+    var newsletter = req.body.newsletter;
+
+    // On construit la requête et on l'envoit (avec check d'erreur)
+    var editUser = `UPDATE users SET newsletter = ${newsletter} WHERE users.id = '${id}';`
+
+    connection.query(editUser, function(err, rows, fields) {
+        if (err) throw err;
+
+        // Si l'utilisateur a été trouvé
+        if (!rows.length) {
+            // on met à jour les cookies
+            req.session.alert = "edit account";
+            req.session.account.newsletter = newsletter;
+
+            console.log("newsletter changed !");
+            res.send('ok'); // on recharge la page
+        }
+        else {
+            console.log("La modification a échoué");
+            //req.session.alert = "email already used"; // on stock l'erreur dans la seesion
+            res.send('badNewsletter');
+        }
+    });
 })
 
 .post('/login', urlencodedParser, function(req, res) {
@@ -223,11 +362,14 @@ app.get('/', function(req, res) {
 })
 
 .post('/sign-up', urlencodedParser, function(req, res) {
-    var adresse = req.body.adresse; // L'adresse est l'assemblage de la ville, pays et rue.
+    var adress = req.body.adress;
+    var city = req.body.city;
+    var country = req.body.country;
 	var username = req.body.name;
     var password = req.body.password;
     var newsletter = req.body.newsletter;
     var email = req.body.email;
+    var tel = req.body.tel;
     
     // Si la case n'est pas coché -> no
     if (!newsletter) {
@@ -238,8 +380,8 @@ app.get('/', function(req, res) {
     bcrypt.hash(password, 10, function(err, hashedPassword) {
         // On construit la requête et on l'envoit (avec check d'erreur)
         var getUser = `SELECT * FROM users WHERE email='${email}'`; 
-        var addUser = `INSERT INTO users (id, name, password, subscribe_date, adresse, city, country, newsletter, email) 
-                   VALUES (NULL, "${username}", "${hashedPassword}", NOW(), "${adresse}", "${city}", "${country}", "${newsletter}", "${email}")`;  
+        var addUser = `INSERT INTO users (id, name, password, subscribe_date, adress, city, country, newsletter, email, tel) 
+                   VALUES (NULL, "${username}", "${hashedPassword}", NOW(), "${adress}", "${city}", "${country}", "${newsletter}", "${email}", "${tel}")`;  
 
         connection.query(getUser, function(err, rows, fields) {
             if (err) throw err;

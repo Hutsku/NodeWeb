@@ -58,7 +58,7 @@ ul.account-link a.header-link:hover {
 
 /* PASSWORD EDIT */
 .account-input input {
-	min-width: 450px;
+	/*min-width: 450px;*/
 	width: auto;
 }
 .confirmation-button button {

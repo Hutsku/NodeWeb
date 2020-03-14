@@ -35,6 +35,10 @@
 		                    <input type="text" placeholder="Adresse email" class="form-control" name="email">
 		                    <div class="invalid-feedback">Veuillez rentrer une adresse email valide</div>
 		                </div>
+		                <div class="form-group form-row">
+		                	<input type="tel" placeholder="Téléphone (mobile de préférence)" class="form-control" name="tel">
+        					<div class="invalid-feedback">Veuillez rentrer un numéro valide valide</div>
+        				</div>
 	            	</div>
 	            	<div class="col-lg-4 col-md-6">
 	            		<h3 class="border-bottom mb-3 pb-2"> Adresse </h3>
@@ -91,6 +95,8 @@
 	        var repeatpasswordInput = $('.subscribe-pannel input[name="repeat-password"]');
 	        var newsletterInput = $('.subscribe-pannel input[name="newsletter"]:checked');
 	        var cguInput = $('.subscribe-pannel input[name="cgu"]:checked');
+	        var telInput = $('.subscribe-pannel input[name="tel"]');
+    		var regex = new RegExp("[0-9]{10}");
 
 	        // On check les erreurs et on ajoute la classe en consequant
 	        if (!nameInput.val()) {
@@ -104,6 +110,15 @@
 	            return false;
 	        } else {
 	            emailInput.removeClass('is-invalid').addClass('is-valid');
+	        }
+	        if (!telInput.val()) {
+	            telInput.removeClass('is-valid').addClass('is-invalid');
+	            return false;
+	        } else if (!telInput.val().match(regex)) {
+	            telInput.removeClass('is-valid').addClass('is-invalid');
+	        }
+	        else {
+	            telInput.removeClass('is-invalid').addClass('is-valid');
 	        }
 	        if (!adresseInput.val()) {
 	            adresseInput.removeClass('is-valid').addClass('is-invalid');
@@ -148,7 +163,7 @@
 	        $.post("/sign-up", {
 	        	name: nameInput.val(),
 	            email: emailInput.val(),
-	            adresse: adresseInput.val(),
+	            adress: adresseInput.val(),
 	            city: cityInput.val(),
 	            country: countryInput.val(),
 	            password: passwordInput.val(),

@@ -13,7 +13,7 @@
 	</div>
 
 	<div class="m-4 account-newsletter">
-        <input class="" type="checkbox" id="subscribeNewsletter" name="newsletter" value="yes">
+        <input class="" type="checkbox" id="subscribeNewsletter" name="newsletter">
         <label for="subscribeNewsletter">Je souhaite m'abonner à la newsletter</label>
 	</div>
 
@@ -25,18 +25,12 @@
 <script type="text/javascript">
     // on préremplis les champs
     var newsletterInput = $('.account-newsletter input[name="newsletter"]');
-    if ("<%= session.account.newsletter %>" == "yes") {
-        newsletterInput.prop('checked', true);
-    }
-    else {
-        newsletterInput.prop('checked', false);
-    }
-    
+    newsletterInput.prop('checked', <%= session.account.newsletter %>);
 
     /* Erreur à afficher pour le login */
     $('form[action="/edit-newsletter"]').submit(function () {
         $.post("/edit-newsletter", {
-            newsletter: newsletterInput.val(),
+            newsletter: newsletterInput.prop('checked'),
         })
         .done( function (data) {
             if (data == "Error") {
