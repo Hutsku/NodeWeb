@@ -64,3 +64,10 @@ ul.account-link a.header-link:hover {
 .confirmation-button button {
 	min-width: 150px;
 }
+
+/* =========== TABLE ORDER ================== */
+.table-order thead th {
+    background-color: #343a40;
+    color: white;
+    border: solid 2px white;
+}

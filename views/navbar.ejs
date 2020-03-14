@@ -159,6 +159,12 @@
             var quote = "Vos informations de compte ont bien été modifiées";
             var quoteTitle = 'Modifications validées !';
             break;
+
+        case 'add order':
+            var type = 'success';
+            var quote = "Vos commande a bien été prise en compte";
+            var quoteTitle = 'Commande validée !';
+            break;
         } %>
         <div class="notif-container col-12">
             <div class="alert alert-<%= type %> alert-dismissible fade show" role="alert">

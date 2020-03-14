@@ -20,7 +20,7 @@ app.use(session({
             client: client,
             ttl: 260
         }),*/
-        cookie: { maxAge: 5*60*1000 }, // in millisecond
+        cookie: { maxAge: 10*60*1000 }, // in millisecond
         resave: false,
         saveUninitialized: false
     })
@@ -116,7 +116,17 @@ app.get('/', function(req, res) {
 .get('/account/:link', function(req, res) {
     // on vérifie que l'utilisateur est bien connecté
     if (req.session.logged) {
-        res.render('account.ejs', {session: req.session, link: req.params.link});
+        if (req.params.link == "order") {
+            var user_id = req.session.account.id;
+            var getOrder = `SELECT * FROM orders WHERE user_id='${user_id}'`;
+
+            connection.query(getOrder, function(err, rows, fields) {
+                if (err) throw err;
+
+                res.render('account.ejs', {session: req.session, link: req.params.link, orders: rows});
+            });
+        }
+        else res.render('account.ejs', {session: req.session, link: req.params.link});
     }
     else {
         // sinon on redirige vers l'écran de connexion
