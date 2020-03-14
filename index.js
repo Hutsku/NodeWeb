@@ -126,6 +126,8 @@ app.get('/', function(req, res) {
 
 // ============================================= POST ===================================================
 
+// ----------------------- PAYOUT OPTION  ---------------------------
+
 .post('/add-cart', urlencodedParser, function(req, res) {
     console.log("creating cookies");
 
@@ -145,8 +147,6 @@ app.get('/', function(req, res) {
     }
     // Si le produit n'est pas déjà dans le panier, on l'ajoute
     if (!match) req.session.cart.push(req.body); 
-
-    console.log(req.session.cart);
     res.send('back');
 })
 
@@ -166,6 +166,53 @@ app.get('/', function(req, res) {
     console.log(req.session.cart);
     res.redirect('back');
 })
+
+.post('/add-order', urlencodedParser, function(req, res) {
+    // on refait une liste des produits simplifiée
+    var products_obj = [];
+    for (var i=0; i<req.session.cart.length; i++) {
+        products_obj.push({
+            id: parseInt(req.session.cart[i].id),
+            nb: parseInt(req.session.cart[i].cart_qty),
+        })
+    }
+    var user_id = req.session.account.id;
+    var str_products = JSON.stringify(products_obj);
+
+    // on calcule le prix totale depuis la DB (pour plus de securité)
+    var total_cost = 0;
+    connection.query('SELECT * FROM products', function(err, rows, fields) {
+        if (err) throw err;
+        for (var i=0; i<rows.length; i++) {
+            for (var j=0; j<products_obj.length; j++) {
+                if (products_obj[j].id == rows[i].id) {
+                    total_cost += products_obj[j].nb * rows[i].price;
+                    console.log(total_cost);
+                }
+            }
+        }
+
+        // requête MySQL
+        var addOrder = `INSERT INTO orders (id, date, cost, state, user_id, products) 
+                   VALUES (NULL, NOW(), ${total_cost}, 'En attente', ${user_id}, '${str_products}')`;
+
+        connection.query(addOrder, function(err, rows, fields) {
+            if (err) throw err;
+
+            // Si l'adresse email n'est pas encore utilisé ...
+            if (!rows.length) {
+                req.session.alert = "add order";
+                console.log("order validated!");
+                res.send('ok'); // on recharge la page
+            }
+            else {
+                res.send('badOrder');
+            }
+        });
+    });
+})
+
+// ------------------------ ACCOUNT EDIT ---------------------------
 
 .post('/edit-password', urlencodedParser, function(req, res) {
     console.log("change password");
@@ -321,6 +368,8 @@ app.get('/', function(req, res) {
         }
     });
 })
+
+// ---------------------------- LOGIN/OUT ---------------------------
 
 .post('/login', urlencodedParser, function(req, res) {
     var password = req.body.password;

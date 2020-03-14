@@ -97,9 +97,11 @@
 			    			<span class="price price-total"><%=  price_final %>€</span>
 			    		</div>
 			    		<div class="text-center">
-				    		<button class="w-100 btn btn-dark mb-3 payout-button <% if (!price_final) { %> disabled <% } %>" type="submit" name="add-cart">
-		    					Passer au payement
-		    				</button>
+                            <form action="/add-order" method="post" class="">
+    				    		<button class="w-100 btn btn-dark mb-3 payout-button <% if (!price_final) { %> disabled <% } %>" type="submit" name="add-cart">
+    		    					Passer au payement
+    		    				</button>
+                            </form>
 		    				<a href="/mainpage" class="btn btn-light" role="button" name="add-cart">
 		    					Continuer les achats
 		    				</a>
@@ -193,6 +195,19 @@
             $('.price-total').text(function () {
                 var total = parseFloat($('.price-shipping').text()) + parseFloat($('.price-sub-total').text());
                 return total.toFixed(2)+'€';
+            });
+            return false;
+         });
+            
+        $('form[action="/add-order"]').submit(function () {
+
+            $.post("/add-order").done( function (data) {
+                if (data == "badOrder") {
+                    console.log("error occured")
+                }
+                else {
+                    location.reload();
+                }
             });
             return false;
         });
