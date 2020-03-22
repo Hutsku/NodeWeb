@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Import CSS Bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- Import custom CSS -->
+        <!--<link rel="stylesheet" type="text/css" href="/css/style-product.css">-->
+        <link rel="stylesheet" type="text/css" href="/css/style-navbar.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-cart.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-payout.css">
+        <title>Hub principal du site</title>
+    </head>
+ 
+    <body>
+    	<header>
+            <% include navbar %>
+        </header>
+
+        <main class="bg-light py-5">
+            <div class="pt-3">
+                <ul class="payout-order list-inline text-center mt-4">
+                    <li class="list-inline-item active">
+                        <a href="/payout-infos">
+                            <span class="order">1</span>
+                            <span class="label"> Informations </span>
+                        </a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="/payout-shipping">
+                            <span class="order">2</span>
+                            <span class="label"> Livraison </span>
+                        </a>
+                    </li>
+                     <li class="list-inline-item">
+                        <a href="/payout-final">
+                            <span class="order">3</span>
+                            <span class="label"> Payement </span>
+                        </a>
+                    </li>
+                    <div class="line"></div>
+                </ul>
+            </div>
+
+    		<div class="container-fluid row m-0 p-0">
+    			<div class="payout-left border col-md-8 mt-3 p-3">
+                    <div class="tab">
+                        <ul class="tab-switch list-inline">
+                            <li class="list-inline-item active" target="log">
+                                Se connecter                            
+                            </li>
+                            <li class="list-inline-item" target="subscribe">
+                                Créer un compte
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="p-4 container log active">
+                        <form action="/login" method="post">
+                            <div class="form-group form-row">
+                                <input type="text" placeholder="Adresse email" class="form-control" name="email">
+                                <div class="invalid-feedback">Veuillez rentrer une adresse email valide</div>
+                            </div>
+
+                            <div class="form-group form-row">
+                                <input type="password" placeholder="Mot de passe" class="form-control" name="password">
+                                <div class="invalid-feedback">Veuillez rentrer un mot de passe valide</div>
+                            </div>
+
+                            <div class="form-check form-row">
+                                <input class="form-check-input" type="checkbox" id="logRemember" name="newsletter" value="yes">
+                                <label for="logRemember">Rester connecté</label>
+                            </div>
+                            <div class="form-row">
+                                <button type="submit" class="btn btn-primary w-100" data-dismiss="">Se connecter</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="p-4 container subscribe">
+                        <form action="/sign-up" method="post" class="container p-0">
+                            <span class="title"> Coordonnées </span>
+                            <div class="form-group form-row">
+                                <input type="text" placeholder="Nom et prénom" class="form-control" name="name">
+                                <div class="invalid-feedback">Veuillez rentrer un nom valide</div>
+                            </div>
+                            <div class="form-group form-row">
+                                <input type="text" placeholder="Adresse email" class="form-control" name="email">
+                                <div class="invalid-feedback">Veuillez rentrer une adresse email valide</div>
+                            </div>
+                            <div class="form-group form-row">
+                                <input type="tel" placeholder="Téléphone (mobile de préférence)" class="form-control" name="tel">
+                                <div class="invalid-feedback">Veuillez rentrer un numéro valide valide</div>
+                            </div>
+
+                            <span class="title"> Adresse </span>
+                            <div class="form-group form-row">
+                                <input type="text" placeholder="Adresse" class="form-control" name="adresse">
+                                <div class="invalid-feedback">Veuillez rentrer une adresse valide</div>
+                            </div>
+                            <div class="form-group form-row">
+                                <input type="text" placeholder="Code postal / Ville" class="form-control" name="city">
+                                <div class="invalid-feedback">Veuillez rentrer une ville valide</div>
+                            </div>
+                            <div class="form-group form-row">
+                                <input type="text" placeholder="Pays" class="form-control" name="country">
+                                <div class="invalid-feedback">Veuillez rentrer un pays valide</div>
+                            </div>
+
+                            <span class="title"> Mot de passe </span>
+                            <div class="form-group form-row">
+                                <input type="password" placeholder="Mot de passe" class="form-control" name="password">
+                                <div class="invalid-feedback">Veuillez rentrer un mot de passe valide</div>
+                            </div>
+                            <div class="form-group form-row">
+                                <input type="password" placeholder="Répetez le mot de passe" class="form-control" name="repeat-password">
+                                <div class="invalid-feedback">les mots de passe ne correspondent pas</div>
+                            </div>
+
+                            <div class="form-check mt-5">
+                                <input class="form-check-input" type="checkbox" id="subscribeNewsletter" name="newsletter" value="yes">
+                                <label for="subscribeNewsletter">Je souhaite m'abonner à la newsletter</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="subscribeCgu" name="cgu" value="yes">
+                                <label for="subscribeCgu">J'ai lu et accepte les conditions d'utilisation</label>
+                                <div class="invalid-feedback">Vous devez accepter les CGU pour vous inscrire</div>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3" data-dismiss="">S'inscrire</button>
+                        </form>
+                    </div>
+    			</div>
+    			
+    			<!---------------------------------------------------------------------->
+
+	    		<div class="payout-right col-md-4 mt-3 p-4">
+	    			<div class="sticky-top sticky-offset cart-recap">
+                        <div class="row">
+                            <span class="title col">Récapitulatif</span>
+                        </div>
+                        <div class="w-100 border-bottom my-3"></div>
+                        <div class="row py-3">
+                            <span class="title col-5">SOUS-TOTAL</span>
+                            <span class="price price-sub-total col text-right">€</span>
+                        </div>
+                        <div class="row py-3">
+                            <span class="title col-5">LIVRAISON</span>
+                            <span class="price price-shipping col text-right">€</span>
+                        </div>
+                        <div class="w-100 border-bottom my-3"></div>
+                        <div class="row pb-5">
+                            <span class="title total col-5">TOTAL</span>
+                            <span class="price price-total col text-right">€</span>
+                        </div>
+	    			</div>
+	    		</div>
+	    	</div>
+        </main>
+    </body>
+
+    <script type="text/javascript">
+        $("div.payout-left ul.tab-switch li").click(function() {
+            $("div.payout-left ul.tab-switch li").removeClass("active");
+            $(this).addClass("active");
+
+            var pannel = $(this).attr("target");
+            console.log($("div.payout-left div."+pannel))
+            $("div.payout-left div.tab ~ div").removeClass("active");
+            $("div.payout-left div."+pannel).addClass("active");
+
+        });
+	</script>
+
+</html>

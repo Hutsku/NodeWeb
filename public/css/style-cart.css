@@ -27,7 +27,7 @@
 .cart-payout .total {
 	font-size: 18px;
 }
-.cart-payout .total.price {
+.cart-payout .price-total {
 	color: #c12020;
 	font-size: 18px;
 }

@@ -1,0 +1,125 @@
+ul.payout-order li {
+	margin: 0 !important;
+	list-style: none;
+}
+/* Selectionne les 2 premiers élements */
+ul.payout-order li:nth-of-type(-n+2) {
+	margin-right: 10% !important;
+}
+
+ul.payout-order a {
+	position: relative;
+	z-index: 1;
+	text-decoration: none;
+}
+
+ul.payout-order span.order {
+	display: block;
+
+	background-color: lightgrey;
+	height: 35px;
+	width: 35px;
+	line-height: 35px;
+    border-radius: 50%;
+    margin-left: 25%;
+    margin-right: 25%;
+
+    color: white;
+    transition: 0.2s;
+}
+ul.payout-order li.active span.order {
+	background-color: grey;
+}
+ul.payout-order span.order:hover {
+	background-color: grey;
+}
+ul.payout-order span.label {
+    color: grey;
+}
+
+div.line {
+	position: absolute;
+	border: 1px solid lightgrey;
+	width: 30%;
+	left: 50%;
+	margin-left: -15%;
+	top: 105px;
+}
+
+/* --------------------------------- PANNEL ---------------------------------- */
+
+div.payout-left {
+	background-color: white;
+	padding: 0;
+	min-height: 90vh;
+}
+
+div.payout-left div.container {
+	max-width: 450px;
+}
+div.payout-left div.tab {
+	text-align: center;
+}
+div.payout-left ul.tab-switch {
+	text-align: center;
+	margin: auto;
+	max-width: 450px;
+}
+div.payout-left ul.tab-switch li {
+	border-bottom: 5px solid white;
+	margin: 0;
+	width: 45%;	
+	height: 50px;
+	padding-top: 10px;	
+	font-weight: 400;
+
+	cursor: pointer;
+	transition: 0.2s;
+}
+div.payout-left ul.tab-switch li:hover {
+	border-bottom: 5px solid lightgrey;	
+}
+div.payout-left ul.tab-switch li.active {
+	border-bottom: 5px solid black;	
+	font-weight: 600;
+}
+div.payout-left div.tab ~ div{
+	display: none;
+}
+div.payout-left div.subscribe.active{
+	display: block;
+}
+div.payout-left div.log.active{
+	display: block;
+}
+
+div.payout-left div.subscribe .title {
+	display: inline-block;
+
+	font-weight: 700;
+	font-size: 17px;
+	margin-bottom: 15px;
+}
+
+/* ---------------------------------- CART RECAP ------------------------------- */
+.cart-recap .title {
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+.cart-recap .price {
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.cart-recap .total {
+	font-size: 18px;
+}
+.cart-recap .price-total {
+	color: #c12020;
+	font-size: 18px;
+}
+
+.sticky-offset {
+	top: 100px;
+}

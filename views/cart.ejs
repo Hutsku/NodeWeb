@@ -21,11 +21,11 @@
         <main class="bg-light py-5">
             <div class="jumbotron bg-light m-0 w-100 text-center">
                 <a class="logo-img" href="/mainpage">
-                    <img class="col-md-6" src="/img/logo1.png">
+                    <img class="col-md-5" src="/img/logo1.png">
                 </a>
             </div>
     		<div class="container-fluid row m-0">
-    			<div class="cart-left col-md-8 px-md-5 mb-5 pb-5">
+    			<div class="cart-left col-md-8 px-md-5 mb-5">
 
     				<div class="cart-pannel-main container">
                         <% if (session.cart) {
@@ -33,7 +33,6 @@
                             for (var i=0; i < session.cart.length; i++) { 
                                 var price_product = parseFloat(session.cart[i].price);
                                 var cart_qty = parseInt(session.cart[i].cart_qty); %>
-        						<div class="w-100 border-bottom my-3"></div>
                                 <div class="cart-product row align-items-center" product_id="<%= session.cart[i].id %>">
                                 	<div class="cart-product-img p-2 col-3">
                                 		<img class="w-100" src="/img/img<%= session.cart[i].id %>-1.jpg">
@@ -57,8 +56,14 @@
                                     </form>
                                 	</div>     
                                 </div>
-                            <% }
-                        } else { %>
+                                <div class="w-100 border-bottom my-3"></div>
+                            <% } %>
+                            <form action="/valid-cart" method="post" class="mt-5 text-center">
+                                <button class="w-auto btn btn-secondary mb-3 payout-button" type="submit" name="valid-cart">
+                                    Valider le panier
+                                </button>
+                            </form>
+                        <% } else { %>
                             <div class="cart-empty text-center row"> 
                                 <span class="col mt-5">Aucun produit dans le panier ...</span>
                             </div>
@@ -97,7 +102,7 @@
 			    			<span class="price price-total"><%=  price_final %>€</span>
 			    		</div>
 			    		<div class="text-center">
-                            <form action="/add-order" method="post" class="">
+                            <form action="/payout" method="post" class="">
     				    		<button class="w-100 btn btn-dark mb-3 payout-button <% if (!price_final) { %> disabled <% } %>" type="submit" name="add-cart">
     		    					Passer au payement
     		    				</button>
@@ -199,10 +204,24 @@
             return false;
          });
             
-        $('form[action="/add-order"]').submit(function () {
+        // Valide le panier
+        $('form[action="/valid-cart"]').submit(function () {
+            var new_cart = [];
+            // on construit un nouveau panier final
+            $('.cart-pannel-main .cart-product').each(function () {
+                var product = $(this);
+                new_cart.push({
+                    id: product.attr('product_id'), 
+                    name: product.find('.cart-product-name a').text(),
+                    price: product.find('.cart-product-price').attr('product_price'),
+                    cart_qty: product.find('.cart-product-qty input').val(),
+                });
+            });
 
-            $.post("/add-order").done( function (data) {
-                if (data == "badOrder") {
+            $.post("/valid-cart", {
+                cart: JSON.stringify(new_cart), // on converti l'objet pour bien le passer
+            }).done( function (data) {
+                if (data == "badCart") {
                     console.log("error occured")
                 }
                 else {
@@ -211,6 +230,35 @@
             });
             return false;
         });
+
+        // Valide le panier et passe au payement
+        $('form[action="/payout"]').submit(function () {
+            var new_cart = [];
+            // on construit un nouveau panier final
+            $('.cart-pannel-main .cart-product').each(function () {
+                var product = $(this);
+                new_cart.push({
+                    id: product.attr('product_id'), 
+                    name: product.find('.cart-product-name a').text(),
+                    price: product.find('.cart-product-price').attr('product_price'),
+                    cart_qty: product.find('.cart-product-qty input').val(),
+                });
+            });
+
+            $.post("/valid-cart", {
+                cart: JSON.stringify(new_cart), // on converti l'objet pour bien le passer
+            }).done( function (data) {
+                if (data == "badCart") {
+                    console.log("error occured")
+                }
+                else {
+                    location.assign("/payout");
+                }
+            });
+            return false;
+        });
+
+
 	</script>
 
 </html>

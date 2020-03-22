@@ -85,6 +85,10 @@ app.get('/', function(req, res) {
     res.render('cart.ejs', {session: req.session});
 })
 
+.get('/payout', function(req, res) {
+    res.render('payout-infos.ejs', {session: req.session});
+})
+
 .get('/mainpage', function(req, res) {
     // on construit la requete mysql:on selectionne tout les produits disponibles
     var requestMysql = `SELECT * FROM products`;
@@ -175,6 +179,13 @@ app.get('/', function(req, res) {
     }
     console.log(req.session.cart);
     res.redirect('back');
+})
+
+.post('/valid-cart', urlencodedParser, function(req, res) {
+    // on remplace le panier par celui envoyé (en le convertissant)
+    req.session.cart = JSON.parse(req.body['cart']);
+    res.send('ok')
+    //res.render('cart.ejs', {session: req.session});
 })
 
 .post('/add-order', urlencodedParser, function(req, res) {
