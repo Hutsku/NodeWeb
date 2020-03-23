@@ -85,6 +85,13 @@ app.get('/', function(req, res) {
     res.render('cart.ejs', {session: req.session});
 })
 
+.get('/payout-infos', function(req, res) {
+    res.render('payout-infos.ejs', {session: req.session});
+})
+.get('/payout-shipping', function(req, res) {
+    res.render('payout-shipping.ejs', {session: req.session});
+})
+
 .get('/payout', function(req, res) {
     res.render('payout-infos.ejs', {session: req.session});
 })

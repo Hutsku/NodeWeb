@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Import CSS Bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- Import custom CSS -->
+        <!--<link rel="stylesheet" type="text/css" href="/css/style-product.css">-->
+        <link rel="stylesheet" type="text/css" href="/css/style-navbar.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-cart.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-payout.css">
+        <title>Hub principal du site</title>
+    </head>
+ 
+    <body>
+    	<header>
+            <% include navbar %>
+        </header>
+
+        <main class="bg-light py-5">
+            <div class="pt-3">
+                <ul class="payout-order list-inline text-center mt-4">
+                    <li class="list-inline-item">
+                        <a href="/payout-infos">
+                            <span class="order">1</span>
+                            <span class="label"> Informations </span>
+                        </a>
+                    </li>
+                    <li class="list-inline-item active">
+                        <a href="/payout-shipping">
+                            <span class="order">2</span>
+                            <span class="label"> Livraison </span>
+                        </a>
+                    </li>
+                     <li class="list-inline-item">
+                        <a href="/payout-final">
+                            <span class="order">3</span>
+                            <span class="label"> Payement </span>
+                        </a>
+                    </li>
+                    <div class="line"></div>
+                </ul>
+            </div>
+
+    		<div class="container-fluid row m-0 p-0">
+    			<div class="payout-left border col-md-8 mt-3 p-3">
+                    <div class="p-4 container subscribe">
+                        <form action="/sign-up" method="post" class="container p-0">
+                            <span class="title"> Adresse de livraison </span>
+                            <div class="shipping-adress p-2 pl-3 mb-4 border rounded text-secondary">
+                                <div class="row radio-payout">
+                                    <div class="radio col-1">
+                                        <input type="radio" id="sa1" class="" name="shippingAdress" checked>
+                                    </div>
+                                    <div class="label col">
+                                        <label for="sa1" class="m-0"> Expedier à l'adresse de mon compte </label>
+                                    </div>
+                                </div>
+                                <div class="border-bottom my-2"></div>
+                                <div class="row radio-payout">
+                                    <div class="radio col-1">
+                                        <input type="radio" id="sa2" class="" name="shippingAdress" checked>
+                                    </div>
+                                    <div class="label col">
+                                        <label for="sa2" class="m-0"> Expedier à une autre adresse </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <span class="title"> Mode d'expedition </span>
+                            <div class="shipping-adress p-2 pl-3 mb-4 border rounded text-secondary">
+                                <div class="row radio-payout">
+                                    <div class="radio col-1">
+                                        <input type="radio" id="sm1" class="" name="shippingMethod" checked>
+                                    </div>
+                                    <div class="label col">
+                                        <label for="sm1" class="m-0"> Colissimo </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-between">
+                                <button type="submit" class="btn btn-secondary m-3 px-4" data-dismiss="">Retour</button>
+                                <button type="submit" class="btn btn-primary m-3 px-4" data-dismiss="">Confirmer</button>
+                            </div>
+                        </form>
+                    </div>
+    			</div>
+    			
+    			<!---------------------------------------------------------------------->
+
+	    		<div class="payout-right col-md-4 mt-3 p-4">
+	    			<div class="sticky-top sticky-offset cart-recap">
+                        <div class="row">
+                            <span class="title col">Récapitulatif</span>
+                        </div>
+                        <div class="w-100 border-bottom my-3"></div>
+                        <div class="row py-3">
+                            <span class="title col-5">SOUS-TOTAL</span>
+                            <span class="price price-sub-total col text-right">€</span>
+                        </div>
+                        <div class="row py-3">
+                            <span class="title col-5">LIVRAISON</span>
+                            <span class="price price-shipping col text-right">€</span>
+                        </div>
+                        <div class="w-100 border-bottom my-3"></div>
+                        <div class="row pb-5">
+                            <span class="title total col-5">TOTAL</span>
+                            <span class="price price-total col text-right">€</span>
+                        </div>
+	    			</div>
+	    		</div>
+	    	</div>
+        </main>
+    </body>
+
+    <script type="text/javascript">
+        $("div.payout-left ul.tab-switch li").click(function() {
+            $("div.payout-left ul.tab-switch li").removeClass("active");
+            $(this).addClass("active");
+
+            var pannel = $(this).attr("target");
+            console.log($("div.payout-left div."+pannel))
+            $("div.payout-left div.tab ~ div").removeClass("active");
+            $("div.payout-left div."+pannel).addClass("active");
+
+        });
+	</script>
+
+</html>

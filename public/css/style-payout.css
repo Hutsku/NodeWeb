@@ -123,3 +123,9 @@ div.payout-left div.subscribe .title {
 .sticky-offset {
 	top: 100px;
 }
+
+/* ----------------------------- RADIO BUTTON ----------------------------*/
+
+.radio-payout input:hover, .radio-payout label:hover {
+	cursor: pointer;
+}
