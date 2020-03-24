@@ -1,3 +1,7 @@
+.hide {
+	display: none;
+}
+
 ul.payout-order li {
 	margin: 0 !important;
 	list-style: none;
@@ -99,6 +103,10 @@ div.payout-left div.subscribe .title {
 	font-weight: 700;
 	font-size: 17px;
 	margin-bottom: 15px;
+}
+
+div.payout-left div.shipping-adress-new {
+	background-color: #f8f9fa;
 }
 
 /* ---------------------------------- CART RECAP ------------------------------- */
