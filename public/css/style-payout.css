@@ -115,6 +115,25 @@ img.payment-logo-paypal {
 img.payment-logo {
 	height: 15px;
 }
+#card-errors {
+	font-size: 12px;
+}
+
+/* ---------------------------------- PAYPAL BUTTON HACK ------------------------- */
+
+button#submit-payment {
+	position: relative;
+	width: 150px;
+	overflow: hidden;
+}
+
+#paypal-button-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 200px;
+	opacity: 0;
+}
 
 /* ---------------------------------- CART RECAP ------------------------------- */
 .cart-recap .title {

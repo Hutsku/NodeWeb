@@ -67,7 +67,7 @@
                                 </div>
 
                                  <div class="row card-payment border-top p-3">
-                                	<form class="col p-0" id="payment-form">
+                                	<div class="col p-0" id="payment-form">
 										<div id="cardNumber"></div>
 										<div class="row p-3">
 											<div class="col mr-2" id="cardExpiry"></div>
@@ -75,10 +75,10 @@
 										</div>
 
 										<!-- We'll put the error messages in this element -->
-										<div id="card-errors" role="alert"></div>
+										<div class="text-danger text-center" id="card-errors" role="alert"></div>
 
 										<!--<button id="submit">Pay</button>-->
-									</form>
+									</div>
                                 </div>
 
                                  <div class="border-bottom"></div>
@@ -93,10 +93,6 @@
                                      	</label>
                                     </div>
                                 </div>
-
-                                <!--<div class="row paypal-payment border-top p-3 hide">
-                                	<div class="col" id="paypal-button-container"></div>
-                                </div>-->
                         	</div>
 
                             <span class="title"> Adresse de facturation </span>
@@ -153,7 +149,8 @@
 
                             <div class="row justify-content-between">
                                 <button type="submit" class="btn btn-secondary m-3 px-4" data-dismiss="">Retour</button>
-                                <button type="submit" class="btn btn-primary m-3 px-4" data-dismiss="">Confirmer</button>
+                                <button type="submit" id="submit-payment" class="btn btn-primary m-3 px-4" data-dismiss="">
+                                <div class="paypal-payment hide" id="paypal-button-container"></div>Confirmer</button>
                             </div>
                     </div>
     			</div>
@@ -203,10 +200,9 @@
 	        $('.paypal-payment').addClass('hide');
 	    }
 	});
-</script>
 
-<!--------------------------- STRIPE SCRIPTS -------------------------------->
-<script>
+	/* ================================ STRIPE ================================== */
+
 	var stripe = Stripe('pk_test_yPzxYfltlnyWe55PR7jjw4PX00vkHy4ywN');
 	// Create an instance of Elements.
 	var elements = stripe.elements();
@@ -219,87 +215,94 @@
 		}
 	};
 
-	var cardNumber = elements.create("cardNumber", { style: style });
+	var cardNumber = elements.create("cardNumber", { style: style, showIcon: true });
 	var cardExpiry = elements.create("cardExpiry", { style: style });
 	var cardCvc = elements.create("cardCvc", { style: style });
 	cardNumber.mount("#cardNumber");
 	cardExpiry.mount("#cardExpiry");
 	cardCvc.mount("#cardCvc");
 
-	// Handle real-time validation errors from the card Element.
-	card.addEventListener('change', function(event) {
-	  var displayError = document.getElementById('card-errors');
-	  if (event.error) {
-	    displayError.textContent = event.error.message;
-	  } else {
-	    displayError.textContent = '';
-	  }
+	cardNumber.addEventListener('change', function(event) {
+		var displayError = document.getElementById('card-errors');
+		if (event.error) {
+			displayError.textContent = event.error.message;
+		} else {
+			displayError.textContent = '';
+		}
+	});
+	cardExpiry.addEventListener('change', function(event) {
+		var displayError = document.getElementById('card-errors');
+		if (event.error) {
+			displayError.textContent = event.error.message;
+		} else {
+			displayError.textContent = '';
+		}
+	});
+	cardCvc.addEventListener('change', function(event) {
+		var displayError = document.getElementById('card-errors');
+		if (event.error) {
+			displayError.textContent = event.error.message;
+		} else {
+			displayError.textContent = '';
+		}
 	});
 
-	// Handle form submission.
-	var form = $('#payment-form');
+	/* ============================== SUBMIT ==================================== */
 
-	form.addEventListener('submit', function(ev) {
-		ev.preventDefault();
-		stripe.confirmCardPayment('<%= client_secret %>', {
-			payment_method: {
-				type: 'card',
-			    card: {
-			      number: cardNumber,
-			      exp_month: cardExpiry,
-			      exp_year: cardExpiry,
-			      cvc: cardCvc,
-			    },
-				billing_details: {
-					name: 'François Dupont',
-					email: 'john.smith@example.com',
+	$('#submit-payment').click( function () {
+		console.log("submition")
+		var paymentMethod = $("input[type=radio][name=paymentMethod]:checked").attr("id");
+
+		// if payment -> card (Stripe)
+		if (paymentMethod == 'pm2') {
+			//ev.preventDefault();
+			stripe.confirmCardPayment('<%= client_secret %>', {
+				payment_method: {
+					type: 'card',
+				    card: elements.getElement('cardNumber'),
+					billing_details: {
+						address: {
+							city: 'Plaisir',
+							country: 'FR',
+							line1: '28rue des petits ponts',
+							line2: '',
+							postal_code: '78300',
+							state: 'Yvelines'
+						},
+						email: "jenny@example.com",
+						name: 'François Dupont',
+						phone: "+15555555555"
+					},
 				}
-			}
-			}).then(function(result) {
-			if (result.error) {
-				// Show error to your customer (e.g., insufficient funds)
-				console.log(result.error.message);
-			} else {
-				// The payment has been processed!
-				if (result.paymentIntent.status === 'succeeded') {
-					// Show a success message to your customer
-					// There's a risk of the customer closing the window before callback
-					// execution. Set up a webhook or plugin to listen for the
-					// payment_intent.succeeded event that handles any business critical
-					// post-payment actions.
+			}).then( function(result) {
+				if (result.error) {
+					// Show error to your customer (e.g., insufficient funds)
+					console.log(result.error.message);
+				} else {
+					// The payment has been processed!
+					if (result.paymentIntent.status === 'succeeded') {
+						console.log('success')
+						// Show a success message to your customer
+						// There's a risk of the customer closing the window before callback
+						// execution. Set up a webhook or plugin to listen for the
+						// payment_intent.succeeded event that handles any business critical
+						// post-payment actions.
+					}
 				}
-			}
-		});
+			});
+		} 
+
+		// si payement -> paypal
+		else if (paymentMethod == 'pm1') {
+			return 0;
+		}
 	});
-
-	// Submit the form with the token ID.
-	function stripeTokenHandler(token) {
-	  // Insert the token ID into the form so it gets submitted to the server
-	  var form = document.getElementById('payment-form');
-	  var hiddenInput = document.createElement('input');
-	  hiddenInput.setAttribute('type', 'hidden');
-	  hiddenInput.setAttribute('name', 'stripeToken');
-	  hiddenInput.setAttribute('value', token.id);
-	  form.appendChild(hiddenInput);
-
-	  // Submit the form
-	  form.submit();
-	}
-	/*stripe.redirectToCheckout({
-	  // Make the id field from the Checkout Session creation API response
-	  // available to this file, so you can provide it as parameter here
-	  // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
-	  sessionId: '{{CHECKOUT_SESSION_ID}}'
-	}).then(function (result) {
-	  // If `redirectToCheckout` fails due to a browser or network
-	  // error, display the localized error message to your customer
-	  // using `result.error.message`.
-	});*/
 </script>
 
 <!-------------------------------- PAYPAL SCRIPTS ---------------------------->
-<script src="https://www.paypal.com/sdk/js?client-id=AdLbFjUFxlf2azMI6_BTzfiXtZNdnoKBW5yRoexLDY6DZJFK2Fw6Vd17TahRpzK-QhdGe1_h2xIicuvf&currency=EUR"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=AdLbFjUFxlf2azMI6_BTzfiXtZNdnoKBW5yRoexLDY6DZJFK2Fw6Vd17TahRpzK-QhdGe1_h2xIicuvf&currency=EUR&components=buttons,funding-eligibility"></script>
 <script>
+	// Set up transaction
 	paypal.Buttons({
 	    createOrder: function(data, actions) {
   		// This function sets up the details of the transaction, including the amount and line item details.
@@ -349,7 +352,28 @@
 	        // This function shows a transaction success message to your buyer.
 	        	alert('Transaction completed by ' + details.payer.name.given_name);
 	      	});
-	    }
-  	}).render('#paypal-button-container');
+	    },
+	    style: {
+		    height: 55,
+	  	}
+  	})
 	// This function displays Smart Payment Buttons on your web page.
+
+	var FUNDING_SOURCES = [paypal.FUNDING.PAYPAL];
+
+	// Loop over each funding source / payment method
+	FUNDING_SOURCES.forEach(function(fundingSource) {
+
+	    // Initialize the buttons
+	    var button = paypal.Buttons({
+	        fundingSource: fundingSource
+	    });
+
+	    // Check if the button is eligible
+	    if (button.isEligible()) {
+
+	        // Render the standalone button for that funding source
+	        button.render('#paypal-button-container');
+	    }
+	});
 </script>
