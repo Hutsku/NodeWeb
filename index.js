@@ -7,6 +7,10 @@ var bodyParser = require("body-parser");
 //var redisStore = require("connect-redis")(session);
 var bcrypt = require('bcryptjs');
 
+// Set your secret key. Remember to switch to your live secret key in production!
+// See your keys here: https://dashboard.stripe.com/account/apikeys
+const stripe = require('stripe')('sk_test_0HJaHUkSg3JE8rkO4P4weCJS00cB00h5K9');
+
 //var client = redis.createClient();
 var app = express();
 
@@ -35,7 +39,7 @@ var connection = mysql.createConnection({
     user     : 'root',
     password : '',
     database : 'ydogbe'
-});
+});   
 
 // ================================================ ROUTES ===============================================
 
@@ -90,6 +94,19 @@ app.get('/', function(req, res) {
 })
 .get('/payout-shipping', function(req, res) {
     res.render('payout-shipping.ejs', {session: req.session});
+})
+.get('/payout-final', function(req, res) {
+    stripe.paymentIntents.create(
+    {
+        amount: 1099,
+        currency: 'eur',
+        payment_method_types: ['card'],
+        // Verify your integration in this guide by including this parameter
+        metadata: {integration_check: 'accept_a_payment'},
+    }, function (err, paymentIntent) {
+        console.log(paymentIntent);
+        res.render('payout-final.ejs', {session: req.session, client_secret: paymentIntent.client_secret});
+    });
 })
 
 .get('/payout', function(req, res) {
