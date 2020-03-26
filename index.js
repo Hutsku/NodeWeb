@@ -41,6 +41,71 @@ var connection = mysql.createConnection({
     database : 'ydogbe'
 });   
 
+function getCartAmount(cart) {
+    /*
+        Renvois le prix exacte du panier en le recalculant via la base de données.
+        Prend en argument un objet de type panier compatible
+    */
+
+    // on refait une liste des produits simplifiée
+    var products_obj = [];
+    for (var i=0; i<cart.length; i++) {
+        products_obj.push({
+            id: parseInt(cart[i].id),
+            nb: parseInt(cart[i].cart_qty),
+        });
+    }
+
+    // on calcule le prix totale depuis la DB (pour plus de securité)
+    var total_cost = 0;
+     return connection.query('SELECT * FROM products', function(err, rows, fields) {
+        if (err) throw err;
+        for (var i=0; i<rows.length; i++) {
+            for (var j=0; j<products_obj.length; j++) {
+                if (products_obj[j].id == rows[i].id) {
+                    total_cost += products_obj[j].nb * rows[i].price;
+                }
+            }
+        }
+        return total_cost;
+    });
+}
+
+function getUserInfos(user_id) {
+    /* 
+        Renvois les infos sur un utilisateur via la base de données.
+        Prend en argument l'id de l'utilisateur
+    */
+
+    var requestMysql = `SELECT * FROM users WHERE id='${id}'`;
+    connection.query(requestMysql, function(err, rows, fields) {
+        if (err) throw err;
+        var user = rows[0]; // on prend seulement 1 utilisateur (le seul en théorie)
+
+        // Si l'id donné est bien enregistré ...
+        if (user) {
+            return user;
+        } else {
+            return undefined;
+        }
+    });
+}
+
+function checkValidPayout(req,res) {
+    // Verifie si les condition du payout sont valides (panier + log)
+    if (!req.session.cart) {
+        // Si le client n'a pas de panier, on le renvoit à cet page
+        res.redirect('/cart');
+        return false;
+    }
+    else if (!req.session.logged) {
+        // Si le client n'est pas connecté, on lui renvois sur la section appropriée
+        res.redirect('/payout-infos');
+        return false;
+    }
+    return true;
+}
+
 // ================================================ ROUTES ===============================================
 
 app.get('/', function(req, res) {
@@ -87,30 +152,6 @@ app.get('/', function(req, res) {
 
 .get('/cart', function(req, res) {
     res.render('cart.ejs', {session: req.session});
-})
-
-.get('/payout-infos', function(req, res) {
-    res.render('payout-infos.ejs', {session: req.session});
-})
-.get('/payout-shipping', function(req, res) {
-    res.render('payout-shipping.ejs', {session: req.session});
-})
-.get('/payout-final', function(req, res) {
-    stripe.paymentIntents.create(
-    {
-        amount: 1099,
-        currency: 'eur',
-        payment_method_types: ['card'],
-        // Verify your integration in this guide by including this parameter
-        metadata: {integration_check: 'accept_a_payment'},
-    }, function (err, paymentIntent) {
-        console.log(paymentIntent);
-        res.render('payout-final.ejs', {session: req.session, client_secret: paymentIntent.client_secret});
-    });
-})
-
-.get('/payout', function(req, res) {
-    res.render('payout-infos.ejs', {session: req.session});
 })
 
 .get('/mainpage', function(req, res) {
@@ -160,6 +201,102 @@ app.get('/', function(req, res) {
         // sinon on redirige vers l'écran de connexion
         res.redirect('/login');
     }
+})
+
+// ------------------------ PAYOUT  --------------------------
+
+.get('/payout-infos', function(req, res) {
+    // Verifie si les condition du payout sont valides (panier + log)
+    if (!req.session.cart) {
+        // Si le client n'a pas de panier, on le renvoit à cet page
+        res.redirect('/cart');
+        return false;
+    }
+
+    // Si le client est déjà log, on passe à la 2e étape
+    if (req.session.logged) {
+        res.redirect('/payout-shipping');
+    }
+    else {
+        res.render('payout-infos.ejs', {session: req.session});
+    }
+})
+
+.get('/payout-shipping', function(req, res) {
+    // Verifie si les condition du payout sont valides (panier + log)
+    if (!req.session.cart) {
+        // Si le client n'a pas de panier, on le renvoit à cet page
+        res.redirect('/cart');
+    }
+    else if (!req.session.logged) {
+        // Si le client n'est pas connecté, on lui renvois sur la section appropriée
+        res.redirect('/payout-infos');
+    }
+    else {
+        res.render('payout-shipping.ejs', {session: req.session});
+    }
+    
+})
+
+.get('/payout-final', function(req, res) {
+    // Verifie si les condition du payout sont valides (panier + log)
+    if (!req.session.cart) {
+        // Si le client n'a pas de panier, on le renvoit à cet page
+        res.redirect('/cart');
+        return false;
+    }
+    else if (!req.session.logged) {
+        // Si le client n'est pas connecté, on lui renvois sur la section appropriée
+        res.redirect('/payout-infos');
+        return false;
+    }
+
+    // On recalcule le prix exacte de la commande
+    // on refait une liste des produits simplifiée
+    var cart = req.session.cart;
+    var products_obj = [];
+    for (var i=0; i<cart.length; i++) {
+        products_obj.push({
+            id: parseInt(cart[i].id),
+            nb: parseInt(cart[i].cart_qty),
+        });
+    }
+
+    // on calcule le prix totale depuis la DB (pour plus de securité)
+    var total_cost = 0;
+    connection.query('SELECT * FROM products', function(err, rows, fields) {
+        if (err) throw err;
+        for (var i=0; i<rows.length; i++) {
+            for (var j=0; j<products_obj.length; j++) {
+                if (products_obj[j].id == rows[i].id) {
+                    total_cost += products_obj[j].nb * rows[i].price;
+                }
+            }
+        }
+
+        total_cost = Math.round(total_cost*100); // on converti en valeur prise en charge par stripe
+
+        // On prépare le payement carte via Stripe
+        stripe.paymentIntents.create(
+        {
+            amount: total_cost,
+            currency: 'eur',
+            payment_method_types: ['card'],
+        }, 
+        function (err, paymentIntent) {
+            res.render('payout-final.ejs', {
+                session: req.session, 
+                client_secret: paymentIntent.client_secret, 
+                amount: total_cost,
+                user: req.session.account
+            });
+        });
+    });
+})
+
+.get('/payout', function(req, res) {
+    // On renvoit vers la 1ère étape par défaut
+    res.redirect('/payout-infos');
 })
 
 // ============================================= POST ===================================================
@@ -255,6 +392,26 @@ app.get('/', function(req, res) {
             }
         });
     });
+})
+
+.post('/valid-shipping', urlencodedParser, function(req, res) {
+    // valide et enregistre les paramètre de livraison
+    req.session.shippingMethod = req.body.shippingMethod;
+    var shippingAddressValue = req.body.shippingAddress;
+
+    // si on a choisi une autre adresse de livraison
+    if (shippingAddressValue) {
+        req.session.shippingAddress = {
+            address1: req.body.address1,
+            address2: req.body.address2,
+            city: req.body.city,
+            country: req.body.country,
+            state: req.body.state,
+            postal_code: req.body.postal_code,
+        }
+    }
+    res.send('ok')
+    //res.render('cart.ejs', {session: req.session});
 })
 
 // ------------------------ ACCOUNT EDIT ---------------------------
@@ -422,7 +579,6 @@ app.get('/', function(req, res) {
 
     // On construit la requête et on l'envoit
     //var requestMysql = `SELECT * FROM users WHERE email='${email}'`;
-    console.log(email);
     var requestMysql = `SELECT * FROM users WHERE email='${email}'`;
     connection.query(requestMysql, function(err, rows, fields) {
         if (err) throw err;
@@ -438,7 +594,7 @@ app.get('/', function(req, res) {
                     req.session.logged = true;
                     req.session.alert = "login";
                     console.log("logged !");
-                    res.redirect('back');
+                    res.redirect('/');
                 } 
                 else {
                     req.session.error = "Bad password";
@@ -456,9 +612,12 @@ app.get('/', function(req, res) {
 })
 
 .post('/sign-up', urlencodedParser, function(req, res) {
-    var adress = req.body.adress;
+    var address1 = req.body.address1;
+    var address2 = req.body.address2;
     var city = req.body.city;
+    var postalCode = req.body.postalCode;
     var country = req.body.country;
+    var state = req.body.state;
 	var username = req.body.name;
     var password = req.body.password;
     var newsletter = req.body.newsletter;
@@ -467,15 +626,17 @@ app.get('/', function(req, res) {
     
     // Si la case n'est pas coché -> no
     if (!newsletter) {
-        newsletter = "no";
+        newsletter = 0;
+    } else {
+        newsletter = 1;
     }
 
     // On hash le mot de passe à enregistrer dansla DB
     bcrypt.hash(password, 10, function(err, hashedPassword) {
         // On construit la requête et on l'envoit (avec check d'erreur)
         var getUser = `SELECT * FROM users WHERE email='${email}'`; 
-        var addUser = `INSERT INTO users (id, name, password, subscribe_date, adress, city, country, newsletter, email, tel) 
-                   VALUES (NULL, "${username}", "${hashedPassword}", NOW(), "${adress}", "${city}", "${country}", "${newsletter}", "${email}", "${tel}")`;  
+        var addUser = `INSERT INTO users (id, name, password, subscribe_date, address1, address2, city, postal_code, state, country, newsletter, email, tel) 
+                   VALUES (NULL, "${username}", "${hashedPassword}", NOW(), "${address1}", "${address2}", "${city}", "${postalCode}", "${state}", "${country}", ${newsletter}, "${email}", "${tel}")`;  
 
         connection.query(getUser, function(err, rows, fields) {
             if (err) throw err;
@@ -485,8 +646,7 @@ app.get('/', function(req, res) {
                 connection.query(addUser, function(err, rows, fields) {
                     if (err) throw err;
                     req.session.alert = "signup";
-                    console.log("sign up !");
-                    res.redirect('back'); // on recharge la page
+                    res.redirect('back');
                 });
             }
             else {

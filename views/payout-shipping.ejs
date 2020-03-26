@@ -46,13 +46,13 @@
 
     		<div class="container-fluid row m-0 p-0">
     			<div class="payout-left border col-md-8 mt-3 p-3">
-                    <div class="p-4 container subscribe">
-                        <form action="/sign-up" method="post" class="container p-0">
+                    <div class="p-4 container shipping-address-pannel">
+                        <form action="/valid-shipping" method="post" class="container p-0">
                             <span class="title"> Adresse de livraison </span>
-                            <div class="shipping-adress px-3 mb-4 border rounded text-secondary">
+                            <div class="shipping-address px-3 mb-4 border rounded text-secondary">
                                 <div class="row radio-payout py-2">
                                     <div class="radio col-1">
-                                        <input type="radio" id="sa1" class="" name="shippingAdress" checked>
+                                        <input type="radio" id="sa1" class="" name="shippingAddress" value="1" checked>
                                     </div>
                                     <div class="label col">
                                         <label for="sa1" class="m-0"> Expedier à l'adresse de mon compte </label>
@@ -61,20 +61,20 @@
                                 <div class="border-bottom"></div>
                                 <div class="row radio-payout py-2">
                                     <div class="radio col-1">
-                                        <input type="radio" id="sa2" class="" name="shippingAdress">
+                                        <input type="radio" id="sa2" class="" name="shippingAddress" value="2">
                                     </div>
                                     <div class="label col">
                                         <label for="sa2" class="m-0"> Expedier à une autre adresse </label>
                                     </div>
                                 </div>
 
-                                <div class="row shipping-adress-new border-top p-3 hide">
+                                <div class="row shipping-address-new border-top p-3 hide">
                                     <div class="form-group w-100">
-                                        <input type="text" placeholder="Adresse" class="form-control" name="adresse">
+                                        <input type="text" placeholder="Adresse" class="form-control" name="address1">
                                         <div class="invalid-feedback">Veuillez rentrer une adresse valide</div>
                                     </div>
                                     <div class="form-group w-100">
-                                        <input type="text" placeholder="N° suite / appartement (optionnel)" class="form-control" name="adresse2">
+                                        <input type="text" placeholder="N° suite / appartement (optionnel)" class="form-control" name="address2">
                                         <div class="invalid-feedback">Veuillez rentrer une adresse valide</div>
                                     </div>
                                     <div class="form-row w-100 m-0 mb-3">
@@ -93,7 +93,7 @@
                                             <div class="invalid-feedback">Veuillez rentrer une région valide</div>
                                         </div>
                                         <div class="col p-0 pl-1">
-                                            <input type="text" placeholder="Pays" class="form-control" name="country">
+                                            <select class="form-control" value="FR" data-role="country-selector" data-code-mode="alpha2" name="country"></select>
                                             <div class="invalid-feedback">Veuillez rentrer un pays valide</div>
                                         </div>
                                     </div>
@@ -101,10 +101,10 @@
                             </div>
 
                             <span class="title"> Mode d'expedition </span>
-                            <div class="shipping-adress p-2 pl-3 mb-4 border rounded text-secondary">
+                            <div class="shipping-method p-2 pl-3 mb-4 border rounded text-secondary">
                                 <div class="row radio-payout">
                                     <div class="radio col-1">
-                                        <input type="radio" id="sm1" class="" name="shippingMethod" checked>
+                                        <input type="radio" id="sm1" class="" name="shippingMethod" checked value="colissimo">
                                     </div>
                                     <div class="label col-9">
                                         <label for="sm1" class="m-0"> Colissimo </label>
@@ -116,7 +116,7 @@
                             </div>
 
                             <div class="row justify-content-between">
-                                <button type="submit" class="btn btn-secondary m-3 px-4" data-dismiss="">Retour</button>
+                                <a href="/payout-infos" class="btn btn-secondary m-3 px-4">Retour</a>
                                 <button type="submit" class="btn btn-primary m-3 px-4" data-dismiss="">Confirmer</button>
                             </div>
                         </form>
@@ -150,13 +150,88 @@
         </main>
     </body>
 
+    <script src="jquery.countryselector.js"></script>
     <script type="text/javascript">
-        $( "input[type=radio][name=shippingAdress]" ).change(function() {
+        // Radio button pannels
+        $( "input[type=radio][name=shippingAddress]" ).change(function() {
             if ($(this).attr('id') == 'sa1') {
-                $('.shipping-adress-new').addClass('hide');
+                $('.shipping-address-new').addClass('hide');
             } else {
-                $('.shipping-adress-new').removeClass('hide');
+                $('.shipping-address-new').removeClass('hide');
             }
+        });
+
+        // Validation de l'adresse de livraison
+        $('form[action="/valid-shipping"]').submit(function () {
+            var shippingAddress = $('input[name="shippingAddress"]:checked').val();
+            var shippingMethod = $('input[name="shippingMethod"]:checked').val();
+
+            var address1Input = $('.shipping-address input[name="address1"]');
+            var address2Input = $('.shipping-address input[name="address2"]');
+            var cityInput = $('.shipping-address input[name="city"]');
+            var countryInput = $('.shipping-address select[name="country"]');
+            var stateInput = $('.shipping-address input[name="state"]');
+            var postalCodeInput = $('.shipping-address input[name="postal-code"]');
+
+            // Si on choisi d'ajouter une autre adresse, on verifie les erreurs
+            if (shippingAddress == "2") {
+                console.log('new address')
+                if (!address1Input.val()) {
+                    address1Input.removeClass('is-valid').addClass('is-invalid');
+                    return false;
+                } else {
+                    address1Input.removeClass('is-invalid').addClass('is-valid');
+                }
+                if (address2Input.val()) {
+                    address2Input.removeClass('is-invalid').addClass('is-valid');
+                }
+                if (!cityInput.val()) {
+                    cityInput.removeClass('is-valid').addClass('is-invalid');
+                    return false;
+                } else {
+                    cityInput.removeClass('is-invalid').addClass('is-valid');
+                }
+                if (!postalCodeInput.val()) {
+                    postalCodeInput.removeClass('is-valid').addClass('is-invalid');
+                    return false;
+                } else {
+                    postalCodeInput.removeClass('is-invalid').addClass('is-valid');
+                }
+                if (!countryInput.val()) {
+                    countryInput.removeClass('is-valid').addClass('is-invalid');
+                    return false;
+                } else {
+                    countryInput.removeClass('is-invalid').addClass('is-valid');
+                }
+                if (!stateInput.val()) {
+                    stateInput.removeClass('is-valid').addClass('is-invalid');
+                    return false;
+                } else {
+                    stateInput.removeClass('is-invalid').addClass('is-valid');
+                }
+            }
+
+            $.post("/valid-shipping", {
+                shippingMethod: shippingMethod,
+                shippingAddress: shippingAddress,
+
+                address1: address1Input.val(),
+                address2: address2Input.val(),
+                city: cityInput.val(),
+                postal_code: postalCodeInput.val(),
+                country: countryInput.val(),
+                state: stateInput.val(),
+            })
+            .done( function (data) {
+                if (data == "badShipping") {
+                    console.log("bad shipping");
+                }
+                else {
+                    location.assign('/payout-final')
+                }
+            });
+
+            return false; // on execute pas le submit normal     
         });
 	</script>
 

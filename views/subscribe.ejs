@@ -20,7 +20,7 @@
         <main class="bg-light py-5">
             <div class="jumbotron bg-light m-0 w-100 text-center">
                 <a class="logo-img" href="/mainpage">
-                    <img class="col-md-6" src="/img/logo1.png">
+                    <img class="col-md-5" src="/img/logo1.png">
                 </a>
             </div>
 			<form action="/sign-up" method="post" class="subscribe-pannel container">
@@ -42,18 +42,34 @@
 	            	</div>
 	            	<div class="col-lg-4 col-md-6">
 	            		<h3 class="border-bottom mb-3 pb-2"> Adresse </h3>
-		                <div class="form-group form-row">
-		                    <input type="text" placeholder="Adresse" class="form-control" name="adresse">
-		                    <div class="invalid-feedback">Veuillez rentrer une adresse valide</div>
-		                </div>
-		                <div class="form-group form-row">
-		                    <input type="text" placeholder="Code postal / Ville" class="form-control" name="city">
-		                    <div class="invalid-feedback">Veuillez rentrer une ville valide</div>
-		                </div>
-		                <div class="form-group form-row">
-		                    <input type="text" placeholder="Pays" class="form-control" name="country">
-		                    <div class="invalid-feedback">Veuillez rentrer un pays valide</div>
-		                </div>
+                        <div class="form-group w-100">
+                            <input type="text" placeholder="Adresse" class="form-control" name="address1">
+                            <div class="invalid-feedback">Veuillez rentrer une adresse valide</div>
+                        </div>
+                        <div class="form-group w-100">
+                            <input type="text" placeholder="N° suite / appartement (optionnel)" class="form-control" name="address2">
+                            <div class="invalid-feedback">Veuillez rentrer une adresse valide</div>
+                        </div>
+                        <div class="form-row w-100 m-0 mb-3">
+                            <div class="col p-0 pr-1">
+                                <input type="text" placeholder="Ville" class="form-control" name="city">
+                                <div class="invalid-feedback">Veuillez rentrer une ville valide</div>
+                            </div>
+                            <div class="col p-0 pl-1">
+                                <input type="text" placeholder="Code postal" class="form-control" name="postal-code">
+                                <div class="invalid-feedback">Veuillez rentrer un code valide</div>
+                            </div>
+                        </div>
+                        <div class="form-row w-100 m-0 mb-3">
+                            <div class="col p-0 pr-1">
+                                <input type="text" placeholder="Région / Etat" class="form-control" name="state">
+                                <div class="invalid-feedback">Veuillez rentrer une région valide</div>
+                            </div>
+                            <div class="col p-0 pl-1">
+                                <select class="form-control" value="FR" data-role="country-selector" data-code-mode="alpha2" name="country"></select>
+                                <div class="invalid-feedback">Veuillez rentrer un pays valide</div>
+                            </div>
+                        </div>
 	            	</div>
 	            	<div class="col-lg-4 col-md-6">
 	            		<h3 class="border-bottom mb-3 pb-2"> Mot de passe </h3>
@@ -83,20 +99,25 @@
         </main>
     </body>
 
+	<script src="jquery.countryselector.js"></script>
 	<script type="text/javascript">
 	    /* Erreur à afficher pour le login */
 	    $('form[action="/sign-up"]').submit(function () {
 	    	var nameInput = $('.subscribe-pannel input[name="name"]');
 	        var emailInput = $('.subscribe-pannel input[name="email"]');
-	        var adresseInput = $('.subscribe-pannel input[name="adresse"]');
+	        var address1Input = $('.subscribe-pannel input[name="address1"]');
+	        var address2Input = $('.subscribe-pannel input[name="address2"]');
 	        var cityInput = $('.subscribe-pannel input[name="city"]');
-	        var countryInput = $('.subscribe-pannel input[name="country"]');
+	        var countryInput = $('.subscribe-pannel select[name="country"]');
+	        var stateInput = $('.subscribe-pannel input[name="state"]');
+	        var postalCodeInput = $('.subscribe-pannel input[name="postal-code"]');
 	        var passwordInput = $('.subscribe-pannel input[name="password"]');
 	        var repeatpasswordInput = $('.subscribe-pannel input[name="repeat-password"]');
 	        var newsletterInput = $('.subscribe-pannel input[name="newsletter"]:checked');
 	        var cguInput = $('.subscribe-pannel input[name="cgu"]:checked');
 	        var telInput = $('.subscribe-pannel input[name="tel"]');
-    		var regex = new RegExp("[0-9]{10}");
+    		var regexTel = new RegExp("[0-9]{10}");
+    		var regexEmail = new RegExp(`[\\w.+-]{1,64}@([a-zA-Z\\d-]{2,252}\\.[\\w\\.]{2,6})`);
 
 	        // On check les erreurs et on ajoute la classe en consequant
 	        if (!nameInput.val()) {
@@ -108,23 +129,30 @@
 	        if (!emailInput.val()) {
 	            emailInput.removeClass('is-valid').addClass('is-invalid');
 	            return false;
+	        } else if (!emailInput.val().match(regexEmail)) {
+	            emailInput.removeClass('is-valid').addClass('is-invalid');
+	            return false;
 	        } else {
 	            emailInput.removeClass('is-invalid').addClass('is-valid');
 	        }
 	        if (!telInput.val()) {
 	            telInput.removeClass('is-valid').addClass('is-invalid');
 	            return false;
-	        } else if (!telInput.val().match(regex)) {
+	        } else if (!telInput.val().match(regexTel)) {
 	            telInput.removeClass('is-valid').addClass('is-invalid');
+	            return false;
 	        }
 	        else {
 	            telInput.removeClass('is-invalid').addClass('is-valid');
 	        }
-	        if (!adresseInput.val()) {
-	            adresseInput.removeClass('is-valid').addClass('is-invalid');
+	        if (!address1Input.val()) {
+	            address1Input.removeClass('is-valid').addClass('is-invalid');
 	            return false;
 	        } else {
-	            adresseInput.removeClass('is-invalid').addClass('is-valid');
+	            address1Input.removeClass('is-invalid').addClass('is-valid');
+	        }
+	        if (address2Input.val()) {
+	            address2Input.removeClass('is-invalid').addClass('is-valid');
 	        }
 	        if (!cityInput.val()) {
 	            cityInput.removeClass('is-valid').addClass('is-invalid');
@@ -132,11 +160,23 @@
 	        } else {
 	            cityInput.removeClass('is-invalid').addClass('is-valid');
 	        }
+	        if (!postalCodeInput.val()) {
+	            postalCodeInput.removeClass('is-valid').addClass('is-invalid');
+	            return false;
+	        } else {
+	            postalCodeInput.removeClass('is-invalid').addClass('is-valid');
+	        }
 	        if (!countryInput.val()) {
 	            countryInput.removeClass('is-valid').addClass('is-invalid');
 	            return false;
 	        } else {
 	            countryInput.removeClass('is-invalid').addClass('is-valid');
+	        }
+	        if (!stateInput.val()) {
+	            stateInput.removeClass('is-valid').addClass('is-invalid');
+	            return false;
+	        } else {
+	            stateInput.removeClass('is-invalid').addClass('is-valid');
 	        }
 	        if (!passwordInput.val()) {
 	            passwordInput.removeClass('is-valid').addClass('is-invalid');
@@ -163,10 +203,14 @@
 	        $.post("/sign-up", {
 	        	name: nameInput.val(),
 	            email: emailInput.val(),
-	            adress: adresseInput.val(),
+	            address1: address1Input.val(),
+	            address2: address2Input.val(),
 	            city: cityInput.val(),
+	            postalCode: postalCodeInput.val(),
 	            country: countryInput.val(),
+	            state: stateInput.val(),
 	            password: passwordInput.val(),
+	            tel: telInput.val(),
 	            newsletter: newsletterInput.val()
 	        })
 	        .done( function (data) {
@@ -182,10 +226,27 @@
 				            </div>
 				            <div class="w-100"></div>
 				        </div>`
-	                	)
+                	)
 	            }
 	            else {
-	                location.reload();
+	            	// une fois inscrit, on connecte directement
+					$.post("/login", {
+		                email: emailInput.val(),
+		                password: passwordInput.val()
+		            })
+		            .done( function (data) {
+		                if (data == "badEmail") {
+		                    console.log("bad email")
+		                    emailInput.removeClass('is-valid').addClass('is-invalid');
+		                }
+		                else if (data == "badPassword") {
+		                    console.log("bad password")
+		                    passwordInput.removeClass('is-valid').addClass('is-invalid');
+		                }
+		                else {
+		                    location.assign('/');
+		                }
+		            });
 	            }
 	        });
 

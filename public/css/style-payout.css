@@ -90,14 +90,14 @@ div.payout-left ul.tab-switch li.active {
 div.payout-left div.tab ~ div{
 	display: none;
 }
-div.payout-left div.subscribe.active{
+div.payout-left div.subscribe-payout.active {
 	display: block;
 }
-div.payout-left div.log.active{
+div.payout-left div.log-payout.active{
 	display: block;
 }
 
-div.payout-left div.subscribe .title {
+div.payout-left .title {
 	display: inline-block;
 
 	font-weight: 700;
