@@ -44,10 +44,10 @@ ul.payout-order span.label {
 div.line {
 	position: absolute;
 	border: 1px solid lightgrey;
-	width: 30%;
+	/*width: 30%;
 	left: 50%;
 	margin-left: -15%;
-	top: 105px;
+	top: 130px;*/
 }
 
 /* --------------------------------- PANNEL ---------------------------------- */
@@ -55,7 +55,7 @@ div.line {
 div.payout-left {
 	background-color: white;
 	padding: 0;
-	min-height: 90vh;
+	/*min-height: 90vh;*/
 }
 
 div.payout-left div.container {

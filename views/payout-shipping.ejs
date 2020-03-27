@@ -21,7 +21,7 @@
 
         <main class="bg-light py-5">
             <div class="pt-3">
-                <ul class="payout-order list-inline text-center mt-4">
+                <ul class="payout-order list-inline text-center mt-5">
                     <li class="list-inline-item">
                         <a href="/payout-infos">
                             <span class="order">1</span>
@@ -123,35 +123,67 @@
                     </div>
     			</div>
     			
-    			<!---------------------------------------------------------------------->
+                <!----------------------------- PC ONLY ------------------------------>
 
-	    		<div class="payout-right col-md-4 mt-3 p-4">
-	    			<div class="sticky-top sticky-offset cart-recap">
+                <div class="payout-right col-md-4 mt-3 p-4">
+                    <div class="sticky-top sticky-offset cart-recap d-none d-md-block">
                         <div class="row">
                             <span class="title col">Récapitulatif</span>
                         </div>
                         <div class="w-100 border-bottom my-3"></div>
                         <div class="row py-3">
                             <span class="title col-5">SOUS-TOTAL</span>
-                            <span class="price price-sub-total col text-right">€</span>
+                            <span class="price price-sub-total col text-right"><%= subtotal_cost %>€</span>
                         </div>
                         <div class="row py-3">
                             <span class="title col-5">LIVRAISON</span>
-                            <span class="price price-shipping col text-right">€</span>
+                            <span class="price price-shipping col text-right"><%= shipping_cost %>€</span>
                         </div>
                         <div class="w-100 border-bottom my-3"></div>
                         <div class="row pb-5">
                             <span class="title total col-5">TOTAL</span>
-                            <span class="price price-total col text-right">€</span>
+                            <span class="price price-total col text-right"><%= total_cost %>€</span>
                         </div>
-	    			</div>
-	    		</div>
+                    </div>
+                </div>
+
+                <!---------------------- MOBILE ONLY ---------------------------->
+                <div class="fixed-bottom product-payout d-md-none d-block w-100 p-3 bg-light shadow-lg">
+                    <div class="cart-recap">
+                        <div class="row py-1">
+                            <span class="title col-5">SOUS-TOTAL</span>
+                            <span class="price price-sub-total col text-right"><%= subtotal_cost %>€</span>
+                        </div>
+                        <div class="row py-2">
+                            <span class="title col-5">LIVRAISON</span>
+                            <span class="price price-shipping col text-right"><%= shipping_cost %>€</span>
+                        </div>
+                        <div class="w-100 border-bottom my-2"></div>
+                        <div class="row">
+                            <span class="title total col-5">TOTAL</span>
+                            <span class="price price-total col text-right"><%= total_cost %>€</span>
+                        </div>
+                    </div>
+                </div>
 	    	</div>
         </main>
     </body>
 
     <script src="jquery.countryselector.js"></script>
     <script type="text/javascript">
+        // on met en place la ligne sur le bandeau
+        $('.line').css({
+            width: function () {
+                return $('.payout-order li:nth-of-type(3) span.order').offset().left - $('.payout-order li:nth-of-type(1) span.order').offset().left;
+            },
+            top: function () {
+                return $('.payout-order li:nth-of-type(1) span.order').offset().top + $('.payout-order li:nth-of-type(1) span.order').height()/2;
+            },
+            left: function () {
+                return $('.payout-order li:nth-of-type(1) span.order').offset().left;
+            }
+        })
+        
         // Radio button pannels
         $( "input[type=radio][name=shippingAddress]" ).change(function() {
             if ($(this).attr('id') == 'sa1') {
@@ -173,41 +205,55 @@
             var stateInput = $('.shipping-address input[name="state"]');
             var postalCodeInput = $('.shipping-address input[name="postal-code"]');
 
+            /* ----------------- Setting optionnal shipping address ------------ */
+
+            var shipping_city = '<%= user.city %>';
+            var shipping_country = '<%= user.country %>';
+            var shipping_address1 = '<%= user.address1 %>';
+            var shipping_address2 = '<%= user.address2 %>';
+            var shipping_postal_code = '<%= user.postal_code %>';
+            var shipping_state = '<%= user.state %>';
+
             // Si on choisi d'ajouter une autre adresse, on verifie les erreurs
             if (shippingAddress == "2") {
-                console.log('new address')
                 if (!address1Input.val()) {
                     address1Input.removeClass('is-valid').addClass('is-invalid');
                     return false;
                 } else {
                     address1Input.removeClass('is-invalid').addClass('is-valid');
+                    billing_address1 = address1Input.val();
                 }
                 if (address2Input.val()) {
                     address2Input.removeClass('is-invalid').addClass('is-valid');
+                    shipping_address2 = address2Input.val();
                 }
                 if (!cityInput.val()) {
                     cityInput.removeClass('is-valid').addClass('is-invalid');
                     return false;
                 } else {
                     cityInput.removeClass('is-invalid').addClass('is-valid');
+                    shipping_city = cityInput.val();
                 }
                 if (!postalCodeInput.val()) {
                     postalCodeInput.removeClass('is-valid').addClass('is-invalid');
                     return false;
                 } else {
                     postalCodeInput.removeClass('is-invalid').addClass('is-valid');
+                    shipping_postal_code = postalCodeInput.val();
                 }
                 if (!countryInput.val()) {
                     countryInput.removeClass('is-valid').addClass('is-invalid');
                     return false;
                 } else {
                     countryInput.removeClass('is-invalid').addClass('is-valid');
+                    shipping_country = countryInput.val();
                 }
                 if (!stateInput.val()) {
                     stateInput.removeClass('is-valid').addClass('is-invalid');
                     return false;
                 } else {
                     stateInput.removeClass('is-invalid').addClass('is-valid');
+                    shipping_state = stateInput.val();
                 }
             }
 
@@ -215,12 +261,12 @@
                 shippingMethod: shippingMethod,
                 shippingAddress: shippingAddress,
 
-                address1: address1Input.val(),
-                address2: address2Input.val(),
-                city: cityInput.val(),
-                postal_code: postalCodeInput.val(),
-                country: countryInput.val(),
-                state: stateInput.val(),
+                address1: shipping_address1,
+                address2: shipping_address2,
+                city: shipping_city,
+                postal_code: shipping_postal_code,
+                country: shipping_country,
+                state: shipping_state,
             })
             .done( function (data) {
                 if (data == "badShipping") {

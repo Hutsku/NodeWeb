@@ -30,26 +30,26 @@
     				<div class="cart-pannel-main container">
                         <% if (session.cart) {
                             var price_total = 0;
-                            for (var i=0; i < session.cart.length; i++) { 
-                                var price_product = parseFloat(session.cart[i].price);
-                                var cart_qty = parseInt(session.cart[i].cart_qty); %>
-                                <div class="cart-product row align-items-center" product_id="<%= session.cart[i].id %>">
+                            for (var i=0; i < session.cart.products.length; i++) { 
+                                var price_product = parseFloat(session.cart.products[i].price);
+                                var cart_qty = parseInt(session.cart.products[i].cart_qty); %>
+                                <div class="cart-product row align-items-center" product_id="<%= session.cart.products[i].id %>">
                                 	<div class="cart-product-img p-2 col-3">
-                                		<img class="w-100" src="/img/img<%= session.cart[i].id %>-1.jpg">
+                                		<img class="w-100" src="/img/img<%= session.cart.products[i].id %>-1.jpg">
                                 	</div>
                                 	<div class="cart-product-name col-md-5 col">
-                                		<a href="/product/<%= session.cart[i].id %>"><%= session.cart[i].name %></a>
+                                		<a href="/product/<%= session.cart.products[i].id %>"><%= session.cart.products[i].name %></a>
                                 	</div>
                                 	<div class="w-100 d-md-none d-block"></div>
                                 	<div class="cart-product-qty col-md-2 offset-md-0 offset-3 col-4">
-                                		<input type="number" value="<%= session.cart[i].cart_qty %>" min="1" max="99" step="1"/>
+                                		<input type="number" value="<%= session.cart.products[i].cart_qty %>" min="1" max="99" step="1"/>
                                 	</div>
-                                	<div class="cart-product-price col-md-1 col-3" product_price="<%= session.cart[i].price %>">
+                                	<div class="cart-product-price col-md-1 col-3" product_price="<%= session.cart.products[i].price %>">
                                 		<span><%= price_product*cart_qty %>€</span>
                                         <% price_total += price_product*cart_qty %>
                                 	</div>
                                 	<div class="product-remove col-md-1 col-1">
-                                    <form class="form-remove-cart col-1" action="/remove-cart" method="post" product_id="<%= session.cart[i].id %>">
+                                    <form class="form-remove-cart col-1" action="/remove-cart" method="post" product_id="<%= session.cart.products[i].id %>">
                                 		<button type="submit" class="close" aria-label="Close">
                                         	<span aria-hidden="true">&times;</span>
                                     	</button>
@@ -81,7 +81,8 @@
                     var shipping_price = 0;
                     price_total = 0;
                     var price_final = 0;
-                } %>
+                } 
+                %>
 	    		<div class="cart-payout col-md-4">
 	    			<div class="sticky-top sticky-offset bg-light shadow rounded p-4">
 	    				<div class="row">
@@ -220,6 +221,9 @@
 
             $.post("/valid-cart", {
                 cart: JSON.stringify(new_cart), // on converti l'objet pour bien le passer
+                total_price: <%= price_total %>,
+                shipping_price: <%= shipping_price %>,
+                final_price: <%= price_final %>
             }).done( function (data) {
                 if (data == "badCart") {
                     console.log("error occured")
@@ -234,6 +238,7 @@
         // Valide le panier et passe au payement
         $('form[action="/payout"]').submit(function () {
             var new_cart = [];
+
             // on construit un nouveau panier final
             $('.cart-pannel-main .cart-product').each(function () {
                 var product = $(this);
@@ -247,6 +252,9 @@
 
             $.post("/valid-cart", {
                 cart: JSON.stringify(new_cart), // on converti l'objet pour bien le passer
+                subtotal_cost: <%= price_total %>,
+                shipping_cost: <%= shipping_price %>,
+                total_cost: <%= price_final %>
             }).done( function (data) {
                 if (data == "badCart") {
                     console.log("error occured")

@@ -207,18 +207,27 @@ app.get('/', function(req, res) {
 
 .get('/payout-infos', function(req, res) {
     // Verifie si les condition du payout sont valides (panier + log)
-    if (!req.session.cart) {
+    if (!req.session.cart.products) {
         // Si le client n'a pas de panier, on le renvoit à cet page
         res.redirect('/cart');
         return false;
     }
+
+    //console.log(req.session.cart.subtotal_cost)
 
     // Si le client est déjà log, on passe à la 2e étape
     if (req.session.logged) {
         res.redirect('/payout-shipping');
     }
     else {
-        res.render('payout-infos.ejs', {session: req.session});
+        res.render('payout-infos.ejs', {
+                session: req.session, 
+                subtotal_cost: req.session.cart.subtotal_cost,
+                shipping_cost: req.session.cart.shipping_cost,
+                total_cost: req.session.cart.total_cost,
+                user: req.session.account
+            }
+        );
     }
 })
 
@@ -233,9 +242,16 @@ app.get('/', function(req, res) {
         res.redirect('/payout-infos');
     }
     else {
-        res.render('payout-shipping.ejs', {session: req.session});
-    }
-    
+        console.log(req.session.cart)
+        res.render('payout-shipping.ejs', {
+                session: req.session, 
+                subtotal_cost: req.session.cart.subtotal_cost,
+                shipping_cost: req.session.cart.shipping_cost,
+                total_cost: req.session.cart.total_cost,
+                user: req.session.account
+            }   
+        );
+    }  
 })
 
 .get('/payout-final', function(req, res) {
@@ -253,7 +269,7 @@ app.get('/', function(req, res) {
 
     // On recalcule le prix exacte de la commande
     // on refait une liste des produits simplifiée
-    var cart = req.session.cart;
+    var cart = req.session.cart.products;
     var products_obj = [];
     for (var i=0; i<cart.length; i++) {
         products_obj.push({
@@ -274,12 +290,16 @@ app.get('/', function(req, res) {
             }
         }
 
-        total_cost = Math.round(total_cost*100); // on converti en valeur prise en charge par stripe
+        var shipping_cost = parseFloat(req.session.cart.shipping_cost);
+        subtotal_cost = total_cost
+        total_cost = (total_cost+shipping_cost).toFixed(2);
+        amount = Math.round(total_cost*100); // on converti en valeur prise en charge par stripe
+        console.log(total_cost)
 
         // On prépare le payement carte via Stripe
         stripe.paymentIntents.create(
         {
-            amount: total_cost,
+            amount: amount,
             currency: 'eur',
             payment_method_types: ['card'],
         }, 
@@ -287,7 +307,9 @@ app.get('/', function(req, res) {
             res.render('payout-final.ejs', {
                 session: req.session, 
                 client_secret: paymentIntent.client_secret, 
-                amount: total_cost,
+                total_cost: total_cost,
+                subtotal_cost: subtotal_cost,
+                shipping_cost: shipping_cost,
                 user: req.session.account
             });
         });
@@ -299,6 +321,11 @@ app.get('/', function(req, res) {
     res.redirect('/payout-infos');
 })
 
+.get('/payment-success', function(req, res) {
+    // A afficher lorsque le payement a été effectué
+    res.render('payment-success.ejs', {session: req.session});
+})
+
 // ============================================= POST ===================================================
 
 // ----------------------- PAYOUT OPTION  ---------------------------
@@ -308,20 +335,25 @@ app.get('/', function(req, res) {
 
     // si il n'y a pas encore cookies de panier, on en créer un
     if (!req.session.cart) {
-        req.session.cart = [];
+        req.session.cart = {
+            products: [],
+            subtotal_cost: '0',
+            shipping_cost: '0',
+            total_cost: '0',
+        }
     }
 
     var product_id = req.body.id;
     var match = false;
     // Si le produit est déjà dans le panier, on l'incremente
-    for (var i=0; i<req.session.cart.length; i++) {
-        if (req.session.cart[i].id == product_id) {
-            req.session.cart[i].cart_qty++;
+    for (var i=0; i<req.session.cart.products.length; i++) {
+        if (req.session.cart.products[i].id == product_id) {
+            req.session.cart.products[i].cart_qty++;
             match = true;
         }
     }
     // Si le produit n'est pas déjà dans le panier, on l'ajoute
-    if (!match) req.session.cart.push(req.body); 
+    if (!match) req.session.cart.products.push(req.body); 
     res.send('back');
 })
 
@@ -331,34 +363,44 @@ app.get('/', function(req, res) {
         res.redirect('back');
     }
     if (req.session.id) {
-        for (var i=0; i<req.session.cart.length; i++) {
-            if (req.session.cart[i].id == req.body.id) req.session.cart.splice(i, 1);
+        for (var i=0; i<req.session.cart.products.length; i++) {
+            if (req.session.cart.products[i].id == req.body.id) req.session.cart.products.splice(i, 1);
         }
     }
-    if (!req.session.cart.length) {
+    if (!req.session.cart.products.length) {
         req.session.cart = 0;
     }
-    console.log(req.session.cart);
     res.redirect('back');
 })
 
 .post('/valid-cart', urlencodedParser, function(req, res) {
     // on remplace le panier par celui envoyé (en le convertissant)
-    req.session.cart = JSON.parse(req.body['cart']);
+    req.session.cart.products = JSON.parse(req.body['cart']);
+    req.session.cart.subtotal_cost = req.body.subtotal_cost;
+    req.session.cart.shipping_cost = req.body.shipping_cost;
+    req.session.cart.total_cost = req.body.total_cost;
+
     res.send('ok')
     //res.render('cart.ejs', {session: req.session});
 })
 
 .post('/add-order', urlencodedParser, function(req, res) {
+    // On recupère les infos
+    var payment_method = req.body.payment_method
+    var billing_address = req.body.billing_address;
+    var shipping_address = req.session.cart.shipping_address.string;
+    var shipping_method = req.session.cart.shipping_method
+    var shipping_cost = parseFloat(req.session.cart.shipping_cost);
+    var user_id = req.session.account.id;
+
     // on refait une liste des produits simplifiée
     var products_obj = [];
-    for (var i=0; i<req.session.cart.length; i++) {
+    for (var i=0; i<req.session.cart.products.length; i++) {
         products_obj.push({
-            id: parseInt(req.session.cart[i].id),
-            nb: parseInt(req.session.cart[i].cart_qty),
+            id: parseInt(req.session.cart.products[i].id),
+            nb: parseInt(req.session.cart.products[i].cart_qty),
         })
     }
-    var user_id = req.session.account.id;
     var str_products = JSON.stringify(products_obj);
 
     // on calcule le prix totale depuis la DB (pour plus de securité)
@@ -369,14 +411,19 @@ app.get('/', function(req, res) {
             for (var j=0; j<products_obj.length; j++) {
                 if (products_obj[j].id == rows[i].id) {
                     total_cost += products_obj[j].nb * rows[i].price;
-                    console.log(total_cost);
                 }
             }
         }
 
+        var subtotal_cost = total_cost
+        total_cost = (total_cost+shipping_cost).toFixed(2);
+        req.session.cart.subtotal_cost = total_cost;
+        req.session.cart.total_cost = total_cost + req.session.shipping_cost; // on en profite pour mettre à jour si jamais
+
         // requête MySQL
-        var addOrder = `INSERT INTO orders (id, date, cost, state, user_id, products) 
-                   VALUES (NULL, NOW(), ${total_cost}, 'En attente', ${user_id}, '${str_products}')`;
+        var addOrder = `INSERT INTO orders (id, date, total_cost, subtotal_cost, shipping_cost, state, user_id, products, shipping_address, billing_address, payment_method, shipping_method) 
+                   VALUES (NULL, NOW(), ${total_cost}, ${subtotal_cost}, ${shipping_cost}, 'En attente', ${user_id}, '${str_products}', '${shipping_address}', 
+                   '${billing_address}', '${payment_method}', '${shipping_method}')`;
 
         connection.query(addOrder, function(err, rows, fields) {
             if (err) throw err;
@@ -396,18 +443,22 @@ app.get('/', function(req, res) {
 
 .post('/valid-shipping', urlencodedParser, function(req, res) {
     // valide et enregistre les paramètre de livraison
-    req.session.shippingMethod = req.body.shippingMethod;
+    req.session.cart.shipping_method = req.body.shippingMethod;
+    req.session.cart.shipping_cost = '6.00'; // par défaut on met la livraison à 6€
+
     var shippingAddressValue = req.body.shippingAddress;
 
     // si on a choisi une autre adresse de livraison
     if (shippingAddressValue) {
-        req.session.shippingAddress = {
+        req.session.cart.shipping_address = {
             address1: req.body.address1,
             address2: req.body.address2,
             city: req.body.city,
             country: req.body.country,
             state: req.body.state,
             postal_code: req.body.postal_code,
+            string: `${req.body.address1} ${req.body.address2} ${req.body.postal_code} 
+                    ${req.body.city} ${req.body.state} ${req.body.country}`
         }
     }
     res.send('ok')

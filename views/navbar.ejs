@@ -60,8 +60,8 @@
                 <a class="nav-link dropdown-toggle cart-dropdown" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <% if (session.cart) { 
                         var nb_total = 0;
-                        for (var i=0; i< session.cart.length; i++) {
-                            nb_total += parseInt(session.cart[i].cart_qty);
+                        for (var i=0; i< session.cart.products.length; i++) {
+                            nb_total += parseInt(session.cart.products[i].cart_qty);
                         }
                     %>
                         <span><%= nb_total %></span>
@@ -74,21 +74,21 @@
                     <div class="cart-pannel container">
                         <% if (session.cart) {
                             var price_total = 0;
-                            for (var i=0; i < session.cart.length; i++) { 
-                                var price_product = parseFloat(session.cart[i].price);
-                                var cart_qty = parseInt(session.cart[i].cart_qty);
+                            for (var i=0; i < session.cart.products.length; i++) { 
+                                var price_product = parseFloat(session.cart.products[i].price);
+                                var cart_qty = parseInt(session.cart.products[i].cart_qty);
                                 price_total += price_product * cart_qty; %>
-                                <div class="cart-product row align-items-center" product_id="<%= session.cart[i].id %>"> 
-                                    <img class="p-2 col-3" src="/img/img<%= session.cart[i].id %>-1.jpg">
+                                <div class="cart-product row align-items-center" product_id="<%= session.cart.products[i].id %>"> 
+                                    <img class="p-2 col-3" src="/img/img<%= session.cart.products[i].id %>-1.jpg">
                                     <div class="col">
-                                        <a href="/product/<%= session.cart[i].id %>" class="cart-product-name">
-                                            <%= session.cart[i].name %>
+                                        <a href="/product/<%= session.cart.products[i].id %>" class="cart-product-name">
+                                            <%= session.cart.products[i].name %>
                                         </a>
                                         <span class="ml-2">x</span>
                                         <span class="qty"><%= cart_qty %> </span>
                                     </div>
                                     <span class="cart-product-price col-3"><%= price_product %>€</span>
-                                    <form class="form-remove-cart col-1" action="/remove-cart" method="post" product_id="<%= session.cart[i].id %>">
+                                    <form class="form-remove-cart col-1" action="/remove-cart" method="post" product_id="<%= session.cart.products[i].id %>">
                                         <button type="submit" name="remove-cart" class="close" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
