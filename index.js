@@ -14,6 +14,11 @@ const stripe = require('stripe')('sk_test_0HJaHUkSg3JE8rkO4P4weCJS00cB00h5K9');
 //var client = redis.createClient();
 var app = express();
 
+// init mailjet
+var mailjetApi = '3fd803f3c9719849951a788982dbfe72';
+var mailjetSecretKeys = '9b4e9cabdf8f2c58ee2221d34a6d8bf0';
+const mailjet = require ('node-mailjet').connect(mailjetApi, mailjetSecretKeys)
+
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 app.use(session({ 
         name: "ydogbe",
@@ -40,6 +45,8 @@ var connection = mysql.createConnection({
     password : '',
     database : 'ydogbe'
 });   
+
+// ============================================= GLOBAL FUNCTIONS ========================================
 
 function getCartAmount(cart) {
     /*
@@ -104,6 +111,69 @@ function checkValidPayout(req,res) {
         return false;
     }
     return true;
+}
+
+// ---------------------------- EMAIL ----------------------- 
+
+var subscriptionTemplate = 1323172;
+var commandTemplate = 1323206;
+function sendEmailSubscription(email, name) {
+    // Send email via mailjet
+    mailjet
+    .post("send", {'version': 'v3.1'})
+    .request({
+      "Messages":[
+            {
+            "TemplateLanguage": true,
+            "To": [{
+                "Email": email,
+                "Name": name
+            }],
+            "TemplateID": subscriptionTemplate,
+            "Variables": {
+                'name': name,
+                }
+            }
+        ]
+    })
+    .then(function (result) {
+        console.log(result.body)
+    })
+    .catch(function (err) {
+        console.log(err)
+
+    })
+}
+
+function sendEmailCommand(email, name, products, shipping_cost, total_cost) {
+    // Send email via mailjet
+    console.log(email)
+    mailjet
+    .post("send", {'version': 'v3.1'})
+    .request({
+      "Messages":[
+            {
+            "TemplateLanguage": true,
+            "To": [{
+                "Email": email,
+                "Name": name
+            }],
+            "TemplateID": commandTemplate,
+            "Variables": {
+                'name': name,
+                'products': products,
+                'shipping_cost': shipping_cost,
+                'total_cost': total_cost,
+                }
+            }
+        ]
+    })
+    .then(function (result) {
+        console.log(result.body)
+    })
+    .catch(function (err) {
+        console.log(err)
+    })
 }
 
 // ================================================ ROUTES ===============================================
@@ -428,8 +498,10 @@ app.get('/', function(req, res) {
         connection.query(addOrder, function(err, rows, fields) {
             if (err) throw err;
 
-            // Si l'adresse email n'est pas encore utilisé ...
             if (!rows.length) {
+                // on envoit un email de confirmation de commande
+                sendEmailCommand(req.session.account.email, req.session.account.name, req.session.cart.products, shipping_cost, total_cost);
+
                 req.session.alert = "add order";
                 console.log("order validated!");
                 res.send('ok'); // on recharge la page
@@ -696,6 +768,9 @@ app.get('/', function(req, res) {
             if (!rows.length) {
                 connection.query(addUser, function(err, rows, fields) {
                     if (err) throw err;
+                    // on envoit un email de confirmation
+                    sendEmailSubscription(email, username);
+
                     req.session.alert = "signup";
                     res.redirect('back');
                 });
