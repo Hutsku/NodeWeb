@@ -12,17 +12,17 @@
 				<th class="p-1" scope="col">Montant</th>
 				<th class="p-1" scope="col">Statut</th>
 				<th class="p-1" scope="col">Date</th>
-				<th class="p-1" scope="col">Produits</th>
+				<th class="p-1" scope="col">Payement</th>
 			</tr>
 		</thead>
 		<tbody>
 			<% for (var i=0; i< orders.length; i++) { %>
 				<tr>
 					<td><a href="#"><%= orders[i].id %></a></td>
-					<td><%= orders[i].cost %>€</td>
+					<td><%= orders[i].total_cost %>€</td>
 					<td style="color: orange;"><%= orders[i].state %></td>
 					<td><%= orders[i].date.getDay()+"/"+orders[i].date.getMonth()+"/"+orders[i].date.getFullYear() %></td>
-					<td><a href="#"> Liste des produits </td>
+					<td><%= orders[i].payment_method %></td>
 				</tr>
 			<% } %>
 

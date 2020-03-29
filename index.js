@@ -145,9 +145,9 @@ function sendEmailSubscription(email, name) {
     })
 }
 
-function sendEmailCommand(email, name, products, shipping_cost, total_cost) {
+function sendEmailCommand(email, name, infos) {
     // Send email via mailjet
-    console.log(email)
+    console.log(infos.products)
     mailjet
     .post("send", {'version': 'v3.1'})
     .request({
@@ -160,10 +160,14 @@ function sendEmailCommand(email, name, products, shipping_cost, total_cost) {
             }],
             "TemplateID": commandTemplate,
             "Variables": {
-                'name': name,
-                'products': products,
-                'shipping_cost': shipping_cost,
-                'total_cost': total_cost,
+                name: name,
+                products: infos.products,
+                shipping_cost: infos.shipping_cost,
+                subtotal_cost: infos.subtotal_cost,
+                total_cost: infos.total_cost,
+                shipping_address: infos.shipping_address,
+                billing_address: infos.billing_address,
+                order_id: infos.order_id
                 }
             }
         ]
@@ -500,10 +504,22 @@ app.get('/', function(req, res) {
 
             if (!rows.length) {
                 // on envoit un email de confirmation de commande
-                sendEmailCommand(req.session.account.email, req.session.account.name, req.session.cart.products, shipping_cost, total_cost);
+                console.log(rows)
+                sendEmailCommand(req.session.account.email, req.session.account.name, 
+                    {
+                        products: req.session.cart.products,
+                        subtotal_cost: subtotal_cost,
+                        shipping_cost: shipping_cost,
+                        total_cost: total_cost,
+                        shipping_address: shipping_address,
+                        billing_address: billing_address,
+                        order_id: ''
+                    }
+                );
 
                 req.session.alert = "add order";
                 console.log("order validated!");
+                req.session.cart = 0;// on vide le panier
                 res.send('ok'); // on recharge la page
             }
             else {
