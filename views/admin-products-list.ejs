@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Import CSS Bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- Import custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/style-account.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-admin.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-navbar.css">
+        <title>YDOGBE</title>
+    </head>
+ 
+    <body>
+        <header>
+            <% include navbar %>
+        </header>
+
+        <main class="bg-light pt-5 mt-3">
+            <div class="products-list-content container-fluid p-4">
+                <div class="table-order text-center w-100">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th class="p-1" scope="col">Images</th>
+                                <th class="p-1" scope="col">Nom</th>
+                                <th class="p-1" scope="col">Description</th>
+                                <th class="p-1" scope="col">Prix</th>
+                                <th class="p-1" scope="col">Taille</th>
+                                <th class="p-1" scope="col">Poids</th>
+                                <th class="p-1" scope="col">Catégorie</th>
+                                <th class="p-1" scope="col">ID</th>
+                                <th class="p-1" scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (var i=0; i< products.length; i++) { %>
+                                <tr>
+                                    <td>
+                                        <a class="product-img" href="/product/<%= products[i].id %>">
+                                            <img class="" src="/img/<%= JSON.parse(products[i].images)[0] %>">
+                                        </a>
+                                    </td>
+                                    <td><a class="" href="/product/<%= products[i].id %>"><%= products[i].name %></a></td>
+                                    <td><%= products[i].description %></td>
+                                    <td><%= products[i].price %>€</td>
+                                    <td><%= products[i].size %></td>
+                                    <td><%= products[i].printing %></td>
+                                    <td><%= products[i].category %></td>
+                                    <td><%= products[i].id %></td>
+                                    <td>
+                                        <a class="btn btn-secondary mb-2 w-100" href="/admin-edit-product/<%= products[i].id %>" name="edit">Modifier</a>
+                                        <form action="/admin-remove-product" method="post" product_id="<%= products[i].id %>">
+                                            <button class="btn btn-danger w-100" type="submit" name="edit" value="<%= products[i].id %>">Supprimer</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                    <a class="btn btn-success mt-3" href="/admin-add-product" name="add">Ajouter un produit</a>
+                </div>
+            </div>
+        </main>
+    </body>
+
+    <script type="text/javascript">
+    </script>
+
+</html>

@@ -6,6 +6,16 @@ var bodyParser = require("body-parser");
 //var redis = require("redis");
 //var redisStore = require("connect-redis")(session);
 var bcrypt = require('bcryptjs');
+var multer  = require('multer')
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './public/img')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname)
+  }
+})
+var upload = multer({storage: storage})
 
 // Set your secret key. Remember to switch to your live secret key in production!
 // See your keys here: https://dashboard.stripe.com/account/apikeys
@@ -48,69 +58,12 @@ var connection = mysql.createConnection({
 
 // ============================================= GLOBAL FUNCTIONS ========================================
 
-function getCartAmount(cart) {
-    /*
-        Renvois le prix exacte du panier en le recalculant via la base de données.
-        Prend en argument un objet de type panier compatible
-    */
+// ---------------------------- USER -----------------------
 
-    // on refait une liste des produits simplifiée
-    var products_obj = [];
-    for (var i=0; i<cart.length; i++) {
-        products_obj.push({
-            id: parseInt(cart[i].id),
-            nb: parseInt(cart[i].cart_qty),
-        });
-    }
-
-    // on calcule le prix totale depuis la DB (pour plus de securité)
-    var total_cost = 0;
-     return connection.query('SELECT * FROM products', function(err, rows, fields) {
-        if (err) throw err;
-        for (var i=0; i<rows.length; i++) {
-            for (var j=0; j<products_obj.length; j++) {
-                if (products_obj[j].id == rows[i].id) {
-                    total_cost += products_obj[j].nb * rows[i].price;
-                }
-            }
-        }
-        return total_cost;
-    });
-}
-
-function getUserInfos(user_id) {
-    /* 
-        Renvois les infos sur un utilisateur via la base de données.
-        Prend en argument l'id de l'utilisateur
-    */
-
-    var requestMysql = `SELECT * FROM users WHERE id='${id}'`;
-    connection.query(requestMysql, function(err, rows, fields) {
-        if (err) throw err;
-        var user = rows[0]; // on prend seulement 1 utilisateur (le seul en théorie)
-
-        // Si l'id donné est bien enregistré ...
-        if (user) {
-            return user;
-        } else {
-            return undefined;
-        }
-    });
-}
-
-function checkValidPayout(req,res) {
-    // Verifie si les condition du payout sont valides (panier + log)
-    if (!req.session.cart) {
-        // Si le client n'a pas de panier, on le renvoit à cet page
-        res.redirect('/cart');
-        return false;
-    }
-    else if (!req.session.logged) {
-        // Si le client n'est pas connecté, on lui renvois sur la section appropriée
-        res.redirect('/payout-infos');
-        return false;
-    }
-    return true;
+// Liste des email (utilisateur) ayant accès au droit admin (gestion des articles)
+var admin_user = ['arouxel@outlook.fr', 'yoann.dogbe@gmail.com']
+function checkAdmin(email) {
+    return admin_user.includes(email)
 }
 
 // ---------------------------- EMAIL ----------------------- 
@@ -193,6 +146,7 @@ app.get('/', function(req, res) {
 .get('/quit', function(req, res) {
     req.session.username = "";
     req.session.logged = false;
+    req.session.admin = false;
     req.session.alert = "logout";
     res.redirect('back');
 })
@@ -211,7 +165,7 @@ app.get('/', function(req, res) {
         // On envoit les données du produit à la page
         res.render('product.ejs', {
             id: product.id, 
-            reference: product.reference,
+            reference: product.id,
             name: product.name,
             stocks: product.stocks,
             price: product.price,
@@ -219,6 +173,7 @@ app.get('/', function(req, res) {
             size: product.size,
             printing: product.printing,
             category: product.category,
+            img: JSON.parse(product.images),
             session: req.session
         });
     }); 
@@ -238,9 +193,9 @@ app.get('/', function(req, res) {
         for (var i=0; i< rows.length; i++) {
             products.push({
                 id: rows[i].id, 
-                reference: rows[i].reference,
                 name: rows[i].name,
                 price: rows[i].price,
+                img: JSON.parse(rows[i].images)
             })
         }
 
@@ -275,6 +230,64 @@ app.get('/', function(req, res) {
         // sinon on redirige vers l'écran de connexion
         res.redirect('/login');
     }
+})
+
+// ----------------------- ADMIN PAGE ------------------------
+
+.get('/admin-products-list', function(req, res) {
+    // on vérifie que l'utilisateur est bien admin (double verification si jamais)
+    if (req.session.admin && checkAdmin(req.session.account.email)) {
+        var getProducts = `SELECT * FROM products`;
+
+        connection.query(getProducts, function(err, rows, fields) {
+            if (err) throw err;
+
+            res.render('admin-products-list.ejs', {session: req.session, products: rows});
+        });
+    }
+    else {
+        // sinon on redirige vers l'écran de connexion
+        res.redirect('/mainpage');
+    } 
+})
+
+.get('/admin-edit-product/:id', function(req, res) {
+    // on vérifie que l'utilisateur est bien admin (double verification si jamais)
+    if (req.session.admin && checkAdmin(req.session.account.email)) {
+        var getProduct = `SELECT * FROM products WHERE id=${req.params.id}`;
+
+        connection.query(getProduct, function(err, rows, fields) {
+            if (err) throw err;
+            product = rows[0];
+            res.render('admin-edit-product.ejs', {
+                id: product.id, 
+                reference: product.id,
+                name: product.name,
+                stocks: product.stocks,
+                price: product.price,
+                description: product.description,
+                size: product.size,
+                printing: product.printing,
+                category: product.category,
+                img: JSON.parse(product.images),
+                session: req.session});
+            });
+        }
+    else {
+        // sinon on redirige vers l'écran de connexion
+        res.redirect('/admin-products-list');
+    } 
+})
+
+.get('/admin-add-product', function(req, res) {
+    // on vérifie que l'utilisateur est bien admin (double verification si jamais)
+    if (req.session.admin && checkAdmin(req.session.account.email)) {
+        res.render('admin-add-product.ejs', {session: req.session});
+    }
+    else {
+        // sinon on redirige vers l'écran de connexion
+        res.redirect('/admin-products-list');
+    } 
 })
 
 // ------------------------ PAYOUT  --------------------------
@@ -402,11 +415,95 @@ app.get('/', function(req, res) {
 
 // ============================================= POST ===================================================
 
+// ----------------------- ADMIN EDIT -------------------------------
+
+.post('/admin-remove-product', urlencodedParser, function(req, res) {
+    // si il n'y a pas encore cookies de panier, on en créer un
+    
+    // on vérifie que l'utilisateur est bien admin (double verification si jamais)
+    if (req.session.admin && checkAdmin(req.session.account.email)) {
+        var product_id = req.body.edit; // recupère la valeur du bouton 'edit' du formulaire
+        var removeProduct = `DELETE FROM products WHERE products.id = ${product_id}`;
+
+        connection.query(removeProduct, function(err, rows, fields) {
+            if (err) throw err;
+
+            req.session.alert = "remove product";
+            res.redirect('back');
+        });
+    }
+    else {
+        // sinon on redirige vers l'écran de connexion
+        res.send('no admin');
+    }
+})
+
+.post('/admin-add-product', urlencodedParser, function(req, res) {
+    // si il n'y a pas encore cookies de panier, on en créer un
+    
+    // on vérifie que l'utilisateur est bien admin (double verification si jamais)
+    if (req.session.admin && checkAdmin(req.session.account.email)) {
+        var name = req.body.name;
+        var description = req.body.description;
+        var price = req.body.price;
+        var size = req.body.size;
+        var printing = req.body.printing;
+        var category = req.body.category;
+        var img_list = req.body.images;
+
+        console.log(img_list)
+        var addProduct = `INSERT INTO products (name, description, price, size, printing, category, images) 
+            VALUES ("${name}", "${description}", "${price}", "${size}", "${printing}", "${category}", '${img_list}')`;  
+        connection.query(addProduct, function(err, rows, fields) {
+            if (err) throw err;
+
+            req.session.alert = "add product";
+            res.redirect('back');
+        });
+    }
+    else {
+        // sinon on redirige vers l'écran de connexion
+        res.send('no admin');
+    }
+})
+
+.post('/admin-edit-product', urlencodedParser, function(req, res) {
+    // si il n'y a pas encore cookies de panier, on en créer un
+    
+    // on vérifie que l'utilisateur est bien admin (double verification si jamais)
+    if (req.session.admin && checkAdmin(req.session.account.email)) {
+        var id = req.body.id;
+        var name = req.body.name;
+        var description = req.body.description;
+        var price = req.body.price;
+        var size = req.body.size;
+        var printing = req.body.printing;
+        var category = req.body.category;
+        var img_list = req.body.images;
+
+        console.log(img_list)
+        var addProduct = `UPDATE products SET name = '${name}', description = '${description}', price = '${price}', 
+            size = '${size}', printing = '${printing}', category = '${category}', images = '${img_list}' WHERE products.id = '${id}'`;  
+        connection.query(addProduct, function(err, rows, fields) {
+            if (err) throw err;
+
+            req.session.alert = "edit product";
+            res.redirect('back');
+        });
+    }
+    else {
+        // sinon on redirige vers l'écran de connexion
+        res.send('no admin');
+    }
+})
+
+.post('/upload-img', upload.any(), function(req, res) {
+    res.send('back');
+})
+
 // ----------------------- PAYOUT OPTION  ---------------------------
 
 .post('/add-cart', urlencodedParser, function(req, res) {
-    console.log("creating cookies");
-
     // si il n'y a pas encore cookies de panier, on en créer un
     if (!req.session.cart) {
         req.session.cart = {
@@ -518,7 +615,6 @@ app.get('/', function(req, res) {
                 );
 
                 req.session.alert = "add order";
-                console.log("order validated!");
                 req.session.cart = 0;// on vide le panier
                 res.send('ok'); // on recharge la page
             }
@@ -732,6 +828,7 @@ app.get('/', function(req, res) {
                     req.session.account = user;
                     req.session.logged = true;
                     req.session.alert = "login";
+                    req.session.admin = checkAdmin(email);
                     console.log("logged !");
                     res.redirect('/');
                 } 

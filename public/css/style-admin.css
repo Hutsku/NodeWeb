@@ -1,0 +1,22 @@
+.products-list-content .product-img img {
+	width: 100px;
+}
+
+.title {
+	display: inline-block;
+
+	font-weight: 700;
+	font-size: 17px;
+	margin-bottom: 15px;
+}
+
+.img-preview img {
+	width: 200px;
+	margin-right: 10px;
+}
+.images label.btn:hover {
+	cursor: pointer;
+}
+.images input {
+	display:none;
+}

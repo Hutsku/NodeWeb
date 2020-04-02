@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Import CSS Bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- Import custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/style-account.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-admin.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-navbar.css">
+        <title>YDOGBE</title>
+    </head>
+ 
+    <body>
+        <header>
+            <% include navbar %>
+        </header>
+
+        <main class="bg-light pt-5 mt-3">
+            <div class="m-3"> 
+                <span href="#" class="link-title p-2 pl-4">
+                    Modification d'un article
+                </span>
+            </div>
+            <div class="new-product-content container-fluid px-4">
+                <form action="/admin-edit-product" method="post">
+                    <div class="images">
+                        <label class="title my-2"> Image(s) </label>
+                        <div class="img-preview">
+                        </div>
+                        <label class="btn btn-primary m-0 mt-3" for="files">Ajouter une image</label>
+                        <input type="file" id="files" name="images" accept="image/*" >
+                        <a href="#" class="btn btn-secondary mt-3" id="clear"> Annuler </a>
+                    </div>
+                    <div class="name">
+                        <label class="title my-2"> Nom </label>
+                        <input type="text" placeholder="Nom" class="form-control col-md-3 col" name="name" value="<%= name %>">
+                        <div class="invalid-feedback">Veuillez rentrer un nom</div>
+                    </div>
+                    <div class="description">
+                        <label class="title my-2"> Description </label>
+                        <textarea class="form-control col-md-3 col" placeholder="Ajouter une description ici ..." rows="5" name="description"><%= description %></textarea>
+                        <div class="invalid-feedback">Veuillez rentrer une description</div>
+                    </div>
+                    <div class="price">
+                        <label class="title my-2"> Price </label>
+                        <input type="text" placeholder="12.99" class="form-control col-md-3 col" name="price" value="<%= price %>">
+                        <div class="invalid-feedback">Veuillez rentrer un prix valide (ex: 12.99)</div>
+                    </div>
+                    <div class="size">
+                        <label class="title my-2"> Format </label>
+                        <select class="form-control col-md-3 col" name="size">
+                            <option>A4</option>
+                            <option selected>A3</option>
+                            <option>A2</option>
+                            <option>A1</option>
+                        </select>
+                    </div>
+                    <div class="printing">
+                        <label class="title my-2"> Poids </label>
+                        <input type="text" placeholder="250mg" class="form-control col-md-3 col" name="printing" value="<%= printing %>">
+                        <div class="invalid-feedback">veuillez rentrer un poids</div>
+                    </div>
+                    <div class="category">
+                        <label class="title my-2"> Categorie(s) </label>
+                        <br/>
+                        <label class="checkbox-inline"><input type="checkbox" value="all" disabled checked name="category"> Tout </label>
+                    </div>
+
+                    <button class="btn btn-success mt-4" type="submit"> Modifier le produit </button>
+                </form>
+            </div>
+        </main>
+    </body>
+
+    <script type="text/javascript">
+        var fileTypes = [
+          'image/jpeg',
+          'image/jpeg',
+          'image/png'
+        ]
+
+        // prend un fichier en paramètre et verifie qu'il est bien du type autorisé
+        function validFileType(file) {
+            for(var i = 0; i < fileTypes.length; i++) {
+                if(file.type === fileTypes[i]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function addImgPreview (file) {
+            var path = window.URL.createObjectURL(file); // on créer un lien provisoire pour l'image
+            $('.img-preview').append(`<img src="${path}" img-name='${file.name}'></img>`)
+        }
+
+        function getImgList() {
+            var list = []
+            $('.images img').each(function () {
+                list.push($(this).attr('img-name'));
+            });
+
+            return list
+        }
+
+        // Upload la liste des images sur le serveur
+        function uploadImgFiles(files) {
+            var form = new FormData()
+            for (var i=0; i<files.length; i++) {
+                form.append('file', files[i])
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/upload-img', 
+                // Form data
+                data: form,//new FormData(files[i]),
+
+                // Tell jQuery not to process data or worry about content-type
+                // You *must* include these options!
+                cache: false,
+                contentType: false,
+                processData: false,
+            })
+        }
+
+        // Préremplis les preview d'image
+        var file_list = [];
+        `<% for (var i =0; i< img.length; i++) { %>`
+            file_list.push('<%= img[i] %>');
+        `<% } %>`;
+        for (var i=0; i<file_list.length; i++) {
+            $('.img-preview').append(`<img src="/img/${file_list[i]}" img-name='${file_list[i]}'></img>`)
+        }
+
+        // Actualise le cadre de preview d'images
+        $('.images input').change(function () {
+            var files = $(this).prop('files');
+            file_list.push(files[0]);
+            if (files.length) {
+                for (var i=0; i<files.length; i++) {
+                    if (validFileType(files[i])) {
+                        addImgPreview(files[i]);
+                    }
+                }
+            }
+        });
+
+        // Actualise le cadre de preview d'images
+        $('.images #clear').click(function () {
+            $('.images .img-preview').empty();
+            file_list = [];
+        })
+
+        // Ajouter un produit
+        $('form[action="/admin-edit-product"]').submit(function () {
+            var name = $('input[name="name"]');
+            var description = $('textarea[name="description"]');
+            var price = $('input[name="price"]');
+            var size = $('select[name="size"]');
+            var printing = $('input[name="printing"]');
+            var category = $('input[name="category"]:checked');
+            var regexPrice = new RegExp("\\d.\\d");
+
+            // On check les erreurs et on ajoute la classe en consequant
+            if (!name.val()) {
+                name.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            } else {
+                name.removeClass('is-invalid').addClass('is-valid');
+            }
+            if (!description.val()) {
+                description.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            } else {
+                description.removeClass('is-invalid').addClass('is-valid');
+            }
+            if (!price.val()) {
+                price.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            } else if (!price.val().match(regexPrice)) {
+                price.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            }
+            else {
+                price.removeClass('is-invalid').addClass('is-valid');
+            }
+            if (!printing.val()) {
+                printing.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            }
+            else {
+                printing.removeClass('is-invalid').addClass('is-valid');
+            }
+
+            uploadImgFiles(file_list) // On upload les images sur le serveur en parallèle
+
+            $.post("/admin-edit-product", {
+                id: <%= id %>,
+                images: JSON.stringify(getImgList()),
+                name: $('input[name="name"]').val(),
+                description: $('textarea[name="description"]').val(),
+                price: $('input[name="price"]').val(),
+                size: $('select[name="size"]').val(),
+                printing: $('input[name="printing"]').val(),
+                category: $('input[name="category"]:checked').val()
+            })
+            .done( function (data) {
+                if (data == "badInfos") {
+                }
+                else {
+                    location.assign('/admin-products-list');
+                }
+            });
+            return false; // on execute pas le submit normal
+         
+        });
+
+    </script>
+
+</html>

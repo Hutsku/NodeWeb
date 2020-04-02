@@ -32,7 +32,8 @@
                     <div class="product col-md-6 p-5">
                         <div class="product-img text-center">
                             <a class="product-img" href="/product/<%= products[i].id %>">
-                                <img class="w-100" src="/img/img<%= products[i].id %>-1.jpg">
+                                <% var img_path = products[i].img[0] %>
+                                <img class="w-100" src="/img/<%= img_path %>">
                             </a>
                         </div>
                         <div class="product-name p-2">

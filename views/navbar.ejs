@@ -19,6 +19,11 @@
     <!-- Navbar content -->
     <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav ml-auto">
+            <% if (session.admin) { %>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-products-list">Gestion des articles <i class="fa fa-cog"></i></a>
+                </li>
+            <% } %>
             <li class="nav-item">
                 <a class="nav-link" href="#">À propos</a>
             </li>
@@ -79,7 +84,7 @@
                                 var cart_qty = parseInt(session.cart.products[i].cart_qty);
                                 price_total += price_product * cart_qty; %>
                                 <div class="cart-product row align-items-center" product_id="<%= session.cart.products[i].id %>"> 
-                                    <img class="p-2 col-3" src="/img/img<%= session.cart.products[i].id %>-1.jpg">
+                                    <img class="p-2 col-3" src="/img/<%= session.cart.products[i].img %>">
                                     <div class="col">
                                         <a href="/product/<%= session.cart.products[i].id %>" class="cart-product-name">
                                             <%= session.cart.products[i].name %>
@@ -165,6 +170,25 @@
             var quote = "Vos commande a bien été prise en compte";
             var quoteTitle = 'Commande validée !';
             break;
+
+        case 'remove product':
+            var type = 'danger';
+            var quote = "Le produit a bien été supprimé de la liste";
+            var quoteTitle = 'Produit supprimé';
+            break;
+
+        case 'add product':
+            var type = 'success';
+            var quote = "Le produit a bien été ajouté à la liste";
+            var quoteTitle = 'Produit ajouté';
+            break;
+
+        case 'edit product':
+            var type = 'secondary';
+            var quote = "Le produit a bien été modifié";
+            var quoteTitle = 'Produit modifié';
+            break;
+
         } %>
         <div class="notif-container row w-100 justify-content-center">
             <div class="alert alert-<%= type %> alert-dismissible fade show col-8" role="alert">
@@ -176,7 +200,7 @@
         </div>
 <% } %>
 
-<!-- MODAL -->
+<!-- MODAL CONNEXION -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">

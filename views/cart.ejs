@@ -35,7 +35,7 @@
                                 var cart_qty = parseInt(session.cart.products[i].cart_qty); %>
                                 <div class="cart-product row align-items-center" product_id="<%= session.cart.products[i].id %>">
                                 	<div class="cart-product-img p-2 col-3">
-                                		<img class="w-100" src="/img/img<%= session.cart.products[i].id %>-1.jpg">
+                                		<img class="w-100" src="/img/<%= session.cart.products[i].img %>">
                                 	</div>
                                 	<div class="cart-product-name col-md-5 col">
                                 		<a href="/product/<%= session.cart.products[i].id %>"><%= session.cart.products[i].name %></a>
