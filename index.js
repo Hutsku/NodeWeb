@@ -628,7 +628,7 @@ app.get('/', function(req, res) {
 .post('/valid-shipping', urlencodedParser, function(req, res) {
     // valide et enregistre les paramètre de livraison
     req.session.cart.shipping_method = req.body.shippingMethod;
-    req.session.cart.shipping_cost = '6.00'; // par défaut on met la livraison à 6€
+    req.session.cart.shipping_cost = '4.95'; // par défaut on met la livraison à 4.95€
 
     var shippingAddressValue = req.body.shippingAddress;
 

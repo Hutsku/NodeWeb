@@ -1,0 +1,30 @@
+footer {
+	background-color: black;
+	height: 200px;
+}
+
+.media-link {
+	
+}
+
+.media-link i {
+	font-size: 30px;
+	color: white;
+	border: 2px solid white;
+	border-radius: 50%;
+	padding: 15px;
+
+	transition: 0.3s;
+}
+
+.media-link i:hover {
+	border-radius: 40%;
+}
+
+.contact a {
+	color: white;
+	text-decoration: none;
+}
+.contact #author {
+	font-weight: 600;
+}

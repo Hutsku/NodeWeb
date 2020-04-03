@@ -74,7 +74,7 @@
     			<!---------------------------------------------------------------------->
 
                 <% if (session.cart) {
-                    var shipping_price = 6.00;
+                    var shipping_price = 4.95;
                     price_total = price_total;
                     var price_final = (price_total+shipping_price).toFixed(2);
                 } else {
@@ -136,6 +136,9 @@
 	    		</div>-->
 	    	</div>
         </main>
+        <footer>
+            <% include footer %>
+        </footer>
     </body>
 
 	<script src="scripts/bootstrap-input-spinner/src/bootstrap-input-spinner.js"></script>
@@ -247,6 +250,7 @@
                     name: product.find('.cart-product-name a').text(),
                     price: product.find('.cart-product-price').attr('product_price'),
                     cart_qty: product.find('.cart-product-qty input').val(),
+                    img: product.find('img').attr('src').split('/')[2],
                 });
             });
 
