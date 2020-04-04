@@ -111,7 +111,9 @@
 
         // Upload la liste des images sur le serveur
         function uploadImgFiles(files) {
-            var form = new FormData()
+            var form = new FormData();
+            console.log("try upload new files");
+            console.log(files);
             for (var i=0; i<files.length; i++) {
                 form.append('file', files[i])
             }
