@@ -147,6 +147,45 @@
 
         // Ajouter un produit
         $('form[action="/admin-add-product"]').submit(function () {
+            var name = $('input[name="name"]');
+            var description = $('textarea[name="description"]');
+            var price = $('input[name="price"]');
+            var size = $('select[name="size"]');
+            var printing = $('input[name="printing"]');
+            var category = $('input[name="category"]:checked');
+            var regexPrice = new RegExp("\\d.\\d");
+
+            // On check les erreurs et on ajoute la classe en consequant
+            if (!name.val()) {
+                name.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            } else {
+                name.removeClass('is-invalid').addClass('is-valid');
+            }
+            if (!description.val()) {
+                description.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            } else {
+                description.removeClass('is-invalid').addClass('is-valid');
+            }
+            if (!price.val()) {
+                price.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            } else if (!price.val().match(regexPrice)) {
+                price.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            }
+            else {
+                price.removeClass('is-invalid').addClass('is-valid');
+            }
+            if (!printing.val()) {
+                printing.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            }
+            else {
+                printing.removeClass('is-invalid').addClass('is-valid');
+            }
+            
             uploadImgFiles(file_list) // On upload les images sur le serveur en parallèle
 
             $.post("/admin-add-product", {
