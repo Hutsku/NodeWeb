@@ -16,7 +16,13 @@ var storage = multer.diskStorage({
     cb(null, file.originalname)
   }
 })
-var upload = multer({storage: storage})
+var upload = multer({
+    storage: storage,
+    onError : function(err, next) {
+        console.log('error', err);
+        next(err);
+    }
+})
 
 // Set your secret key. Remember to switch to your live secret key in production!
 // See your keys here: https://dashboard.stripe.com/account/apikeys
