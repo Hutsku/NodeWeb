@@ -22,7 +22,7 @@ var upload = multer({
         console.log('error', err);
         next(err);
     }
-})
+}).any();
 
 // Set your secret key. Remember to switch to your live secret key in production!
 // See your keys here: https://dashboard.stripe.com/account/apikeys
@@ -502,10 +502,17 @@ app.get('/', function(req, res) {
     }
 })
 
-.post('/upload-img', upload.any(), function(req, res) {
-    console.log('files uploaded: ');
-    console.log(req.files);
-    res.send('back');
+.post('/upload-img', urlencodedParser, function(req, res) {
+    console.log("uploading file")
+    upload(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+            console.log(err)
+        } else if (err) {
+            console.log(err)
+        }
+
+        console.log('uploaded')
+    });
 })
 
 // ----------------------- PAYOUT OPTION  ---------------------------
