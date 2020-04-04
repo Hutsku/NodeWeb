@@ -916,4 +916,4 @@ app.use(function(req, res, next){
 });
 
 // On ouvre le serveur sur le port 8080 (80 pour les vrais serv)
-app.listen(8080, '192.168.1.18');
+app.listen(8080, 'localhost');
