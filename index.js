@@ -46,7 +46,7 @@ app.use(session({
             client: client,
             ttl: 260
         }),*/
-        cookie: { maxAge: 10*60*1000 }, // in millisecond
+        cookie: { maxAge: 30*60*1000 }, // in millisecond
         resave: false,
         saveUninitialized: false
     })
