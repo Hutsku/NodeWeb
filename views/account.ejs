@@ -14,7 +14,7 @@
  
     <body>
     	<header>
-            <% include navbar %>
+            <%- include('navbar') %>
         </header>
 
         <main class="bg-light pt-5 mt-3">
@@ -47,31 +47,31 @@
     			<div class="account-right col-md-9 mt-3 pl-md-4 p-0">
     				<% switch (link) {
     					case "overview": %>
-	    					<%- include account-overview %>
+	    					<%- include('account-overview') %>
 	    					<% break;
 	    					case "infos": %>
-	    					<%- include account-infos %>
+	    					<%- include('account-infos') %>
 	    					<% break;
     					case "order": %>
-	    					<%- include account-order %>
+	    					<%- include('account-order') %>
 	    					<% break;
     					case "adress": %>
-	    					<%- include account-adress %>
+	    					<%- include('account-adress') %>
 	    					<% break;
     					case "password": %>
-	    					<%- include account-password %>
+	    					<%- include('account-password') %>
 	    					<% break;
     					case "newsletter": %>
-	    					<%- include account-newsletter %>
+	    					<%- include('account-newsletter') %>
 	    					<% break;
 	    				default: %>
-	    					<%- include account-overview %>
+	    					<%- include('account-overview') %>
 	    			<% } %>
     			</div>
 	    	</div>
         </main>
         <footer>
-            <% include footer %>
+            <%- include('footer') %>
         </footer>
     </body>
     
