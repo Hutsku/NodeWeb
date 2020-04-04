@@ -21,10 +21,10 @@ footer {
 	border-radius: 40%;
 }
 
-.contact a {
+#author a, #contact span {
 	color: white;
 	text-decoration: none;
 }
-.contact #author {
+#author  span{
 	font-weight: 600;
 }
