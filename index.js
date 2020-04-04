@@ -451,7 +451,6 @@ app.get('/', function(req, res) {
         var category = req.body.category;
         var img_list = req.body.images;
 
-        console.log(img_list)
         var addProduct = `INSERT INTO products (name, description, price, size, printing, category, images) 
             VALUES ("${name}", "${description}", "${price}", "${size}", "${printing}", "${category}", '${img_list}')`;  
         connection.query(addProduct, function(err, rows, fields) {
@@ -481,7 +480,6 @@ app.get('/', function(req, res) {
         var category = req.body.category;
         var img_list = req.body.images;
 
-        console.log(img_list)
         var addProduct = `UPDATE products SET name = '${name}', description = '${description}', price = '${price}', 
             size = '${size}', printing = '${printing}', category = '${category}', images = '${img_list}' WHERE products.id = '${id}'`;  
         connection.query(addProduct, function(err, rows, fields) {
@@ -498,6 +496,8 @@ app.get('/', function(req, res) {
 })
 
 .post('/upload-img', upload.any(), function(req, res) {
+    console.log('files uploaded: ');
+    console.log(req.files);
     res.send('back');
 })
 
