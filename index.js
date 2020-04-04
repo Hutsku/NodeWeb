@@ -1,5 +1,6 @@
 
 // Variables d'initalisation de Node
+const path = require('path');
 var express = require('express');
 var session = require('express-session');
 var bodyParser = require("body-parser");
@@ -9,7 +10,7 @@ var bcrypt = require('bcryptjs');
 var multer  = require('multer')
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './public/img')
+    cb(null, path.resolve(__dirname, './public/img/'))
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname)
