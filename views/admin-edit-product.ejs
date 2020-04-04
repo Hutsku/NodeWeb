@@ -128,7 +128,13 @@
                 // You *must* include these options!
                 cache: false,
                 contentType: false,
-                processData: false,
+                processData: false,                
+                success: function() {
+                    console.log('success')       
+                },
+                error: function() {
+                    console.log('error')                  
+                },
             })
         }
 
