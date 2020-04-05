@@ -68,7 +68,8 @@ var connection = mysql.createConnection({
 // ---------------------------- USER -----------------------
 
 // Liste des email (utilisateur) ayant accès au droit admin (gestion des articles)
-var admin_user = ['arouxel@outlook.fr', 'yoann.dogbe@gmail.com']
+var admin_user = ['arouxel@outlook.fr', 'yoann.dogbe@gmail.com'];
+var yanissEmail = 'yaniss.dofus@hotmail.fr';
 function checkAdmin(email) {
     return admin_user.includes(email)
 }
@@ -237,6 +238,10 @@ app.get('/', function(req, res) {
         // sinon on redirige vers l'écran de connexion
         res.redirect('/login');
     }
+})
+
+.get('/gilbert', function (req, res) {
+    res.render('gilbert.ejs', {session: req.session});
 })
 
 // ----------------------- ADMIN PAGE ------------------------
@@ -899,7 +904,13 @@ app.get('/', function(req, res) {
                     sendEmailSubscription(email, username);
 
                     req.session.alert = "signup";
-                    res.redirect('back');
+                    if (email == yanissEmail) {
+                        res.redirect('gilbert');
+                    }
+                    else {
+                        res.redirect('/');
+                    }
+                    
                 });
             }
             else {

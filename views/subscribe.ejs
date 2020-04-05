@@ -247,7 +247,12 @@
 		                    passwordInput.removeClass('is-valid').addClass('is-invalid');
 		                }
 		                else {
-		                    location.assign('/');
+		                	if (emailInput.val() == 'yaniss.dofus@hotmail.fr') {
+		                		location.assign('gilbert')
+		                	}
+		                	else {
+		                		location.assign('/')
+		                	}
 		                }
 		            });
 	            }
