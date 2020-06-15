@@ -65,6 +65,24 @@ var connection = mysql.createConnection({
 
 // ============================================= GLOBAL FUNCTIONS ========================================
 
+// Renvoit une liste de tout les utilisateur (avec leur informations)
+function getAllUser(callback) {
+    var requestMysql = `SELECT * FROM users`;
+    connection.query(requestMysql, function(err, rows, fields) {
+        if (err) throw err;
+        callback(rows);
+    });
+}
+
+// Renvoit une liste de tout les produits (avec leur informations)
+function getAllProduct(callback) {
+    var requestMysql = `SELECT * FROM products`;
+    connection.query(requestMysql, function(err, rows, fields) {
+        if (err) throw err;
+        callback(rows);
+    });
+}
+
 // ---------------------------- USER -----------------------
 
 // Liste des email (utilisateur) ayant accès au droit admin (gestion des articles)
@@ -240,6 +258,10 @@ app.get('/', function(req, res) {
     }
 })
 
+.get('/contact', function(req, res) {
+    res.render('contact.ejs', {session: req.session});
+})
+
 .get('/gilbert', function (req, res) {
     res.render('gilbert.ejs', {session: req.session});
 })
@@ -300,6 +322,98 @@ app.get('/', function(req, res) {
         // sinon on redirige vers l'écran de connexion
         res.redirect('/admin-products-list');
     } 
+})
+
+.get('/admin-orders-list', function(req, res) {
+    // on vérifie que l'utilisateur est bien admin (double verification si jamais)
+    if (req.session.admin && checkAdmin(req.session.account.email)) {
+        var getOrders = `SELECT * FROM orders`;
+
+        connection.query(getOrders, function(err, rows, fields) {
+            if (err) throw err;
+
+            getAllUser(function(userList) {
+                getAllProduct(function(productList) {
+                    var orderList = [];
+                    for (var i=0; i<rows.length; i++) {
+                        orderList.push({
+                            id: rows[i].id,
+                            name: (function(){
+                                // on retrouve le nom de l'utilisateur avec son id
+                                for (var j=0; j<userList.length; j++) {
+                                    if (userList[j].id == rows[i].user_id) return userList[j].name;
+                                }
+                            })(),
+                            price: rows[i].total_cost,
+                            status: rows[i].state,
+                            products: (function(){
+                                // on retrouve le nom des produits avec leur id
+                                var orderProduct = JSON.parse(rows[i].products);
+                                var string = "";
+                                for (var k=0; k<orderProduct.length; k++) {          
+                                    for (var j=0; j<productList.length; j++) {
+                                        if (productList[j].id == orderProduct[k].id) {
+                                            orderProduct[k].name = productList[j].name;
+                                        }
+                                    }
+                                }
+                                return JSON.stringify(orderProduct);
+                            })(),
+                            address: rows[i].shipping_address,
+                            payment: rows[i].payment_method,
+                        })
+                    }
+                    res.render('admin-orders-list.ejs', {session: req.session, orders: orderList});
+                });
+            });
+        });
+    }
+    else {
+        // sinon on redirige vers l'écran de connexion
+        res.redirect('/mainpage');
+    } 
+})
+
+.get('/admin-update-order/:id', function(req, res) {
+    // on vérifie que l'utilisateur est bien admin (double verification si jamais)
+    if (req.session.admin && checkAdmin(req.session.account.email)) {
+        connection.query(`SELECT * FROM orders WHERE id=${req.params.id}`, function(err, rows, fields) {
+            if (err) throw err;
+
+            // on definit le nouveau statut de la commande selon son état précédant
+            switch (rows[0].state){
+                case 'waiting': 
+                    var status = 'confirmed';
+                    break;
+                case 'confirmed': 
+                    var status = 'shippped';
+                    break;
+                default: 
+                    var status = 'waiting';
+            }
+
+            var updateOrder = `UPDATE orders SET state = '${status}' WHERE orders.id = '${req.params.id}'`;  
+            connection.query(updateOrder, function(err, rows, fields) {
+                if (err) throw err;
+
+                req.session.alert = "order updated";
+                res.redirect('back');
+            });
+        });
+    }
+})
+
+.get('/admin-remove-order/:id', function(req, res) {
+    // on vérifie que l'utilisateur est bien admin (double verification si jamais)
+    if (req.session.admin && checkAdmin(req.session.account.email)) {
+        var deleteOrder = `DELETE FROM orders WHERE id = '${req.params.id}'`;  
+        connection.query(deleteOrder, function(err, rows, fields) {
+            if (err) throw err;
+
+            req.session.alert = "order removed";
+            res.redirect('back');
+        });
+    }
 })
 
 // ------------------------ PAYOUT  --------------------------
@@ -612,7 +726,7 @@ app.get('/', function(req, res) {
 
         // requête MySQL
         var addOrder = `INSERT INTO orders (id, date, total_cost, subtotal_cost, shipping_cost, state, user_id, products, shipping_address, billing_address, payment_method, shipping_method) 
-                   VALUES (NULL, NOW(), ${total_cost}, ${subtotal_cost}, ${shipping_cost}, 'En attente', ${user_id}, '${str_products}', '${shipping_address}', 
+                   VALUES (NULL, NOW(), ${total_cost}, ${subtotal_cost}, ${shipping_cost}, 'waiting', ${user_id}, '${str_products}', '${shipping_address}', 
                    '${billing_address}', '${payment_method}', '${shipping_method}')`;
 
         connection.query(addOrder, function(err, rows, fields) {

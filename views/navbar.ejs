@@ -11,21 +11,25 @@
         <img class="" src="/img/logo2.png">
     </a>
 
+    <!--
     <form class="form-inline my-2 mw-100 d-none d-md-block" id="searchForm">
         <button class="btn color-white fas fa-search" type="submit"></button>
         <input class="" type="search" placeholder="Search" aria-label="Search" action="/search" method="POST">
-    </form>
+    </form>-->
 
     <!-- Navbar content -->
     <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav ml-auto">
             <% if (session.admin) { %>
                 <li class="nav-item">
+                    <a class="nav-link" href="/admin-orders-list">Gestion des commandes <i class="fa fa-cog"></i></a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/admin-products-list">Gestion des articles <i class="fa fa-cog"></i></a>
                 </li>
             <% } %>
             <li class="nav-item">
-                <a class="nav-link" href="#">À propos</a>
+                <a class="nav-link" href="/contact">À propos</a>
             </li>
             <!-- VISIBLE EN MOBILE UNIQUEMENT -->
             <% if (session.logged) { %>
@@ -184,6 +188,18 @@
             var type = 'secondary';
             var quote = "Le produit a bien été modifié";
             var quoteTitle = 'Produit modifié';
+            break;
+
+        case 'order updated':
+            var type = 'info';
+            var quote = "la commande a bien été mise à jour";
+            var quoteTitle = 'Commande mise à jour';
+            break;
+
+        case 'order removed':
+            var type = 'danger';
+            var quote = "La commande a bien été supprimée de la BDD";
+            var quoteTitle = 'Commande supprimée';
             break;
 
         } %>

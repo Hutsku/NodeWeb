@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Import CSS Bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- Import custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/style-navbar.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-payment-success.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-contact.css">
+        <title>YDOGBE</title>
+    </head>
+ 
+    <body>
+    	<header>
+            <%- include('navbar') %>
+        </header>
+
+        <main class="bg-light pt-5 mt-3">
+            <div class="contact-content container-fluid m-0">
+                <div class="row image-success bg-light m-0 justify-content-md-center">
+                    <img class="col-md-5" src="/img/logo1.png">
+                </div>
+                <div class="row recap mb-3">
+                    <span class="col"><b>Ydogbe</b> est un collectif centré sur la vente et la distribution de design exclusifs de <b>Yoann Dogbe</b>. Ces derniers peuvent prendre la forme d'affiches fictifs de film ou humoristique ou bien des collections de vêtements créées autour d'un thème commun.</span>
+                </div>
+                <div class="pb-2">
+                    <span class="title"> Membre du projet </span>
+                    <ul>
+                        <li> <b>Design et concept</b> :  Yoann Dogbe</li>
+                        <li> <b>Conception du site</b> :  Armel Rouxel</li>
+                    </ul>
+                </div>
+                <div class="pb-2">
+                    <span class="title"> Contact </span>
+                    <span class="row col"> Pour toute demande relative à l'achat d'un produit (remboursement, information, etc) veuillez envoyer un email à <span class="email">yoann.dogbe@gmail.com</span></span>
+                    <span class="row col"> Pour toute question technique ou rapport de bug sur le site, veuillez envoyer un email à <span class="email">arouxel@outlook.com</span></span>
+                </div>
+            </div>
+    		<!--<div class="contact-content container-fluid row m-0 ">
+                <div class="row logo bg-light m-0 justify-content-md-center">
+                    <img class="col-md-5" src="/img/logo1.png">
+                </div>
+                <div class="row recap px-3">
+                    <span> <b>Ydogbe</b> est un collectif centré sur la vente et la distribution de design exclusifs de <b>Yoann Dogbe</b>. Ces derniers peuvent prendre la forme d'affiches fictifs de film ou humoristique ou bien des collections de vêtements créées autour d'un thème commun.</span>
+                </div>
+                <div class="row text-center">
+                    <span class="col"> Membre du projet </span><br/>
+                </div>
+                <div class="row text-center">
+                    <span class="col"> Contact </span>
+                </div>
+	    	</div>-->
+        </main>
+        <footer>
+            <%- include('footer') %>
+        </footer>
+    </body>
+    
+    <script type="text/javascript">
+    </script>
+
+</html>

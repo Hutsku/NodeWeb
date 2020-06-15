@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Import CSS Bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- Import custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/style-account.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-admin.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-navbar.css">
+        <title>YDOGBE</title>
+    </head>
+ 
+    <body>
+        <header>
+            <%- include('navbar') %>
+        </header>
+
+        <main class="bg-light pt-5 mt-3">
+            <div class="orders-list-content container-fluid p-4">
+                <div class="table-order text-center w-100">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th class="p-1" scope="col">Utilisateur</th>
+                                <th class="p-1" scope="col">Montant</th>
+                                <th class="p-1" scope="col">Statut</th>
+                                <th class="p-1" scope="col">Produits</th>
+                                <th class="p-1" scope="col">Adresse</th>
+                                <th class="p-1" scope="col">Détail</th>
+                                <th class="p-1" scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (var i=0; i< orders.length; i++) { 
+                                switch (orders[i].status) {
+                                    case "waiting":
+                                        var color = "orange";
+                                        var text = "En attente";
+                                        var button = "Confirmer";
+                                        break;
+                                    case "confirmed":
+                                        var color = "green";
+                                        var text = "En préparation";
+                                        var button = "Envoyer";
+                                        break;
+                                    case "shipped":
+                                        var color = "blue";
+                                        var text = "Envoyée";
+                                        var button = "";
+                                        break;
+                                } %>
+                                <tr>
+                                    <td><%= orders[i].name %></td>
+                                    <td><%= orders[i].price %>€</td>
+                                    
+                                    <td style="color:<%= color %>;"><%= text %></td>
+                                    <td>
+                                        <% var products = JSON.parse(orders[i].products);
+                                        for (var j=0; j< products.length; j++) { %>
+                                            <p><%= products[j].name %> x<%= products[j].nb %></p>
+                                        <% } %>
+                                    </td>
+                                    <td><%= orders[i].address %></td>
+                                    <td><a href="/order-detail">Voir plus de détail</a></td>
+                                    <td>
+                                        <% if (orders[i].status != "shipped") { %>
+                                        <a class="btn btn-secondary mb-2 w-100" href="/admin-update-order/<%= orders[i].id %>" name="update"><%= button %></a> <% } %>
+                                        <a class="btn btn-danger w-100" href="/admin-remove-order/<%= orders[i].id %>">Supprimer</button>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                    <!--<a class="btn btn-success mt-3" href="/admin-add-product" name="add">Ajouter un produit</a>-->
+                </div>
+            </div>
+        </main>
+        <footer>
+            <%- include('footer') %>
+        </footer>
+    </body>
+    
+    <script type="text/javascript">
+    </script>
+
+</html>

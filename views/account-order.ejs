@@ -16,11 +16,25 @@
 			</tr>
 		</thead>
 		<tbody>
-			<% for (var i=0; i< orders.length; i++) { %>
+			<% for (var i=0; i< orders.length; i++) { 
+				switch (orders[i].state) {
+                    case "waiting":
+                        var color = "orange";
+                        var text = "En attente";
+                        break;
+                    case "confirmed":
+                        var color = "green";
+                        var text = "En préparation";
+                        break;
+                    case "shipped":
+                        var color = "blue";
+                        var text = "Envoyée";
+                        break;
+                } %>
 				<tr>
 					<td><a href="#"><%= orders[i].id %></a></td>
 					<td><%= orders[i].total_cost %>€</td>
-					<td style="color: orange;"><%= orders[i].state %></td>
+					<td style="color: <%= color %>;"><%= text %></td>
 					<td><%= orders[i].date.getDay()+"/"+orders[i].date.getMonth()+"/"+orders[i].date.getFullYear() %></td>
 					<td><%= orders[i].payment_method %></td>
 				</tr>

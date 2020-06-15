@@ -1,0 +1,14 @@
+.title {
+	display: inline-block;
+
+	font-weight: 700;
+	font-size: 17px;
+	margin-bottom: 10px;
+	width:100%;
+	/*margin-top: 15px;*/
+}
+ 
+.email {
+	font-weight: 700;
+	margin-left: 4px;
+}

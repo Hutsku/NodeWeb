@@ -1,0 +1,9 @@
+login ssh server: 
+(cmd) ssh armel@ydogbe.store / ssh root@ydogbe.store
+
+run server:
+npm start
+ou pw2 start
+
+maj github code:
+(server) sudo git pull
