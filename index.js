@@ -205,6 +205,34 @@ app.get('/', function(req, res) {
     }); 
 })
 
+.get('/order-detail/:id', function(req, res) {
+    var getOrder = `SELECT * FROM orders WHERE id=${req.params.id}`;
+    connection.query(getOrder, function(err, rows, fields) {
+        if (err) throw err;
+        order = rows[0];
+
+        // On verifie que l'utilisateur est connecté et que la commande existe
+        if (order && req.session.logged) {
+            // on vérifie que l'utilisateur est bien admin ou que la commande appartient bien au client
+            if ((req.session.admin && checkAdmin(req.session.account.email)) || req.session.account.id == order.user_id) {
+                console.log(order.products)
+                res.render('order-detail.ejs', {
+                    order: order,
+                    session: req.session
+                });
+            }
+            else {
+                // sinon on recharge la page
+                res.redirect('back');
+            }
+        }
+        else {
+            // sinon on recharge la page
+            res.redirect('back');
+        }
+    });
+})
+
 .get('/cart', function(req, res) {
     res.render('cart.ejs', {session: req.session});
 })
@@ -333,38 +361,24 @@ app.get('/', function(req, res) {
             if (err) throw err;
 
             getAllUser(function(userList) {
-                getAllProduct(function(productList) {
-                    var orderList = [];
-                    for (var i=0; i<rows.length; i++) {
-                        orderList.push({
-                            id: rows[i].id,
-                            name: (function(){
-                                // on retrouve le nom de l'utilisateur avec son id
-                                for (var j=0; j<userList.length; j++) {
-                                    if (userList[j].id == rows[i].user_id) return userList[j].name;
-                                }
-                            })(),
-                            price: rows[i].total_cost,
-                            status: rows[i].state,
-                            products: (function(){
-                                // on retrouve le nom des produits avec leur id
-                                var orderProduct = JSON.parse(rows[i].products);
-                                var string = "";
-                                for (var k=0; k<orderProduct.length; k++) {          
-                                    for (var j=0; j<productList.length; j++) {
-                                        if (productList[j].id == orderProduct[k].id) {
-                                            orderProduct[k].name = productList[j].name;
-                                        }
-                                    }
-                                }
-                                return JSON.stringify(orderProduct);
-                            })(),
-                            address: rows[i].shipping_address,
-                            payment: rows[i].payment_method,
-                        })
-                    }
-                    res.render('admin-orders-list.ejs', {session: req.session, orders: orderList});
-                });
+                var orderList = [];
+                for (var i=0; i<rows.length; i++) {
+                    orderList.push({
+                        id: rows[i].id,
+                        name: (function(){
+                            // on retrouve le nom de l'utilisateur avec son id
+                            for (var j=0; j<userList.length; j++) {
+                                if (userList[j].id == rows[i].user_id) return userList[j].name;
+                            }
+                        })(),
+                        price: rows[i].total_cost,
+                        status: rows[i].state,
+                        products: rows[i].products,
+                        address: rows[i].shipping_address,
+                        payment: rows[i].payment_method,
+                    })
+                }
+                res.render('admin-orders-list.ejs', {session: req.session, orders: orderList});
             });
         });
     }
@@ -702,7 +716,9 @@ app.get('/', function(req, res) {
     for (var i=0; i<req.session.cart.products.length; i++) {
         products_obj.push({
             id: parseInt(req.session.cart.products[i].id),
+            name: req.session.cart.products[i].name,
             nb: parseInt(req.session.cart.products[i].cart_qty),
+            price: parseInt(req.session.cart.products[i].cart_qty * req.session.cart.products[i].price)
         })
     }
     var str_products = JSON.stringify(products_obj);
@@ -1039,6 +1055,7 @@ app.get('/', function(req, res) {
 .post('/logout', urlencodedParser, function(req, res) {
     req.session.username = '';
     req.session.logged = false;
+    req.session.admin = false;
     res.redirect('/');
 })
 

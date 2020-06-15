@@ -64,7 +64,7 @@
                                         <% } %>
                                     </td>
                                     <td><%= orders[i].address %></td>
-                                    <td><a href="/order-detail">Voir plus de détail</a></td>
+                                    <td><a href="/order-detail/<%= orders[i].id %>">Voir plus de détail</a></td>
                                     <td>
                                         <% if (orders[i].status != "shipped") { %>
                                         <a class="btn btn-secondary mb-2 w-100" href="/admin-update-order/<%= orders[i].id %>" name="update"><%= button %></a> <% } %>

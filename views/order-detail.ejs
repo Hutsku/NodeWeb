@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Import CSS Bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- Import custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/style-account.css">
+        <link rel="stylesheet" type="text/css" href="/css/style-navbar.css">
+        <title>YDOGBE</title>
+    </head>
+ 
+    <body>
+        <header>
+            <%- include('navbar') %>
+        </header>
+
+        <main class="bg-light pt-5 mt-3">
+            <div class="m-3"> 
+                <span href="#" class="link-title p-2 pl-4">
+                    Détail de la commande n°<%= order.id %>
+                </span>
+            </div>
+            <div class="order-detail container-fluid px-4">
+                <div class="products">
+                    <label class="title my-2"> Produits </label>
+                    <div class="table-order text-center">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="p-1" scope="col">Nom</th>
+                                    <th class="p-1" scope="col">Quantité</th>
+                                    <th class="p-1" scope="col">Prix TTC</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% var products = JSON.parse(order.products);
+                                for (var i=0; i< products.length; i++) { %>
+                                    <tr>
+                                        <td><a href="/product/<%= products[i].id %>"><%= products[i].name %></a></td>
+                                        <td><%= products[i].nb %></td>
+                                        <td><%= products[i].price %>€</td>
+                                    </tr>
+                                <% } %>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <span class="row col">Frais de port - <span class="info"> <%= order.shipping_cost %>€</span></span>
+                    <span class="row col">Montant total - <span class="info"> <%= order.total_cost %>€</span></span>
+                </div>
+                <div class="address">
+                    <label class="title my-2"> Adresse(s) </label>
+                    <span class="row col">Adresse de facturation - <span class="info"> <%= order.billing_address %></span></span>
+                    <span class="row col">Adresse de livraison - <span class="info"> <%= order.shipping_address %></span></span>
+                    <span class="row col">Moyen de paiement - <span class="info">  <%= order.shipping_method %></span></span>
+                </div>
+                <div class="detail">
+                    <label class="title my-2"> Détail </label>
+                    <span class="row col">Date de facturation - <span class="info"> <%= order.date %></span></span>
+                    <span class="row col">Statut - <span class="info"> <%= order.state %></span></span>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <%- include('footer') %>
+        </footer>
+    </body>

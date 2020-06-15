@@ -1,3 +1,15 @@
+.title {
+	display: block;
+
+	font-weight: 700;
+	font-size: 17px;
+	margin-bottom: 15px;
+}
+span.info {
+	color: grey;
+	margin-left: 4px;
+}
+
 div.account-content {
 	min-height: 100vh;
 }
