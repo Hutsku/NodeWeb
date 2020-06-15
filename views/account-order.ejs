@@ -35,7 +35,7 @@
 					<td><a href="/order-detail/<%= orders[i].id %>"><%= orders[i].id %></a></td>
 					<td><%= orders[i].total_cost %>€</td>
 					<td style="color: <%= color %>;"><%= text %></td>
-					<td><%= orders[i].date.getDay()+"/"+orders[i].date.getMonth()+"/"+orders[i].date.getFullYear() %></td>
+					<td><%= orders[i].date.getDate() %>/<%=orders[i].date.getMonth()+1%>/<%= orders[i].date.getFullYear() %></td>
 					<td><%= orders[i].payment_method %></td>
 				</tr>
 			<% } %>
