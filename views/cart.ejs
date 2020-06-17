@@ -90,22 +90,22 @@
 		    			</div>
 		    			<div class="w-100 border-bottom my-3"></div>
 		    			<div class="row py-3">
-		    				<span class="title col-5">SOUS-TOTAL</span>
+		    				<span class="title col-5">SOUS-TOTAL <span class="detail">(TTC)</span></span>
 		    				<span class="price price-sub-total"><%= price_total %>€</span>
 		    			</div>
 		    			<div class="row py-3">
-		    				<span class="title col-5">LIVRAISON</span>
+		    				<span class="title col-5">LIVRAISON <span class="detail">(estimée)</span></span>
 		    				<span class="price price-shipping"><%= shipping_price %>€</span>
 		    			</div>
 		    			<div class="w-100 border-bottom my-3"></div>
 		    			<div class="row pb-5">
-			    			<span class="title total col-5">TOTAL</span>
+			    			<span class="title total col-5">TOTAL <span class="detail">(TTC)</span></span>
 			    			<span class="price price-total"><%=  price_final %>€</span>
 			    		</div>
 			    		<div class="text-center">
                             <form action="/payout" method="post" class="">
     				    		<button class="w-100 btn btn-dark mb-3 payout-button <% if (!price_final) { %> disabled <% } %>" type="submit" name="add-cart">
-    		    					Passer au payement
+    		    					Passer au paiement
     		    				</button>
                             </form>
 		    				<a href="/mainpage" class="btn btn-light" role="button" name="add-cart">

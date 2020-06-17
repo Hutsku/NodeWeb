@@ -18,6 +18,12 @@
 .cart-payout .title {
 	font-size: 12px;
 	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.title .detail {
+	color: gray;
+	font-size: 11px;
 }
 .cart-payout .price {
 	font-size: 14px;

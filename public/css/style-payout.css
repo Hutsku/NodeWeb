@@ -104,8 +104,12 @@ div.payout-left .title {
 	font-size: 17px;
 	margin-bottom: 15px;
 }
+.title .detail {
+	font-size: 11px;
+	color: grey;
+}
 
-div.shipping-adress-new, div.paypal-payment, div.card-payment {
+div.shipping-address-new, div.billing-address-new, div.paypal-payment, div.card-payment {
 	background-color: #f8f9fa;
 }
 
@@ -113,7 +117,7 @@ img.payment-logo-paypal {
 	height: 20px;
 }
 img.payment-logo {
-	height: 15px;
+	height: 20px;
 }
 #card-errors {
 	font-size: 12px;

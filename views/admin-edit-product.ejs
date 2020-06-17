@@ -51,12 +51,7 @@
                     </div>
                     <div class="size">
                         <label class="title my-2"> Format </label>
-                        <select class="form-control col-md-3 col" name="size">
-                            <option>A4</option>
-                            <option selected>A3</option>
-                            <option>A2</option>
-                            <option>A1</option>
-                        </select>
+                        <input type="text" placeholder="A3" class="form-control col-md-3 col" name="size" value="<%= size %>">
                     </div>
                     <div class="printing">
                         <label class="title my-2"> Poids </label>
@@ -166,10 +161,10 @@
             var name = $('input[name="name"]');
             var description = $('textarea[name="description"]');
             var price = $('input[name="price"]');
-            var size = $('select[name="size"]');
+            var size = $('input[name="size"]');
             var printing = $('input[name="printing"]');
             var category = $('input[name="category"]:checked');
-            var regexPrice = new RegExp("\\d.\\d");
+            var regexPrice = new RegExp("^(\\d+[.]\\d{1,2})$");
 
             // On check les erreurs et on ajoute la classe en consequant
             if (!name.val()) {
@@ -194,6 +189,13 @@
             else {
                 price.removeClass('is-invalid').addClass('is-valid');
             }
+            if (!size.val()) {
+                size.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            }
+            else {
+                size.removeClass('is-invalid').addClass('is-valid');
+            }
             if (!printing.val()) {
                 printing.removeClass('is-valid').addClass('is-invalid');
                 return false;
@@ -207,12 +209,12 @@
             $.post("/admin-edit-product", {
                 id: <%= id %>,
                 images: JSON.stringify(getImgList()),
-                name: $('input[name="name"]').val(),
-                description: $('textarea[name="description"]').val(),
-                price: $('input[name="price"]').val(),
-                size: $('select[name="size"]').val(),
-                printing: $('input[name="printing"]').val(),
-                category: $('input[name="category"]:checked').val()
+                name: name.val(),
+                description: description.val(),
+                price: price.val(),
+                size: size.val(),
+                printing: printing.val(),
+                category: category.val()
             })
             .done( function (data) {
                 if (data == "badInfos") {

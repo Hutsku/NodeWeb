@@ -37,6 +37,9 @@ var mailjetSecretKeys = '9b4e9cabdf8f2c58ee2221d34a6d8bf0';
 const mailjet = require ('node-mailjet').connect(mailjetApi, mailjetSecretKeys)
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
+
+var timeCookieDefault = 30 // en minute
+var timeCookieStayConnected = 30*24*60 // durée de 30 jours
 app.use(session({ 
         name: "ydogbe",
         secret: 'keyboard cat', 
@@ -46,7 +49,7 @@ app.use(session({
             client: client,
             ttl: 260
         }),*/
-        cookie: { maxAge: 30*60*1000 }, // in millisecond
+        cookie: { maxAge: timeCookieDefault*60*1000 }, // in millisecond
         resave: false,
         saveUninitialized: false
     })
@@ -1032,6 +1035,7 @@ app.get('/', function(req, res) {
                     if (err) throw err;
                     // on envoit un email de confirmation
                     sendEmailSubscription(email, username);
+                    req.session.alert = "signup";
 
                     req.session.alert = "signup";
                     if (email == yanissEmail) {

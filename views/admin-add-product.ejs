@@ -36,28 +36,27 @@
                     </div>
                     <div class="name">
                         <label class="title my-2"> Nom </label>
-                        <input type="text" placeholder="Nom" class="form-control col-md-3 col" name="name">
+                        <input type="text" placeholder="Nom" class="form-control col-md-3 col" name="name" value="<%= name %>">
+                        <div class="invalid-feedback">Veuillez rentrer un nom</div>
                     </div>
                     <div class="description">
                         <label class="title my-2"> Description </label>
-                        <textarea class="form-control col-md-3 col" placeholder="Ajouter une description ici ..." rows="5" name="description"></textarea>
+                        <textarea class="form-control col-md-3 col" placeholder="Ajouter une description ici ..." rows="5" name="description"><%= description %></textarea>
+                        <div class="invalid-feedback">Veuillez rentrer une description</div>
                     </div>
                     <div class="price">
                         <label class="title my-2"> Price </label>
-                        <input type="text" placeholder="12.99" class="form-control col-md-3 col" name="price">
+                        <input type="text" placeholder="12.99" class="form-control col-md-3 col" name="price" value="<%= price %>">
+                        <div class="invalid-feedback">Veuillez rentrer un prix valide (ex: 12.99)</div>
                     </div>
                     <div class="size">
                         <label class="title my-2"> Format </label>
-                        <select class="form-control col-md-3 col" name="size">
-                            <option>A4</option>
-                            <option selected>A3</option>
-                            <option>A2</option>
-                            <option>A1</option>
-                        </select>
+                        <input type="text" placeholder="A3" class="form-control col-md-3 col" name="size" value="<%= size %>">
                     </div>
                     <div class="printing">
                         <label class="title my-2"> Poids </label>
-                        <input type="text" placeholder="250mg" class="form-control col-md-3 col" name="printing">
+                        <input type="text" placeholder="250mg" class="form-control col-md-3 col" name="printing" value="<%= printing %>">
+                        <div class="invalid-feedback">veuillez rentrer un poids</div>
                     </div>
                     <div class="category">
                         <label class="title my-2"> Categorie(s) </label>
@@ -146,14 +145,14 @@
         })
 
         // Ajouter un produit
-        $('form[action="/admin-add-product"]').submit(function () {
+        $('form[action="/admin-edit-product"]').submit(function () {
             var name = $('input[name="name"]');
             var description = $('textarea[name="description"]');
             var price = $('input[name="price"]');
-            var size = $('select[name="size"]');
+            var size = $('input[name="size"]');
             var printing = $('input[name="printing"]');
             var category = $('input[name="category"]:checked');
-            var regexPrice = new RegExp("\\d.\\d");
+            var regexPrice = new RegExp("^(\\d+[.]\\d{1,2})$");
 
             // On check les erreurs et on ajoute la classe en consequant
             if (!name.val()) {
@@ -178,6 +177,13 @@
             else {
                 price.removeClass('is-invalid').addClass('is-valid');
             }
+            if (!size.val()) {
+                size.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            }
+            else {
+                size.removeClass('is-invalid').addClass('is-valid');
+            }
             if (!printing.val()) {
                 printing.removeClass('is-valid').addClass('is-invalid');
                 return false;
@@ -185,17 +191,18 @@
             else {
                 printing.removeClass('is-invalid').addClass('is-valid');
             }
-            
+
             uploadImgFiles(file_list) // On upload les images sur le serveur en parallèle
 
             $.post("/admin-add-product", {
+                id: <%= id %>,
                 images: JSON.stringify(getImgList()),
-                name: $('input[name="name"]').val(),
-                description: $('textarea[name="description"]').val(),
-                price: $('input[name="price"]').val(),
-                size: $('select[name="size"]').val(),
-                printing: $('input[name="printing"]').val(),
-                category: $('input[name="category"]:checked').val()
+                name: name.val(),
+                description: description.val(),
+                price: price.val(),
+                size: size.val(),
+                printing: printing.val(),
+                category: category.val()
             })
             .done( function (data) {
                 if (data == "badInfos") {
