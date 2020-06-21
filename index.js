@@ -86,6 +86,12 @@ function getAllProduct(callback) {
     });
 }
 
+function safeQuote(string) {
+    string =  string.replace(`'`, `''`);
+    string =  string.replace(`"`, `""`);
+    return string;
+}
+
 // ---------------------------- USER -----------------------
 
 // Liste des email (utilisateur) ayant accès au droit admin (gestion des articles)
@@ -196,7 +202,7 @@ app.get('/', function(req, res) {
             id: product.id, 
             reference: product.id,
             name: product.name,
-            stocks: product.stocks,
+            available: product.available,
             price: product.price,
             description: product.description,
             size: product.size,
@@ -334,6 +340,7 @@ app.get('/', function(req, res) {
                 size: product.size,
                 printing: product.printing,
                 category: product.category,
+                available: product.available,
                 img: JSON.parse(product.images),
                 session: req.session});
             });
@@ -381,6 +388,7 @@ app.get('/', function(req, res) {
                         payment: rows[i].payment_method,
                     })
                 }
+
                 res.render('admin-orders-list.ejs', {session: req.session, orders: orderList});
             });
         });
@@ -586,16 +594,17 @@ app.get('/', function(req, res) {
     
     // on vérifie que l'utilisateur est bien admin (double verification si jamais)
     if (req.session.admin && checkAdmin(req.session.account.email)) {
-        var name = req.body.name;
-        var description = req.body.description;
+        var name = safeQuote(req.body.name);
+        var description = safeQuote(req.body.description);
         var price = req.body.price;
         var size = req.body.size;
         var printing = req.body.printing;
         var category = req.body.category;
+        var available = req.body.available;
         var img_list = req.body.images;
 
         var addProduct = `INSERT INTO products (name, description, price, size, printing, category, images) 
-            VALUES ("${name}", "${description}", "${price}", "${size}", "${printing}", "${category}", '${img_list}')`;  
+            VALUES ("${name}", "${description}", "${price}", "${size}", "${printing}", "${category}", "${available}", '${img_list}')`;  
         connection.query(addProduct, function(err, rows, fields) {
             if (err) throw err;
 
@@ -614,17 +623,20 @@ app.get('/', function(req, res) {
     
     // on vérifie que l'utilisateur est bien admin (double verification si jamais)
     if (req.session.admin && checkAdmin(req.session.account.email)) {
+
+
         var id = req.body.id;
-        var name = req.body.name;
-        var description = req.body.description;
+        var name = safeQuote(req.body.name);
+        var description = safeQuote(req.body.description);
         var price = req.body.price;
         var size = req.body.size;
         var printing = req.body.printing;
         var category = req.body.category;
+        var available = req.body.available;
         var img_list = req.body.images;
 
         var addProduct = `UPDATE products SET name = '${name}', description = '${description}', price = '${price}', 
-            size = '${size}', printing = '${printing}', category = '${category}', images = '${img_list}' WHERE products.id = '${id}'`;  
+            size = '${size}', printing = '${printing}', category = '${category}', available = '${available}', images = '${img_list}' WHERE products.id = '${id}'`;  
         connection.query(addProduct, function(err, rows, fields) {
             if (err) throw err;
 
@@ -708,11 +720,13 @@ app.get('/', function(req, res) {
 .post('/add-order', urlencodedParser, function(req, res) {
     // On recupère les infos
     var payment_method = req.body.payment_method
-    var billing_address = req.body.billing_address;
-    var shipping_address = req.session.cart.shipping_address.string;
+    var billing_address = safeQuote(req.body.billing_address);
+    var shipping_address = safeQuote(req.session.cart.shipping_address.string);
     var shipping_method = req.session.cart.shipping_method
     var shipping_cost = parseFloat(req.session.cart.shipping_cost);
     var user_id = req.session.account.id;
+
+    console.log(billing_address);
 
     // on refait une liste des produits simplifiée
     var products_obj = [];
@@ -753,7 +767,6 @@ app.get('/', function(req, res) {
 
             if (!rows.length) {
                 // on envoit un email de confirmation de commande
-                console.log(rows)
                 sendEmailCommand(req.session.account.email, req.session.account.name, 
                     {
                         products: req.session.cart.products,
@@ -864,15 +877,17 @@ app.get('/', function(req, res) {
 })
 
 .post('/edit-adress', urlencodedParser, function(req, res) {
-    console.log("change adress");
+    console.log("change address");
 
     var id = req.session.account.id;
-    var adress = req.body.adress;
-    var city = req.body.city;
-    var country = req.body.country;
+    var address1 = safeQuote(req.body.address1);
+    var address2 = safeQuote(req.body.address2);
+    var postal_code = req.body.postal_code;
+    var city = safeQuote(req.body.city);
+    var country = safeQuote(req.body.country);
 
     // On construit la requête et on l'envoit (avec check d'erreur)
-    var editUser = `UPDATE users SET adress = '${adress}', city = '${city}', country = '${country}' WHERE users.id = '${id}';`
+    var editUser = `UPDATE users SET address1 = "${address1}", address2 = "${address2}", city = "${city}", country = "${country}", address2 = "${address2}", postal_code = "${postal_code}" WHERE users.id = '${id}';`
 
     connection.query(editUser, function(err, rows, fields) {
         if (err) throw err;
@@ -881,12 +896,14 @@ app.get('/', function(req, res) {
         if (!rows.length) {
             // onmet à jour les cookies
             req.session.alert = "edit account";
-            req.session.account.adress = adress;
+            req.session.account.address1 = address1;
+            req.session.account.address2 = address2;
+            req.session.account.postal_code = postal_code;
             req.session.account.city = city;
             req.session.account.country = country;
 
             console.log("adress changed !");
-            res.send('ok'); // on recharge la page
+            res.send('back'); // on recharge la page
         }
         else {
             console.log("La modification a échoué");
@@ -899,7 +916,7 @@ app.get('/', function(req, res) {
 .post('/edit-infos', urlencodedParser, function(req, res) {
     console.log("change infos");
 
-    var name = req.body.name;
+    var name = safeQuote(req.body.name);
     var email = req.body.email;
     var tel = req.body.tel;
 
@@ -1000,13 +1017,13 @@ app.get('/', function(req, res) {
 })
 
 .post('/sign-up', urlencodedParser, function(req, res) {
-    var address1 = req.body.address1;
-    var address2 = req.body.address2;
-    var city = req.body.city;
+    var address1 = safeQuote(req.body.address1);
+    var address2 = safeQuote(req.body.address2);
+    var city = safeQuote(req.body.city);
     var postalCode = req.body.postalCode;
-    var country = req.body.country;
-    var state = req.body.state;
-	var username = req.body.name;
+    var country = safeQuote(req.body.country);
+    var state = safeQuote(req.body.state);
+	var username = safeQuote(req.body.name);
     var password = req.body.password;
     var newsletter = req.body.newsletter;
     var email = req.body.email;

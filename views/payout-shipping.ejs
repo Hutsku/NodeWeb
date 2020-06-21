@@ -210,12 +210,12 @@
 
             /* ----------------- Setting optionnal shipping address ------------ */
 
-            var shipping_city = '<%= user.city %>';
-            var shipping_country = '<%= user.country %>';
-            var shipping_address1 = '<%= user.address1 %>';
-            var shipping_address2 = '<%= user.address2 %>';
-            var shipping_postal_code = '<%= user.postal_code %>';
-            var shipping_state = '<%= user.state %>';
+            var shipping_city = `<%- user.city %>`;
+            var shipping_country = `<%- user.country %>`;
+            var shipping_address1 = `<%- user.address1 %>`;
+            var shipping_address2 = `<%- user.address2 %>`;
+            var shipping_postal_code = `<%- user.postal_code %>`;
+            var shipping_state = `<%- user.state %>`;
 
             // Si on choisi d'ajouter une autre adresse, on verifie les erreurs
             if (shippingAddress == "2") {
@@ -224,7 +224,7 @@
                     return false;
                 } else {
                     address1Input.removeClass('is-invalid').addClass('is-valid');
-                    billing_address1 = address1Input.val();
+                    shipping_address1 = address1Input.val();
                 }
                 if (address2Input.val()) {
                     address2Input.removeClass('is-invalid').addClass('is-valid');

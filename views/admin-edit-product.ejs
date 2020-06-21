@@ -63,6 +63,12 @@
                         <br/>
                         <label class="checkbox-inline"><input type="checkbox" value="all" disabled checked name="category"> Tout </label>
                     </div>
+                    <div class="available">
+                        <label class="title my-2"> Disponible </label>
+                        <br/>
+                        <label class="checkbox-inline"><input type="radio" name="available" value="1" id="a1" <% if (available) { %> checked <% } %> > Oui </label>
+                        <label class="checkbox-inline ml-3"><input type="radio" name="available" value="0" id="a2" <% if (!available) { %> checked <% } %> > Non </label>
+                    </div>
 
                     <button class="btn btn-success my-4" type="submit"> Modifier le produit </button>
                 </form>
@@ -164,6 +170,7 @@
             var size = $('input[name="size"]');
             var printing = $('input[name="printing"]');
             var category = $('input[name="category"]:checked');
+            var available = $('input[name="available"]:checked');
             var regexPrice = new RegExp("^(\\d+[.]\\d{1,2})$");
 
             // On check les erreurs et on ajoute la classe en consequant
@@ -214,7 +221,8 @@
                 price: price.val(),
                 size: size.val(),
                 printing: printing.val(),
-                category: category.val()
+                category: category.val(),
+                available: available.val()
             })
             .done( function (data) {
                 if (data == "badInfos") {

@@ -6,17 +6,29 @@
 	</div>
 
 	<div class="m-2 my-4 account-input row">
-	    <input type="text" placeholder="Adresse" class="form-control col-md-5 col" name="adresse" >
+        
+	    <input type="text" placeholder="Adresse" value="<%= session.account.address1 %>" class="form-control col-md-5 col" name="address1" >
         <div class="invalid-feedback">Veuillez rentrer une adresse valide</div>
 	</div>
-
-	<div class="m-2 my-4 account-input row">
-	    <input type="text" placeholder="Code postal / Ville" class="form-control col-md-5 col" name="city">
+    <div class="m-2 my-4 account-input row">
+        <input type="text" placeholder="N° suite / appartement (optionnel)"  value="<%= session.account.address2 %>"class="form-control col-md-5 col" name="address2" >
+        <div class="invalid-feedback">Veuillez rentrer une adresse valide</div>
+    </div>
+    <div class="m-2 my-4 account-input row">
+        <input type="text" placeholder="Ville" value="<%= session.account.city %>" class="form-control col-md-5 col" name="city">
         <div class="invalid-feedback">Veuillez rentrer une ville valide</div>
-	</div>
+    </div>
+    <div class="m-2 my-4 account-input row">
+        <input type="text" placeholder="Code postal" value="<%= session.account.postal_code %>" class="form-control col-md-5 col" name="postal-code">
+        <div class="invalid-feedback">Veuillez rentrer un code valide</div>
+    </div>
 
     <div class="m-2 my-4 account-input row">
-        <input type="text" placeholder="Pays" class="form-control col-md-5 col" name="country">
+        <input type="text" placeholder="Région / Etat" value="<%= session.account.state %>" class="form-control col-md-5 col" name="state">
+        <div class="invalid-feedback">Veuillez rentrer une région valide</div>
+    </div>
+    <div class="m-2 my-4 account-input row">
+        <select class="form-control col-md-5 col" value="<%= session.account.country %>" data-role="country-selector" data-code-mode="alpha2" name="country"></select>
         <div class="invalid-feedback">Veuillez rentrer un pays valide</div>
     </div>
 
@@ -25,24 +37,27 @@
 	</div>
 </form>
 
+<script src="/jquery.countryselector.js"></script>
 <script type="text/javascript">
     // on préremplis les champs
-    var adresseInput = $('.account-input input[name="adresse"]');
+    var address1Input = $('.account-input input[name="address1"]');
+    var address2Input = $('.account-input input[name="address2"]');
     var cityInput = $('.account-input input[name="city"]');
-    var countryInput = $('.account-input input[name="country"]');
-
-    adresseInput.val("<%= session.account.adress %>");
-    cityInput.val("<%= session.account.city %>");
-    countryInput.val("<%= session.account.country %>");
+    var countryInput = $('.account-input select[name="country"]');
+    var stateInput = $('.account-input input[name="state"]');
+    var postalCodeInput = $('.account-input input[name="postal-code"]');
 
     /* Erreur à afficher pour le login */
     $('form[action="/edit-adress"]').submit(function () {
         // On check les erreurs et on ajoute la classe en consequant
-        if (!adresseInput.val()) {
-            adresseInput.removeClass('is-valid').addClass('is-invalid');
+        if (!address1Input.val()) {
+            address1Input.removeClass('is-valid').addClass('is-invalid');
             return false;
         } else {
-            adresseInput.removeClass('is-invalid').addClass('is-valid');
+            address1Input.removeClass('is-invalid').addClass('is-valid');
+        }
+        if (address2Input.val()) {
+            address2Input.removeClass('is-invalid').addClass('is-valid');
         }
         if (!cityInput.val()) {
             cityInput.removeClass('is-valid').addClass('is-invalid');
@@ -50,15 +65,29 @@
         } else {
             cityInput.removeClass('is-invalid').addClass('is-valid');
         }
+        if (!postalCodeInput.val()) {
+            postalCodeInput.removeClass('is-valid').addClass('is-invalid');
+            return false;
+        } else {
+            postalCodeInput.removeClass('is-invalid').addClass('is-valid');
+        }
         if (!countryInput.val()) {
             countryInput.removeClass('is-valid').addClass('is-invalid');
             return false;
         } else {
             countryInput.removeClass('is-invalid').addClass('is-valid');
         }
+        if (!stateInput.val()) {
+            stateInput.removeClass('is-valid').addClass('is-invalid');
+            return false;
+        } else {
+            stateInput.removeClass('is-invalid').addClass('is-valid');
+        }
 
         $.post("/edit-adress", {
-            adress: adresseInput.val(),
+            address1: address1Input.val(),
+            address2: address2Input.val(),
+            postal_code: postalCodeInput.val(),
             city: cityInput.val(),
             country: countryInput.val(),
         })

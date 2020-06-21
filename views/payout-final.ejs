@@ -248,15 +248,15 @@
 
 	/* ----------------- Setting optionnal billing address ------------ */
 
-	var billing_city = '<%= user.city %>';
-	var billing_country = '<%= user.country %>';
-	var billing_address1 = '<%= user.address1 %>';
-	var billing_address2 = '<%= user.address2 %>';
-	var billing_postal_code = '<%= user.postal_code %>';
-	var billing_state = '<%= user.state %>';
-	var billing_email = '<%= user.email %>';
-	var billing_name = '<%= user.name %>';
-	var billing_phone = '<%= user.tel %>';
+	var billing_city = `<%- user.city %>`;
+	var billing_country = `<%- user.country %>`;
+	var billing_address1 = `<%- user.address1 %>`;
+	var billing_address2 = `<%- user.address2 %>`;
+	var billing_postal_code = `<%- user.postal_code %>`;
+	var billing_state = `<%- user.state %>`;
+	var billing_email = `<%- user.email %>`;
+	var billing_name = `<%- user.name %>`;
+	var billing_phone = `<%- user.tel %>`;
 
 	/* ================================ STRIPE ================================== */
 
@@ -369,7 +369,7 @@
 		// if payment -> card (Stripe)
 		if (paymentMethod == 'pm2') {
 			//ev.preventDefault();
-			stripe.confirmCardPayment('<%= client_secret %>', {
+			stripe.confirmCardPayment('<%- client_secret %>', {
 				payment_method: {
 					type: 'card',
 				    card: elements.getElement('cardNumber'),
@@ -447,9 +447,9 @@
 					payer: {
 						name: {
 							surname: '',
-							given_name: '<%= user.name %>',
+							given_name: `<%- user.name %>`,
 						},
-						email_address:'<%= user.email %>',
+						email_address:`<%- user.email %>`,
 						//payer_id: '15',
 						/*phone: {
 							phone_number: {
@@ -457,12 +457,12 @@
 							}
 						}*/
 						address: {
-							address_line_1: '<%= user.address1 %>',
-							address_line_2: '<%= user.address2 %>',
-							postal_code: '<%= user.postal_code %>',
-							admin_area_2: '<%= user.city %>',
-							admin_area_1: '<%= user.state %>',
-							country_code: '<%= user.country %>'
+							address_line_1: `<%- user.address1 %>`,
+							address_line_2: `<%- user.address2 %>`,
+							postal_code: `<%- user.postal_code %>`,
+							admin_area_2: `<%- user.city %>`,
+							admin_area_1: `<%- user.state %>`,
+							country_code: `<%- user.country %>`
 						}
 					},
 					application_context: {

@@ -97,8 +97,15 @@
 			    			</div>
 	    				</div>
 	    				<div class="w-100 border-bottom my-4"></div>
+	    				<% if (available) {
+	    					var class_available = "valid";
+	    					var text_available = "En stock";
+	    				} else {
+	    					var class_available = "invalid";
+	    					var text_available = "Non disponible";	
+	    				} %>
 		    			<div class="row mb-2">
-		    				<small class="storage-info valid"><i class="fas fa-box"></i> En stock</small>
+		    				<small class="storage-info <%= class_available %>"><i class="fas fa-box"></i> <%= text_available %></small>
 		    			</div>
 		    			<div class="row">
 			    			<form class="form-product">
@@ -109,9 +116,15 @@
 			    					<option value="L" class="attached enabled">L</option>
 			    					<option value="XL" class="attached enabled">XL</option>
 						      	</select>-->
+						      	<% if (!available) { %>
+			    				<button class="btn btn-primary w-100" disabled=true type="submit" name="add-cart">
+			    					Indisponible à l'achat
+			    				</button>
+			    				<% } else { %>
 			    				<button class="btn btn-primary w-100" type="submit" name="add-cart">
 			    					Ajouter au panier <i class="fas fa-cart-arrow-down"></i>
 			    				</button>
+			    				<% } %>
 			    			</form>
 			    		</div>
 	    			</div>
@@ -124,7 +137,7 @@
     					<span class="price-product col-2 p-0 text-right"><%= price %>€</span>
 	    			</div>
 	    			<div class="row mx-2 mb-2">
-	    				<small class="storage-info valid"><i class="fas fa-box"></i> En stock</small>
+	    				<small class="storage-info <%= class_available %>"><i class="fas fa-box"></i> <%= text_available %></small>
 	    			</div>
 	    			<form class="form-product row w-100" action="/add-cart" method="post">
 	    				<!--<select class="custom-select size col ml-4">
@@ -134,9 +147,15 @@
 	    					<option value="L" class="attached enabled">L</option>
 	    					<option value="XL" class="attached enabled">XL</option>
 				      	</select>-->
+				      	<% if (!available) { %>
+	    				<button class="btn btn-primary col ml-2 text-truncate" disabled=true type="submit" name="add-cart">
+	    					Indisponible à l'achat
+	    				</button>
+	    				<% } else { %>
 	    				<button class="btn btn-primary col ml-2 text-truncate" type="submit" name="add-cart">
 	    					Ajouter au panier <i class="fas fa-cart-arrow-down"></i>
 	    				</button>
+	    				<% } %>
 	    			</form>
 	    		</div>
 	    	</div>
@@ -165,7 +184,7 @@
                 id: <%= id %>, 
 	            reference: <%= reference %>,
 	            name: "<%= name %>",
-	            stocks: <%= stocks %>,
+	            available: <%= available %>,
 	            price: <%= price %>,
 	            description: "<%= description %>",
 	            size: "<%= size %>",

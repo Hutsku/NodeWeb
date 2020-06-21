@@ -34,7 +34,7 @@
             <!-- VISIBLE EN MOBILE UNIQUEMENT -->
             <% if (session.logged) { %>
                 <li class="nav-item d-md-none">
-                    <a class="nav-link" href="/account"> <%= session.username %> <i class="fa fa-user"></i></a>
+                    <a class="nav-link" href="/account"> <%- session.username %> <i class="fa fa-user"></i></a>
                 </li>
             <% } else { %>
                 <li class="nav-item d-md-none">
@@ -50,7 +50,7 @@
             <% if (session.logged) { %>
                 <li class="dropdown nav-item d-none d-md-block">
                     <a class="nav-link dropdown-toggle" href="#" id="acccountDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-user"></i> <%= session.username %>
+                        <i class="fa fa-user"></i> <%- session.username %>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right w-auto" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="/account/overview">Mon profil</a>
@@ -91,7 +91,7 @@
                                     <img class="p-2 col-3" src="/img/<%= session.cart.products[i].img %>">
                                     <div class="col">
                                         <a href="/product/<%= session.cart.products[i].id %>" class="cart-product-name">
-                                            <%= session.cart.products[i].name %>
+                                            <%- session.cart.products[i].name %>
                                         </a>
                                         <span class="ml-2">x</span>
                                         <span class="qty"><%= cart_qty %> </span>

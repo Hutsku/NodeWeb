@@ -100,11 +100,11 @@
 		    			<div class="w-100 border-bottom my-3"></div>
 		    			<div class="row pb-5">
 			    			<span class="title total col-5">TOTAL <span class="detail">(TTC)</span></span>
-			    			<span class="price price-total"><%=  price_final %>€</span>
+			    			<span class="price price-total"><%= price_final %>€</span>
 			    		</div>
 			    		<div class="text-center">
                             <form action="/payout" method="post" class="">
-    				    		<button class="w-100 btn btn-dark mb-3 payout-button <% if (!price_final) { %> disabled <% } %>" type="submit" name="add-cart">
+    				    		<button class="w-100 btn btn-dark mb-3 payout-button" <% if (!price_final) { %> disabled=true <% } %> type="submit" name="add-cart">
     		    					Passer au paiement
     		    				</button>
                             </form>
