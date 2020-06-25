@@ -41,6 +41,9 @@
     					<li>
     						<a href="/account/newsletter" class="p-3"> NEWSLETTER </a>
     					</li>
+                        <li id="unsubscribe-pannel">
+                            <a href="#"  href="#" data-toggle="modal" data-target="#unsubscribeModal" class="p-3"> SE DESINSCRIRE </a>
+                        </li>
 
     				</ul>
     			</div>
@@ -69,6 +72,32 @@
 	    			<% } %>
     			</div>
 	    	</div>
+            <!-- MODAL UNSUBSCRIBE -->
+            <div class="modal fade" id="unsubscribeModal" tabindex="-1" role="dialog" aria-labelledby="unsubscribeModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="unsubscribeModalLabel">Voulez-vous vraiment vous désinscrire ?</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="modal-body p-4">
+                            <div>
+                                    En vous désinscrivant, toutes vos donnez personnelles seront définitivement supprimées et ne seront en aucun cas conservés sur notre site. <br/>Seul votre historique de commande sera conservé, mais ne sera plus affilié à votre compte.
+                            </div>
+                            <form action="/unsubscribe" method="post" class="unsubscribe-pannel offset-2 col-8 offset-2 mt-3">
+                                <div class="form-row justify-content-center">
+                                    <button type="submit" class="btn btn-danger mr-2" data-dismiss="">Confirmer</button>
+                                    <button type="button" class="ml-2 btn btn-secondary" data-dismiss="modal" aria-label="Close"> Annuler</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
         <footer>
             <%- include('footer') %>

@@ -202,6 +202,12 @@
             var quoteTitle = 'Commande supprimée';
             break;
 
+        case 'unsubscribe':
+            var type = 'success';
+            var quote = "Votre compte a bien été supprimé";
+            var quoteTitle = 'Compte effacé';
+            break;
+
         } %>
         <div class="notif-container row w-100 justify-content-center">
             <div class="alert alert-<%= type %> alert-dismissible fade show col-8" role="alert">

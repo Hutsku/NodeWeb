@@ -68,6 +68,12 @@ ul.account-link a.header-link:hover {
 	font-weight: 700;
 }
 
+#unsubscribe-pannel a:hover{
+	color: white;
+	background-color: red;
+	border-left: 1px solid white;
+}
+
 /* PASSWORD EDIT */
 .account-input input {
 	/*min-width: 450px;*/

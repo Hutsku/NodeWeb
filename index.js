@@ -998,19 +998,16 @@ app.get('/', function(req, res) {
                     req.session.logged = true;
                     req.session.alert = "login";
                     req.session.admin = checkAdmin(email);
-                    console.log("logged !");
                     res.redirect('/');
                 } 
                 else {
                     req.session.error = "Bad password";
-                    console.log("faux mot de passe"); // Les id ne correspondent pas
                     res.send('badPassword');
                 }
             });
         }
         else {
             req.session.error = "Unknown email";
-            console.log("aucun utilisateur"); // Les id ne correspondent pas
             res.send('badEmail');
         }
     }); 
@@ -1077,7 +1074,21 @@ app.get('/', function(req, res) {
     req.session.username = '';
     req.session.logged = false;
     req.session.admin = false;
+    req.session.account = false;
     res.redirect('/');
+})
+
+.post('/unsubscribe', urlencodedParser, function(req, res) {
+    var requestMysql = `DELETE FROM users WHERE id=${req.session.account.id}`;
+    connection.query(requestMysql, function(err, rows, fields) {
+        req.session.username = '';
+        req.session.logged = false;
+        req.session.admin = false;
+        req.session.account = false;
+        req.session.alert = "unsubscribe"
+        res.redirect('/');
+    }); 
+
 })
 
 .post('/resetNotif', urlencodedParser, function(req, res) {
