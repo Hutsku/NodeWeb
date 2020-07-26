@@ -74,12 +74,12 @@
     			<!---------------------------------------------------------------------->
 
                 <% if (session.cart) {
-                    var shipping_price = 4.95;
                     price_total = price_total;
-                    var price_final = (price_total+shipping_price).toFixed(2);
+                    var shipping_cost =  parseFloat(session.cart.shipping_cost);
+                    var price_final = (price_total+shipping_cost).toFixed(2);
                 } else {
-                    var shipping_price = 0;
                     price_total = 0;
+                    var shipping_cost = 0;
                     var price_final = 0;
                 } 
                 %>
@@ -95,7 +95,7 @@
 		    			</div>
 		    			<div class="row py-3">
 		    				<span class="title col-5">LIVRAISON <span class="detail">(estimée)</span></span>
-		    				<span class="price price-shipping"><%= shipping_price %>€</span>
+		    				<span class="price price-shipping"><%= shipping_cost %>€</span>
 		    			</div>
 		    			<div class="w-100 border-bottom my-3"></div>
 		    			<div class="row pb-4">
@@ -229,9 +229,9 @@
 
             $.post("/valid-cart", {
                 cart: JSON.stringify(new_cart), // on converti l'objet pour bien le passer
-                total_price: <%= price_total %>,
-                shipping_price: <%= shipping_price %>,
-                final_price: <%= price_final %>
+                subtotal_cost: <%= price_total %>,
+                shipping_price: <%= shipping_cost %>,
+                total_cost: <%= price_final %>
             }).done( function (data) {
                 if (data == "badCart") {
                     console.log("error occured")
@@ -270,7 +270,7 @@
             $.post("/valid-cart", {
                 cart: JSON.stringify(new_cart), // on converti l'objet pour bien le passer
                 subtotal_cost: <%= price_total %>,
-                shipping_cost: <%= shipping_price %>,
+                shipping_cost: <%= shipping_cost %>,
                 total_cost: <%= price_final %>
             }).done( function (data) {
                 if (data == "badCart") {

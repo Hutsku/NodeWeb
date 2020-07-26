@@ -32,7 +32,7 @@
     var telInput = $('.account-input input[name="tel"]');
     var regex = new RegExp("[0-9]{10}");
 
-    nameInput.val("<%= session.account.name %>");
+    nameInput.val("<%- session.account.name %>");
     emailInput.val("<%= session.account.email %>");
     telInput.val("<%= session.account.tel %>");
 

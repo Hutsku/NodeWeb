@@ -7,28 +7,28 @@
 
 	<div class="m-2 my-4 account-input row">
         
-	    <input type="text" placeholder="Adresse" value="<%= session.account.address1 %>" class="form-control col-md-5 col" name="address1" >
+	    <input type="text" placeholder="Adresse" class="form-control col-md-5 col" name="address1" >
         <div class="invalid-feedback">Veuillez rentrer une adresse valide</div>
 	</div>
     <div class="m-2 my-4 account-input row">
-        <input type="text" placeholder="N° suite / appartement (optionnel)"  value="<%= session.account.address2 %>"class="form-control col-md-5 col" name="address2" >
+        <input type="text" placeholder="N° suite / appartement (optionnel)" class="form-control col-md-5 col" name="address2" >
         <div class="invalid-feedback">Veuillez rentrer une adresse valide</div>
     </div>
     <div class="m-2 my-4 account-input row">
-        <input type="text" placeholder="Ville" value="<%= session.account.city %>" class="form-control col-md-5 col" name="city">
+        <input type="text" placeholder="Ville" class="form-control col-md-5 col" name="city">
         <div class="invalid-feedback">Veuillez rentrer une ville valide</div>
     </div>
     <div class="m-2 my-4 account-input row">
-        <input type="text" placeholder="Code postal" value="<%= session.account.postal_code %>" class="form-control col-md-5 col" name="postal-code">
+        <input type="text" placeholder="Code postal" class="form-control col-md-5 col" name="postal-code">
         <div class="invalid-feedback">Veuillez rentrer un code valide</div>
     </div>
 
     <div class="m-2 my-4 account-input row">
-        <input type="text" placeholder="Région / Etat" value="<%= session.account.state %>" class="form-control col-md-5 col" name="state">
+        <input type="text" placeholder="Région / Etat" class="form-control col-md-5 col" name="state">
         <div class="invalid-feedback">Veuillez rentrer une région valide</div>
     </div>
     <div class="m-2 my-4 account-input row">
-        <select class="form-control col-md-5 col" value="<%= session.account.country %>" data-role="country-selector" data-code-mode="alpha2" name="country"></select>
+        <select class="form-control col-md-5 col" value="<%- session.account.country %>" data-role="country-selector" data-code-mode="alpha2" name="country"></select>
         <div class="invalid-feedback">Veuillez rentrer un pays valide</div>
     </div>
 
@@ -46,6 +46,13 @@
     var countryInput = $('.account-input select[name="country"]');
     var stateInput = $('.account-input input[name="state"]');
     var postalCodeInput = $('.account-input input[name="postal-code"]');
+
+    address1Input.val("<%- session.account.address1 %>");
+    address2Input.val("<%- session.account.address2 %>");
+    cityInput.val("<%- session.account.city %>");
+    stateInput.val("<%- session.account.state %>");
+    countryInput.val("<%- session.account.country %>");
+    postalCodeInput.val("<%- session.account.postal_code %>");
 
     /* Erreur à afficher pour le login */
     $('form[action="/edit-adress"]').submit(function () {
@@ -84,15 +91,16 @@
             stateInput.removeClass('is-invalid').addClass('is-valid');
         }
 
-        $.post("/edit-adress", {
+        $.post("/edit-address", {
             address1: address1Input.val(),
             address2: address2Input.val(),
             postal_code: postalCodeInput.val(),
             city: cityInput.val(),
             country: countryInput.val(),
+            state: stateInput.val()
         })
         .done( function (data) {
-            if (data == "badAdress") {
+            if (data == "badAddress") {
                 emailInput.removeClass('is-valid').addClass('is-invalid'); // l'email est déjà utilisé
                 $('header').append(
                 	`<div class="notif-container row w-100 justify-content-center">

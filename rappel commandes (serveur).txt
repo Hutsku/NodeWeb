@@ -3,7 +3,7 @@ login ssh server:
 
 run server:
 npm start
-ou pw2 start
+ou pm2 start index.js
 
 maj github code:
 (server) sudo git pull

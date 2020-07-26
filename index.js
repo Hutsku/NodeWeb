@@ -87,9 +87,52 @@ function getAllProduct(callback) {
 }
 
 function safeQuote(string) {
-    string =  string.replace(`'`, `''`);
-    string =  string.replace(`"`, `""`);
+    string = string.replace(/'/g, `''`); // on double toutes les occurences de '
     return string;
+}
+
+// Renvoit le frais de port selon le pays et code postal (Colissimo)
+function getShippingCost(country, postal_code) {
+    // On définie à l'avance les prix (250mg)
+    var metroCost = 4.95;
+    var domtomCost = 9.60;
+    var euroCost = 12.55;
+    var inter1Cost = 17.00;
+    var inter2Cost = 24.85;
+
+    // On définit les differentes zones
+    var euro = ['DE', 'AT', 'BE', 'BG', 'CY', 'HR', 'DK', 'ES', 'EE', 'FI', 'FR', 'GR', 'HU', 'IE', 'IT', 'LT', 
+    'LV', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'SE', 'CZ', 'CH', 'SM', 'LI']; // UE + suisse etc
+    var inter1 = ['NO', 'BA', 'HR', 'MK', 'ME', 'RS', 'AL', 'DZ', 'MA', 'TN', 'LY', 'MR'] // Europe Est + Norvège + Maghreb
+
+    console.log(country)
+
+    // Si le client est en france ...
+    if (country == 'FR') {
+        if (['97', '98'].indexOf(postal_code.slice(0, 2)) >= 0) return domtomCost;
+        else return metroCost;
+        
+    }
+    else if (['MC', 'AD'].indexOf(country) >= 0) return metroCost; // Si Andorre ou Monaco
+    else if (euro.indexOf(country) >= 0) return euroCost; // Si UE + Suisse et autres
+    else if (inter1.indexOf(country) >= 0) return inter1Cost; // Si EU Est + Maghreb + Norvège
+    else return inter2Cost; // Sinon -> international
+}
+
+// Met à jour le panier selon le statut de l'utilisateur
+function refreshCart(session) {
+    console.log(session.logged)
+    if (session.cart) {
+        if (session.logged) {
+            session.cart.shipping_cost = getShippingCost(session.account.country, session.account.postal_code); // On récupère les frais de port estimés
+        } else {
+            session.cart.shipping_cost = 4.95;
+        }
+        session.cart.total_cost = parseFloat(session.cart.shipping_cost) + parseFloat(session.cart.subtotal_cost);
+        return session.cart;
+    } else {
+        return 0;
+    }
 }
 
 // ---------------------------- USER -----------------------
@@ -179,10 +222,14 @@ app.get('/', function(req, res) {
 })
 
 .get('/quit', function(req, res) {
-    req.session.username = "";
+    req.session.username = '';
     req.session.logged = false;
     req.session.admin = false;
-    req.session.alert = "logout";
+    req.session.account = false;
+
+    // On met à jour le panier si jamais
+    req.session.cart = refreshCart(req.session);
+
     res.redirect('back');
 })
 
@@ -243,6 +290,7 @@ app.get('/', function(req, res) {
 })
 
 .get('/cart', function(req, res) {
+    console.log(req.session.cart);
     res.render('cart.ejs', {session: req.session});
 })
 
@@ -528,9 +576,15 @@ app.get('/', function(req, res) {
             }
         }
 
-        var shipping_cost = parseFloat(req.session.cart.shipping_cost);
-        subtotal_cost = total_cost
-        total_cost = (total_cost+shipping_cost).toFixed(2);
+        shipping_cost = req.session.cart.shipping_cost;
+        subtotal_cost = total_cost;
+        total_cost = (subtotal_cost+shipping_cost).toFixed(2);
+
+        // On met à jour le panier
+        req.session.cart.shipping_cost = shipping_cost;
+        req.session.cart.total_cost = total_cost;
+        req.session.subtotal_cost = subtotal_cost;
+
         amount = Math.round(total_cost*100); // on converti en valeur prise en charge par stripe
         console.log(total_cost)
 
@@ -604,7 +658,7 @@ app.get('/', function(req, res) {
         var img_list = req.body.images;
 
         var addProduct = `INSERT INTO products (name, description, price, size, printing, category, images) 
-            VALUES ("${name}", "${description}", "${price}", "${size}", "${printing}", "${category}", "${available}", '${img_list}')`;  
+            VALUES ('${name}', '${description}', '${price}', '${size}', '${printing}', '${category}', '${available}', '${img_list}')`;  
         connection.query(addProduct, function(err, rows, fields) {
             if (err) throw err;
 
@@ -670,10 +724,14 @@ app.get('/', function(req, res) {
     if (!req.session.cart) {
         req.session.cart = {
             products: [],
-            subtotal_cost: '0',
-            shipping_cost: '0',
-            total_cost: '0',
+            subtotal_cost: 0,
+            shipping_cost: 4.95, // valeur par défaut si non connecté
+            total_cost: 0,
         }
+    }
+    // On paramètre les frais de port si connecté
+    if (req.session.logged) {
+        req.session.cart.shipping_cost = getShippingCost(req.session.account.country, req.session.account.postal_code); // On récupère les frais de port estimés
     }
 
     var product_id = req.body.id;
@@ -793,8 +851,6 @@ app.get('/', function(req, res) {
 .post('/valid-shipping', urlencodedParser, function(req, res) {
     // valide et enregistre les paramètre de livraison
     req.session.cart.shipping_method = req.body.shippingMethod;
-    req.session.cart.shipping_cost = '4.95'; // par défaut on met la livraison à 4.95€
-
     var shippingAddressValue = req.body.shippingAddress;
 
     // si on a choisi une autre adresse de livraison
@@ -809,6 +865,8 @@ app.get('/', function(req, res) {
             string: `${req.body.address1} ${req.body.address2} ${req.body.postal_code} 
                     ${req.body.city} ${req.body.state} ${req.body.country}`
         }
+        req.session.cart.shipping_cost = getShippingCost(req.body.country, req.body.postal_code);
+        req.session.total_cost = parseFloat(req.session.subtotal_cost) + req.session.shipping_cost
     }
     res.send('ok')
     //res.render('cart.ejs', {session: req.session});
@@ -876,18 +934,22 @@ app.get('/', function(req, res) {
     });
 })
 
-.post('/edit-adress', urlencodedParser, function(req, res) {
+.post('/edit-address', urlencodedParser, function(req, res) {
     console.log("change address");
 
     var id = req.session.account.id;
-    var address1 = safeQuote(req.body.address1);
-    var address2 = safeQuote(req.body.address2);
+    var address1 = req.body.address1;
+    var address2 = req.body.address2;
     var postal_code = req.body.postal_code;
-    var city = safeQuote(req.body.city);
-    var country = safeQuote(req.body.country);
+    var city = req.body.city;
+    var country = req.body.country;
+    var state = req.body.state;
+
+    console.log(address1);
 
     // On construit la requête et on l'envoit (avec check d'erreur)
-    var editUser = `UPDATE users SET address1 = "${address1}", address2 = "${address2}", city = "${city}", country = "${country}", address2 = "${address2}", postal_code = "${postal_code}" WHERE users.id = '${id}';`
+    var editUser = `UPDATE users SET address1 = '${safeQuote(address1)}', address2 = '${safeQuote(address2)}', city = '${safeQuote(city)}', 
+    country = '${country}', state = '${safeQuote(state)}', address2 = '${safeQuote(address2)}', postal_code = '${postal_code}' WHERE users.id = '${id}';`
 
     connection.query(editUser, function(err, rows, fields) {
         if (err) throw err;
@@ -900,6 +962,7 @@ app.get('/', function(req, res) {
             req.session.account.address2 = address2;
             req.session.account.postal_code = postal_code;
             req.session.account.city = city;
+            req.session.account.state = state;
             req.session.account.country = country;
 
             console.log("adress changed !");
@@ -908,7 +971,7 @@ app.get('/', function(req, res) {
         else {
             console.log("La modification a échoué");
             //req.session.alert = "email already used"; // on stock l'erreur dans la seesion
-            res.send('badAdress');
+            res.send('badAddress');
         }
     });
 })
@@ -916,13 +979,13 @@ app.get('/', function(req, res) {
 .post('/edit-infos', urlencodedParser, function(req, res) {
     console.log("change infos");
 
-    var name = safeQuote(req.body.name);
+    var name = req.body.name;
     var email = req.body.email;
     var tel = req.body.tel;
 
     // On construit la requête et on l'envoit (avec check d'erreur)
     var getUser = `SELECT * FROM users WHERE email='${email}'`; 
-    var editUser = `UPDATE users SET name = '${name}', email = '${email}', tel = '${tel}' WHERE users.email = '${email}';`
+    var editUser = `UPDATE users SET name = '${safeQuote(name)}', email = '${email}', tel = '${tel}' WHERE users.email = '${email}';`
 
     connection.query(editUser, function(err, rows, fields) {
         if (err) throw err;
@@ -998,6 +1061,10 @@ app.get('/', function(req, res) {
                     req.session.logged = true;
                     req.session.alert = "login";
                     req.session.admin = checkAdmin(email);
+
+                    // On met à jour le panier si jamais
+                    req.session.cart = refreshCart(req.session);
+
                     res.redirect('/');
                 } 
                 else {
@@ -1038,7 +1105,7 @@ app.get('/', function(req, res) {
         // On construit la requête et on l'envoit (avec check d'erreur)
         var getUser = `SELECT * FROM users WHERE email='${email}'`; 
         var addUser = `INSERT INTO users (id, name, password, subscribe_date, address1, address2, city, postal_code, state, country, newsletter, email, tel) 
-                   VALUES (NULL, "${username}", "${hashedPassword}", NOW(), "${address1}", "${address2}", "${city}", "${postalCode}", "${state}", "${country}", ${newsletter}, "${email}", "${tel}")`;  
+                   VALUES (NULL, '${username}', '${hashedPassword}', NOW(), '${address1}', '${address2}', '${city}', '${postalCode}', '${state}', '${country}', ${newsletter}, '${email}', '${tel}')`;  
 
         connection.query(getUser, function(err, rows, fields) {
             if (err) throw err;
@@ -1075,6 +1142,10 @@ app.get('/', function(req, res) {
     req.session.logged = false;
     req.session.admin = false;
     req.session.account = false;
+
+    // On met à jour le panier si jamais
+    req.session.cart = refreshCart(req.session);
+
     res.redirect('/');
 })
 
@@ -1088,7 +1159,6 @@ app.get('/', function(req, res) {
         req.session.alert = "unsubscribe"
         res.redirect('/');
     }); 
-
 })
 
 .post('/resetNotif', urlencodedParser, function(req, res) {

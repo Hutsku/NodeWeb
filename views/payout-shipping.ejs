@@ -109,8 +109,8 @@
                                     <div class="label col-9">
                                         <label for="sm1" class="m-0"> Colissimo </label>
                                     </div>
-                                    <div class="label col-2">
-                                        <span> 4.95€ </label>
+                                    <div class="label col-2 colissimo-price">
+                                        <span> <%= shipping_cost%>€ </label>
                                     </div>
                                 </div>
                             </div>
@@ -136,7 +136,7 @@
                             <span class="price price-sub-total col text-right"><%= subtotal_cost %>€</span>
                         </div>
                         <div class="row py-3">
-                            <span class="title col-5">LIVRAISON</span>
+                            <span class="title col-5">LIVRAISON <span class="detail">(estimée)</span></span>
                             <span class="price price-shipping col text-right"><%= shipping_cost %>€</span>
                         </div>
                         <div class="w-100 border-bottom my-3"></div>
@@ -155,7 +155,7 @@
                             <span class="price price-sub-total col text-right"><%= subtotal_cost %>€</span>
                         </div>
                         <div class="row py-2">
-                            <span class="title col-5">LIVRAISON</span>
+                            <span class="title col-5">LIVRAISON <span class="detail">(estimée)</span></span>
                             <span class="price price-shipping col text-right"><%= shipping_cost %>€</span>
                         </div>
                         <div class="w-100 border-bottom my-2"></div>
@@ -186,15 +186,68 @@
                 return $('.payout-order li:nth-of-type(1) span.order').offset().left;
             }
         })
-        
+
+        /* ============================= FRAIS DE PORT DYNAMIQUE ======================= */
+
+        var shippingCost = <%= shipping_cost %>;
+
+        // Renvoit le frais de port selon le pays et code postal (Colissimo)
+        function getShippingCost(country, postal_code) {
+            // On définie à l'avance les prix (250mg)
+            var metroCost = 4.95;
+            var domtomCost = 9.60;
+            var euroCost = 12.55;
+            var inter1Cost = 17.00;
+            var inter2Cost = 24.85;
+
+            // On définit les differentes zones
+            var euro = ['DE', 'AT', 'BE', 'BG', 'CY', 'HR', 'DK', 'ES', 'EE', 'FI', 'FR', 'GR', 'HU', 'IE', 'IT', 'LT', 
+            'LV', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'SE', 'CZ', 'CH', 'SM', 'LI']; // UE + suisse etc
+            var inter1 = ['NO', 'BA', 'HR', 'MK', 'ME', 'RS', 'AL', 'DZ', 'MA', 'TN', 'LY', 'MR'] // Europe Est + Norvège + Maghreb
+
+            // Si le client est en france ...
+            if (country == 'FR') {
+                if (['97', '98'].indexOf(postal_code.slice(0, 2)) >= 0) return domtomCost;
+                else return metroCost;
+                
+            }
+            else if (['MC', 'AD'].indexOf(country) >= 0) return metroCost; // Si Andorre ou Monaco
+            else if (euro.indexOf(country) >= 0) return euroCost; // Si UE + Suisse et autres
+            else if (inter1.indexOf(country) >= 0) return inter1Cost; // Si EU Est + Maghreb + Norvège
+            else return inter2Cost; // Sinon -> international
+        }
+        // Met par défaut la valeur et l'affichage des frais de port
+        function defaultShippingCost() {
+            shippingCost = <%= shipping_cost %>;
+            totalCost = shippingCost + <%= subtotal_cost %>;
+            $('span.price-shipping').text(`${shippingCost}€`);
+            $('span.price-total').text(`${totalCost}€`);
+            $('.colissimo-price span').text(`${shippingCost}€`);
+        }
+        // Met à jour les frais de port selon la nouvele adresse
+        function newShippingCost() {
+            var country = $('select[name="country"]').val();
+            var postal_code = $('input[name="postal-code"]').val();
+            shippingCost = getShippingCost(country, postal_code);
+            totalCost = shippingCost + <%= subtotal_cost %>;
+            $('span.price-shipping').text(`${shippingCost}€`);
+            $('span.price-total').text(`${totalCost}€`);
+            $('.colissimo-price span').text(`${shippingCost}€`);
+        }
         // Radio button pannels
         $( "input[type=radio][name=shippingAddress]" ).change(function() {
             if ($(this).attr('id') == 'sa1') {
                 $('.shipping-address-new').addClass('hide');
+                defaultShippingCost();
             } else {
                 $('.shipping-address-new').removeClass('hide');
+                newShippingCost();
             }
         });
+        $('select[name="country"]').change(newShippingCost);
+        $('input[name="postal-code"]').change(newShippingCost);
+
+        /* ============================================================================ */
 
         // Validation de l'adresse de livraison
         $('form[action="/valid-shipping"]').submit(function () {
