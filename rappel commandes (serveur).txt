@@ -5,5 +5,15 @@ run server:
 npm start
 ou pm2 start index.js
 
+run nginx:
+sudo systemctl restart nginx
+
 maj github code:
 (server) sudo git pull
+
+si problème connexion mysql:
+(mysql) ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';
+flush privileges;
+
+si problème https:
+sudo certbot --nginx -d ydogbe.store
