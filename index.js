@@ -390,9 +390,10 @@ app.get('/', function(req, res) {
                 category: product.category,
                 available: product.available,
                 img: JSON.parse(product.images),
-                session: req.session});
+                session: req.session
             });
-        }
+        });
+    }
     else {
         // sinon on redirige vers l'écran de connexion
         res.redirect('/admin-products-list');
@@ -657,8 +658,8 @@ app.get('/', function(req, res) {
         var available = req.body.available;
         var img_list = req.body.images;
 
-        var addProduct = `INSERT INTO products (name, description, price, size, printing, category, images) 
-            VALUES ('${name}', '${description}', '${price}', '${size}', '${printing}', '${category}', '${available}', '${img_list}')`;  
+        var addProduct = `INSERT INTO products (name, available, description, price, size, printing, category, images) 
+            VALUES ('${name}', '${available}', ${description}', '${price}', '${size}', '${printing}', '${category}', '${img_list}')`;  
         connection.query(addProduct, function(err, rows, fields) {
             if (err) throw err;
 
