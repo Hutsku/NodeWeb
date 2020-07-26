@@ -202,7 +202,6 @@
             uploadImgFiles(file_list) // On upload les images sur le serveur en parallèle
 
             $.post("/admin-add-product", {
-                id: <%= id %>,
                 images: JSON.stringify(getImgList()),
                 name: name.val(),
                 description: description.val(),
