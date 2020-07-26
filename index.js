@@ -659,7 +659,7 @@ app.get('/', function(req, res) {
         var img_list = req.body.images;
 
         var addProduct = `INSERT INTO products (name, available, description, price, size, printing, category, images) 
-            VALUES ('${name}', '${available}', ${description}', '${price}', '${size}', '${printing}', '${category}', '${img_list}')`;  
+            VALUES ('${name}', '${available}', '${description}', '${price}', '${size}', '${printing}', '${category}', '${img_list}')`;  
         connection.query(addProduct, function(err, rows, fields) {
             if (err) throw err;
 
