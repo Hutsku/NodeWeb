@@ -11,7 +11,6 @@
         <link rel="stylesheet" type="text/css" href="/css/style-navbar.css">
         <link rel="stylesheet" type="text/css" href="/css/style-cart.css">
         <link rel="stylesheet" type="text/css" href="/css/style-payout.css">
-
         <title>YDOGBE</title>
     </head>
  
@@ -20,7 +19,7 @@
             <%- include('navbar') %>
         </header>
 
-        <main class="bg-light py-5">
+        <main class="bg-light pt-5">
             <div class="pt-3">
                 <ul class="payout-order list-inline text-center mt-5">
                     <li class="list-inline-item active">
@@ -150,8 +149,8 @@
     			
     			<!----------------------------- PC ONLY ------------------------------>
 
-	    		<div class="payout-right col-md-4 mt-3 p-4">
-	    			<div class="sticky-top sticky-offset cart-recap d-none d-md-block">
+	    		<div class="payout-right col-md-4 mt-3 p-4 d-none d-md-block">
+	    			<div class="sticky-top sticky-offset cart-recap">
                         <div class="row">
                             <span class="title col">Récapitulatif</span>
                         </div>
@@ -171,31 +170,30 @@
                         </div>
 	    			</div>
 	    		</div>
-
-                <!---------------------- MOBILE ONLY ---------------------------->
-                <div class="fixed-bottom product-payout d-md-none d-block w-100 p-3 bg-white shadow-lg">
-                    <div class="cart-recap">
-                        <div class="row py-1">
-                            <span class="title col-5">SOUS-TOTAL <span class="detail">(TTC)</span></span>
-                            <span class="price price-sub-total col text-right"><%= subtotal_cost %>€</span>
-                        </div>
-                        <div class="row py-2">
-                            <span class="title col-5">LIVRAISON <span class="detail">(estimée)</span></span>
-                            <span class="price price-shipping col text-right"><%= shipping_cost %>€</span>
-                        </div>
-                        <div class="w-100 border-bottom my-2"></div>
-                        <div class="row">
-                            <span class="title total col-5">TOTAL <span class="detail">(TTC)</span></span>
-                            <span class="price price-total col text-right"><%= total_cost %>€</span>
-                        </div>
-                    </div>
-                </div>
-
 	    	</div>
         </main>
         <footer>
             <%- include('footer') %>
         </footer>
+
+        <!---------------------- MOBILE ONLY ---------------------------->
+        <div class="sticky-bottom product-payout d-md-none d-block w-100 p-3 bg-white shadow-lg">
+            <div class="cart-recap">
+                <div class="row py-1">
+                    <span class="title col-5">SOUS-TOTAL <span class="detail">(TTC)</span></span>
+                    <span class="price price-sub-total col text-right"><%= subtotal_cost %>€</span>
+                </div>
+                <div class="row py-2">
+                    <span class="title col-5">LIVRAISON <span class="detail">(estimée)</span></span>
+                    <span class="price price-shipping col text-right"><%= shipping_cost %>€</span>
+                </div>
+                <div class="w-100 border-bottom my-2"></div>
+                <div class="row">
+                    <span class="title total col-5">TOTAL <span class="detail">(TTC)</span></span>
+                    <span class="price price-total col text-right"><%= total_cost %>€</span>
+                </div>
+            </div>
+        </div>
     </body>
 
     <script src="jquery.countryselector.js"></script>

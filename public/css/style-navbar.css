@@ -64,3 +64,9 @@ li.nav-item {
 	top: 70px;
 	position: fixed;
 }
+
+.sticky-bottom {
+	position: sticky !important;
+	bottom: 0px;
+	z-index: 99;
+}

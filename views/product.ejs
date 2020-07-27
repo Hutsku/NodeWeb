@@ -24,7 +24,7 @@
                 </a>
             </div>
     		<div class="container-fluid row m-0">
-    			<div class="product-left col-md-7 px-md-5 mb-5 pb-5">
+    			<div class="product-left col-md-7 px-md-5">
     				<div id="carouselProduct" class="carousel slide" data-ride="carousel">
 					  	<div class="carousel-indicators row mb-3">
 					  		<% for (var i=0; i< img.length; i++) { %>
@@ -129,40 +129,39 @@
 			    		</div>
 	    			</div>
 	    		</div>
-
-	    		<!---------------------- MOBILE ONLY ---------------------------->
-	    		<div class="fixed-bottom product-payout d-md-none d-block w-100 p-3 bg-light shadow-lg">
-    				<div class="row mx-2 mb-2">
-    					<span class="title-product col-10 p-0"><%= name %></span>
-    					<span class="price-product col-2 p-0 text-right"><%= price %>€</span>
-	    			</div>
-	    			<div class="row mx-2 mb-2">
-	    				<small class="storage-info <%= class_available %>"><i class="fas fa-box"></i> <%= text_available %></small>
-	    			</div>
-	    			<form class="form-product row w-100" action="/add-cart" method="post">
-	    				<!--<select class="custom-select size col ml-4">
-					        <option selected disabled>Sélectionnez la taille</option>
-							<option value="S" class="attached enabled">S</option>
-	    					<option value="M" class="attached enabled">M</option>
-	    					<option value="L" class="attached enabled">L</option>
-	    					<option value="XL" class="attached enabled">XL</option>
-				      	</select>-->
-				      	<% if (!available) { %>
-	    				<button class="btn btn-primary col ml-2 text-truncate" disabled=true type="submit" name="add-cart">
-	    					Indisponible à l'achat
-	    				</button>
-	    				<% } else { %>
-	    				<button class="btn btn-primary col ml-2 text-truncate" type="submit" name="add-cart">
-	    					Ajouter au panier <i class="fas fa-cart-arrow-down"></i>
-	    				</button>
-	    				<% } %>
-	    			</form>
-	    		</div>
 	    	</div>
         </main>
         <footer>
             <%- include('footer') %>
         </footer>
+		<!---------------------- MOBILE ONLY ---------------------------->
+		<div class="sticky-bottom product-payout d-md-none d-block w-100 p-3 bg-light shadow-lg">
+			<div class="row mx-2 mb-2">
+				<span class="title-product col-10 p-0"><%= name %></span>
+				<span class="price-product col-2 p-0 text-right"><%= price %>€</span>
+			</div>
+			<div class="row mx-2 mb-2">
+				<small class="storage-info <%= class_available %>"><i class="fas fa-box"></i> <%= text_available %></small>
+			</div>
+			<form class="form-product row w-100" action="/add-cart" method="post">
+				<!--<select class="custom-select size col ml-4">
+			        <option selected disabled>Sélectionnez la taille</option>
+					<option value="S" class="attached enabled">S</option>
+					<option value="M" class="attached enabled">M</option>
+					<option value="L" class="attached enabled">L</option>
+					<option value="XL" class="attached enabled">XL</option>
+		      	</select>-->
+		      	<% if (!available) { %>
+				<button class="btn btn-primary col ml-2 text-truncate" disabled=true type="submit" name="add-cart">
+					Indisponible à l'achat
+				</button>
+				<% } else { %>
+				<button class="btn btn-primary col ml-2 text-truncate" type="submit" name="add-cart">
+					Ajouter au panier <i class="fas fa-cart-arrow-down"></i>
+				</button>
+				<% } %>
+			</form>
+		</div>
     </body>
 
     <script type="text/javascript">
