@@ -10,6 +10,9 @@ sudo systemctl restart nginx
 
 maj github code:
 (server) sudo git pull
+pour forcer le pull: 
+git fetch --all
+git reset --hard origin/master
 
 si problème connexion mysql:
 (mysql) ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';
