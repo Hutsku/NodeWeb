@@ -6,6 +6,10 @@ main {
 	min-height: 90vh;
 }
 
+.hide {
+	display: none;
+}
+
 .navbar-brand img {
 	height:35px;
 }

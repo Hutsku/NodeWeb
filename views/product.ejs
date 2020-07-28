@@ -49,19 +49,28 @@
 						    <span class="sr-only">Next</span>
 	  					</a>
 					</div>
+					<!------------------------- MOBILE ONLY ------------------------------->
 	    			<div class="info-product d-md-none d-block">
 	    				<div class="w-100 border-bottom my-4"></div>
 		    			<span class="desc mb-3 ml">
 		    				<%= description %>
 		    			</span>
-		    			<div class="material mb-1">
-		    				<span>Impression </span>
-		    				<span>Impression sur papier <%= printing %></span>
-		    			</div>
-		    			<div class="size mb-1">
-		    				<span>Dimension </span>
-		    				<span>Affiche <%= size %></span>
-		    			</div>
+		    			<% var type="clothe"; 
+		    			if (type == "clothe") { %>
+			    			<div class="composition mb-1">
+			    				<span>Composition </span>
+			    				<span>100% coton ?</span>
+			    			</div>
+		    			<% } else if (type == "poster") { %>
+			    			<div class="material mb-1">
+			    				<span>Impression </span>
+			    				<span>Impression sur papier <%= printing %></span>
+			    			</div>
+			    			<div class="size mb-1">
+			    				<span>Dimension </span>
+			    				<span>Affiche <%= size %></span>
+			    			</div>
+			    		<% } %>
 		    			<div class="ref mb-1">
 		    				<span>Reference </span>
 		    				<span><%= reference %></span>
@@ -83,45 +92,56 @@
 			    			<span class="row desc mb-3">
 			    				<%= description %>
 			    			</span>
-			    			<div class="row material mb-1">
-			    				<span>Impression </span>
-			    				<span>Impression sur papier <%= printing %></span>
-			    			</div>
-			    			<div class="row size mb-1">
-			    				<span>Dimension </span>
-			    				<span>Affiche <%= size %></span>
-			    			</div>
+			    			<% if (type == "clothe") { %>
+				    			<div class="row composition mb-1">
+				    				<span>Composition </span>
+				    				<span>100% coton ?</span>
+				    			</div>
+			    			<% } else if (type == "poster") { %>
+				    			<div class="row material mb-1">
+				    				<span>Impression </span>
+				    				<span>Impression sur papier <%= printing %></span>
+				    			</div>
+				    			<div class="row size mb-1">
+				    				<span>Dimension </span>
+				    				<span>Affiche <%= size %></span>
+				    			</div>
+				    		<% } %>
 			    			<div class="row ref mb-1">
 			    				<span>Reference </span>
 			    				<span><%= reference %></span>
 			    			</div>
 	    				</div>
 	    				<div class="w-100 border-bottom my-4"></div>
-	    				<% if (available) {
-	    					var class_available = "valid";
-	    					var text_available = "En stock";
-	    				} else {
-	    					var class_available = "invalid";
-	    					var text_available = "Non disponible";	
-	    				} %>
-		    			<div class="row mb-2">
-		    				<small class="storage-info <%= class_available %>"><i class="fas fa-box"></i> <%= text_available %></small>
-		    			</div>
 		    			<div class="row">
-			    			<form class="form-product">
-			    				<!--<select class="custom-select size mb-3">
-							        <option selected disabled>Sélectionnez la taille</option>
-	    							<option value="S" class="attached enabled">S</option>
-			    					<option value="M" class="attached enabled">M</option>
-			    					<option value="L" class="attached enabled">L</option>
-			    					<option value="XL" class="attached enabled">XL</option>
-						      	</select>-->
-						      	<% if (!available) { %>
-			    				<button class="btn btn-primary w-100" disabled=true type="submit" name="add-cart">
+			    			<form class="form-product w-100">
+			    				<% if (available) {
+			    					var class_available = "valid";
+			    					var text_available = "En stock";
+			    				} else {
+			    					var class_available = "invalid";
+			    					var text_available = "Non disponible";	
+			    				} %>
+				    			<div class="mb-2">
+				    				<small class="storage-info <%= class_available %>"><i class="fas fa-box"></i> <%= text_available %></small>
+				    			</div>
+
+				    			<% if (type == "clothe") { %>
+				    				<select class="custom-select size col-7 mb-3">
+								        <option selected disabled>Sélectionnez la taille</option>
+		    							<option value="S" class="attached enabled">S</option>
+				    					<option value="M" class="attached enabled">M</option>
+				    					<option value="L" class="attached enabled">L</option>
+				    					<option value="XL" class="attached enabled">XL</option>
+							      	</select>
+							    <% }
+
+						      	if (!available) { %>
+			    				<button class="btn btn-primary col-7" disabled=true type="submit" name="add-cart">
 			    					Indisponible à l'achat
 			    				</button>
 			    				<% } else { %>
-			    				<button class="btn btn-primary w-100" type="submit" name="add-cart">
+			    				<button class="btn btn-primary col-7" type="submit" name="add-cart">
 			    					Ajouter au panier <i class="fas fa-cart-arrow-down"></i>
 			    				</button>
 			    				<% } %>
@@ -140,23 +160,26 @@
 				<span class="title-product col-10 p-0"><%= name %></span>
 				<span class="price-product col-2 p-0 text-right"><%= price %>€</span>
 			</div>
-			<div class="row mx-2 mb-2">
-				<small class="storage-info <%= class_available %>"><i class="fas fa-box"></i> <%= text_available %></small>
-			</div>
-			<form class="form-product row w-100" action="/add-cart" method="post">
-				<!--<select class="custom-select size col ml-4">
-			        <option selected disabled>Sélectionnez la taille</option>
-					<option value="S" class="attached enabled">S</option>
-					<option value="M" class="attached enabled">M</option>
-					<option value="L" class="attached enabled">L</option>
-					<option value="XL" class="attached enabled">XL</option>
-		      	</select>-->
+			<form class="form-product w-100" action="/add-cart" method="post">
+				<div class="mb-2">
+	    			<% if (type == "clothe") { %>
+	    				<select class="custom-select size col-7">
+					        <option selected disabled>Sélectionnez la taille</option>
+							<option value="S" class="attached enabled">S</option>
+	    					<option value="M" class="attached enabled">M</option>
+	    					<option value="L" class="attached enabled">L</option>
+	    					<option value="XL" class="attached enabled">XL</option>
+				      	</select>
+				    <% } %>
+					<small class="storage-info <%= class_available %> ml-2"><i class="fas fa-box"></i> <%= text_available %></small>
+				</div>
+
 		      	<% if (!available) { %>
-				<button class="btn btn-primary col ml-2 text-truncate" disabled=true type="submit" name="add-cart">
+				<button class="btn btn-primary col text-truncate" disabled=true type="submit" name="add-cart">
 					Indisponible à l'achat
 				</button>
 				<% } else { %>
-				<button class="btn btn-primary col ml-2 text-truncate" type="submit" name="add-cart">
+				<button class="btn btn-primary col text-truncate" type="submit" name="add-cart">
 					Ajouter au panier <i class="fas fa-cart-arrow-down"></i>
 				</button>
 				<% } %>

@@ -49,15 +49,31 @@
                         <input type="text" placeholder="12.99" class="form-control col-md-3 col" name="price" value="<%= price %>">
                         <div class="invalid-feedback">Veuillez rentrer un prix valide (ex: 12.99)</div>
                     </div>
-                    <div class="size">
-                        <label class="title my-2"> Format </label>
-                        <input type="text" placeholder="A3" class="form-control col-md-3 col" name="size" value="<%= size %>">
+                    <div class="available">
+                        <label class="title my-2"> Type </label> <% type="clothe"%>
+                        <br/>
+                        <label class="checkbox-inline"><input type="radio" name="type" value="clothe" id="t1" <% if (type=="clothe") { %> checked <% } %> > Vêtement </label>
+                        <label class="checkbox-inline ml-3"><input type="radio" name="type" value="poster" id="t2" <% if (type=="poster") { %> checked <% } %> > Poster </label>
                     </div>
-                    <div class="printing">
-                        <label class="title my-2"> Poids </label>
-                        <input type="text" placeholder="250mg" class="form-control col-md-3 col" name="printing" value="<%= printing %>">
-                        <div class="invalid-feedback">veuillez rentrer un poids</div>
+
+                    <div class="type-clothe <% if (type!="clothe") { %> hide <% } %>">
+                        <div class="size">
+                            <label class="title my-2"> Composition </label>
+                            <input type="text" placeholder="Composition du vêtement" class="form-control col-md-3 col" name="composition" value="<%=  %>">
+                        </div>
                     </div>
+                    <div class="type-poster <% if (type!="poster") { %> hide <% } %>">
+                        <div class="size">
+                            <label class="title my-2"> Format </label>
+                            <input type="text" placeholder="A3" class="form-control col-md-3 col" name="size" value="<%= size %>">
+                        </div>
+                        <div class="printing">
+                            <label class="title my-2"> Poids </label>
+                            <input type="text" placeholder="250mg" class="form-control col-md-3 col" name="printing" value="<%= printing %>">
+                            <div class="invalid-feedback">veuillez rentrer un poids</div>
+                        </div>
+                    </div>
+
                     <div class="category">
                         <label class="title my-2"> Categorie(s) </label>
                         <br/>
@@ -144,6 +160,12 @@
         }
 
         // Actualise le cadre de preview d'images
+        $('.images #clear').click(function () {
+            $('.images .img-preview').empty();
+            file_list = [];
+        })
+
+        // Actualise le cadre de preview d'images
         $('.images input').change(function () {
             var files = $(this).prop('files');
             file_list.push(files[0]);
@@ -156,11 +178,18 @@
             }
         });
 
-        // Actualise le cadre de preview d'images
-        $('.images #clear').click(function () {
-            $('.images .img-preview').empty();
-            file_list = [];
-        })
+        // Change les champs à remplir selon le type
+        $('input[name="type"]').change(function () {
+            var value = $('input[name="type"]:checked').val();
+            if (value=="clothe") {
+                $('.type-clothe').removeClass('hide');
+                $('.type-poster').addClass('hide');
+            }
+            else if (value=="poster") {
+                $('.type-poster').removeClass('hide');
+                $('.type-clothe').addClass('hide');
+            }
+        });        
 
         // Ajouter un produit
         $('form[action="/admin-edit-product"]').submit(function () {
