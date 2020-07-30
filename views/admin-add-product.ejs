@@ -191,6 +191,13 @@
             var available = $('input[name="available"]:checked');
             var regexPrice = new RegExp("^(\\d+[.]\\d{1,2})$");
 
+            if (type.val() == "clothe") {
+                size.val('');
+                printing.val('');
+            } else if (type.val() == "poster") {
+                composition.val('');
+            }
+
             // On check les erreurs et on ajoute la classe en consequant
             if (!name.val()) {
                 name.removeClass('is-valid').addClass('is-invalid');
@@ -214,20 +221,20 @@
             else {
                 price.removeClass('is-invalid').addClass('is-valid');
             }
-            if (!composition.val()) {
+            if (!composition.val() && type.val() == "clothe") {
                 composition.removeClass('is-valid').addClass('is-invalid');
                 return false;
             } else {
                 composition.removeClass('is-invalid').addClass('is-valid');
             }
-            if (!size.val()) {
+            if (!size.val() && type.val() == "poster") {
                 size.removeClass('is-valid').addClass('is-invalid');
                 return false;
             }
             else {
                 size.removeClass('is-invalid').addClass('is-valid');
             }
-            if (!printing.val()) {
+            if (!printing.val() && type.val() == "poster") {
                 printing.removeClass('is-valid').addClass('is-invalid');
                 return false;
             }
@@ -241,7 +248,6 @@
                 images: JSON.stringify(getImgList()),
                 name: name.val(),
                 description: description.val(),
-                price: price.val(),
                 price: price.val(),
                 composition: composition.val(),
                 size: size.val(),
