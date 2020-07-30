@@ -86,6 +86,12 @@ function getAllProduct(callback) {
     });
 }
 
+function escapeQuote(string) {
+    string = string.replace(/'/g, `\'`); // on escape toutes les occurences de '
+    string = string.replace(/"/g, `\\"`); // on escape toutes les occurences de ""
+    return string;
+}
+
 function safeQuote(string) {
     string = string.replace(/'/g, `''`); // on double toutes les occurences de '
     return string;
@@ -250,11 +256,13 @@ app.get('/', function(req, res) {
             reference: product.id,
             name: product.name,
             available: product.available,
+            composition: product.composition,
             price: product.price,
             description: product.description,
             size: product.size,
             printing: product.printing,
             category: product.category,
+            type: product.type,
             img: JSON.parse(product.images),
             session: req.session
         });
@@ -389,6 +397,8 @@ app.get('/', function(req, res) {
                 printing: product.printing,
                 category: product.category,
                 available: product.available,
+                type: product.type,
+                composition: product.composition,
                 img: JSON.parse(product.images),
                 session: req.session
             });
@@ -438,6 +448,7 @@ app.get('/', function(req, res) {
                     })
                 }
 
+                console.log(orderList);
                 res.render('admin-orders-list.ejs', {session: req.session, orders: orderList});
             });
         });
@@ -460,7 +471,7 @@ app.get('/', function(req, res) {
                     var status = 'confirmed';
                     break;
                 case 'confirmed': 
-                    var status = 'shippped';
+                    var status = 'shipped';
                     break;
                 default: 
                     var status = 'waiting';
@@ -656,10 +667,12 @@ app.get('/', function(req, res) {
         var printing = req.body.printing;
         var category = req.body.category;
         var available = req.body.available;
+        var type = req.body.type;
+        var composition = req.body.composition;
         var img_list = req.body.images;
 
-        var addProduct = `INSERT INTO products (name, available, description, price, size, printing, category, images) 
-            VALUES ('${name}', '${available}', '${description}', '${price}', '${size}', '${printing}', '${category}', '${img_list}')`;  
+        var addProduct = `INSERT INTO products (name, available, description, price, size, printing, category, type, composition, images) 
+            VALUES ('${name}', '${available}', '${description}', '${price}', '${size}', '${printing}', '${category}', '${type}', '${composition}', '${img_list}')`;  
         connection.query(addProduct, function(err, rows, fields) {
             if (err) throw err;
 
@@ -688,11 +701,14 @@ app.get('/', function(req, res) {
         var printing = req.body.printing;
         var category = req.body.category;
         var available = req.body.available;
+        var type = req.body.type;
+        var composition = req.body.composition;
         var img_list = req.body.images;
 
-        var addProduct = `UPDATE products SET name = '${name}', description = '${description}', price = '${price}', 
-            size = '${size}', printing = '${printing}', category = '${category}', available = '${available}', images = '${img_list}' WHERE products.id = '${id}'`;  
-        connection.query(addProduct, function(err, rows, fields) {
+        var editProduct = `UPDATE products SET name = '${name}', description = '${description}', price = '${price}', 
+            size = '${size}', printing = '${printing}', category = '${category}', available = '${available}', 
+            images = '${img_list}', type = '${type}', composition = '${composition}' WHERE products.id = '${id}'`;  
+        connection.query(editProduct, function(err, rows, fields) {
             if (err) throw err;
 
             req.session.alert = "edit product";
@@ -736,10 +752,11 @@ app.get('/', function(req, res) {
     }
 
     var product_id = req.body.id;
+    var product_option = req.body.option;
     var match = false;
     // Si le produit est déjà dans le panier, on l'incremente
     for (var i=0; i<req.session.cart.products.length; i++) {
-        if (req.session.cart.products[i].id == product_id) {
+        if (req.session.cart.products[i].id == product_id && req.session.cart.products[i].option == product_option) {
             req.session.cart.products[i].cart_qty++;
             match = true;
         }
@@ -754,9 +771,15 @@ app.get('/', function(req, res) {
     if (!req.session.cart) {
         res.redirect('back');
     }
+
+    var product_id = req.body.id;
+    var product_option = req.body.option;
+    console.log(product_id)
     if (req.session.id) {
         for (var i=0; i<req.session.cart.products.length; i++) {
-            if (req.session.cart.products[i].id == req.body.id) req.session.cart.products.splice(i, 1);
+            if (req.session.cart.products[i].id == product_id && req.session.cart.products[i].option == product_option) {
+                req.session.cart.products.splice(i, 1);
+            }
         }
     }
     if (!req.session.cart.products.length) {
@@ -767,6 +790,7 @@ app.get('/', function(req, res) {
 
 .post('/valid-cart', urlencodedParser, function(req, res) {
     // on remplace le panier par celui envoyé (en le convertissant)
+    console.log(req.body['cart'])
     req.session.cart.products = JSON.parse(req.body['cart']);
     req.session.cart.subtotal_cost = req.body.subtotal_cost;
     req.session.cart.shipping_cost = req.body.shipping_cost;
@@ -785,14 +809,13 @@ app.get('/', function(req, res) {
     var shipping_cost = parseFloat(req.session.cart.shipping_cost);
     var user_id = req.session.account.id;
 
-    console.log(billing_address);
-
     // on refait une liste des produits simplifiée
     var products_obj = [];
     for (var i=0; i<req.session.cart.products.length; i++) {
         products_obj.push({
             id: parseInt(req.session.cart.products[i].id),
-            name: req.session.cart.products[i].name,
+            name: escapeQuote(req.session.cart.products[i].name),
+            option: req.session.cart.products[i].option,
             nb: parseInt(req.session.cart.products[i].cart_qty),
             price: parseInt(req.session.cart.products[i].cart_qty * req.session.cart.products[i].price)
         })

@@ -60,7 +60,7 @@
                                     <td>
                                         <% var products = JSON.parse(orders[i].products);
                                         for (var j=0; j< products.length; j++) { %>
-                                            <p><%= products[j].name %> x<%= products[j].nb %></p>
+                                            <p><%= products[j].name %> <%= products[j].option %> x<%= products[j].nb %></p>
                                         <% } %>
                                     </td>
                                     <td><%= orders[i].address %></td>

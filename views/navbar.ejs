@@ -87,17 +87,17 @@
                                 var price_product = parseFloat(session.cart.products[i].price);
                                 var cart_qty = parseInt(session.cart.products[i].cart_qty);
                                 price_total += price_product * cart_qty; %>
-                                <div class="cart-product row align-items-center" product_id="<%= session.cart.products[i].id %>"> 
+                                <div class="cart-product row align-items-center" product_id="<%= session.cart.products[i].id %>" product_option="<%= session.cart.products[i].option %>"> 
                                     <img class="p-2 col-3" src="/img/<%= session.cart.products[i].img %>">
                                     <div class="col">
                                         <a href="/product/<%= session.cart.products[i].id %>" class="cart-product-name">
-                                            <%- session.cart.products[i].name %>
+                                            <%- session.cart.products[i].name %> <%- session.cart.products[i].option %>
                                         </a>
                                         <span class="ml-2">x</span>
                                         <span class="qty"><%= cart_qty %> </span>
                                     </div>
                                     <span class="cart-product-price col-3"><%= price_product %>€</span>
-                                    <form class="form-remove-cart col-1" action="/remove-cart" method="post" product_id="<%= session.cart.products[i].id %>">
+                                    <form class="form-remove-cart col-1" action="/remove-cart" method="post" product_id="<%= session.cart.products[i].id %>"  product_option="<%= session.cart.products[i].option %>">
                                         <button type="submit" name="remove-cart" class="close" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -269,7 +269,7 @@
 
 <script type="text/javascript">
     /* On efface les cookies de session pour les notifications */
-    $.post("resetNotif");
+    $.post("/resetNotif");
 
     /* Erreur à afficher pour le login */
     $('form[action="/login"]').submit(function () {
@@ -315,6 +315,7 @@
     $('form.form-remove-cart').submit(function () {
         console.log("remove");
         var product_id = $(this).attr('product_id');
+        var product_option = $(this).attr('product_option');
         var nb = parseFloat($('.cart-dropdown span').text());
         var div_empty = `<div class="cart-empty row align-items-center"> 
                                 <span class="m-5 col"> Aucun produit dans le panier ...</span>
@@ -322,10 +323,11 @@
 
         $.post("/remove-cart", {
             id: product_id, 
+            option: product_option
         })
         .done( function (data) {
             // on modifie le panier dynamiquement
-            $('div.cart-product[product_id='+product_id+']').remove(); 
+            $('div.cart-product[product_id='+product_id+'][product_option='+product_option+']').remove(); 
             $('.cart-dropdown span').text(nb-1);
 
             // s'il n'y a plus rien dans le panier, on supprime le total et on ajoute le texte de vide

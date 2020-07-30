@@ -55,11 +55,10 @@
 		    			<span class="desc mb-3 ml">
 		    				<%= description %>
 		    			</span>
-		    			<% var type="clothe"; 
-		    			if (type == "clothe") { %>
+		    			<% if (type == "clothe") { %>
 			    			<div class="composition mb-1">
 			    				<span>Composition </span>
-			    				<span>100% coton ?</span>
+			    				<span><%= composition %></span>
 			    			</div>
 		    			<% } else if (type == "poster") { %>
 			    			<div class="material mb-1">
@@ -95,7 +94,7 @@
 			    			<% if (type == "clothe") { %>
 				    			<div class="row composition mb-1">
 				    				<span>Composition </span>
-				    				<span>100% coton ?</span>
+				    				<span><%= composition %></span>
 				    			</div>
 			    			<% } else if (type == "poster") { %>
 				    			<div class="row material mb-1">
@@ -202,16 +201,30 @@
 
         /* Ajoute un produit au panier */;
         $('form.form-product').submit(function () {
+        	var option = '';
+        	var type = '<%= type %>';
+        	if (type == "clothe") {
+        		// Permet de differencier le select mobile et pc
+        		$('.custom-select').each(function () {
+        			if (!$(this).is(':hidden')) option = $(this).val();
+        		});
+
+        		// On vérifie qu'on a bien entré une option
+	            if (!option) {
+                	$('.custom-select').removeClass('is-valid').addClass('is-invalid');
+                	return false;
+            	} else {
+                	$('.custom-select').removeClass('is-invalid').addClass('is-valid');
+            	}
+        	}
+
         	$.post("/add-cart", {
                 id: <%= id %>, 
 	            reference: <%= reference %>,
 	            name: "<%= name %>",
 	            available: <%= available %>,
 	            price: <%= price %>,
-	            description: "<%= description %>",
-	            size: "<%= size %>",
-	            printing: "<%= printing %>",
-	            category: "<%= category %>",
+	            option: option,
 	            cart_qty: 1,
 	            img: "<%= img[0] %>",
             })
@@ -223,23 +236,26 @@
                     console.log("cart added");
                     //location.reload();
 
-                    if ($('.cart-product[product_id=<%= id %>]').length) {
-                    	var qty = parseInt($('.cart-product[product_id=<%= id %>] span.qty').text());
-                    	$('.cart-product[product_id=<%= id %>] span.qty').text(qty+1);
+                    // Si le produit est déjà dans le panier (avec les bonnes options) ...
+                    var cartProduct = $(`.cart-product[product_id=<%= id %>][product_option="${option}"]`);
+                    if (cartProduct.length) {
+                    	var qty = parseInt(cartProduct.find('span.qty').text() );
+                    	cartProduct.find('span.qty').text(qty+1);
                     }
+                    // Sinon on ajoute une ligne ...
                     else {
 	                    var cart_product = 
-	                    	`<div class="cart-product row align-items-center" product_id="<%= id %>"> 
+	                    	`<div class="cart-product row align-items-center" product_id="<%= id %>" product_option="${option}"> 
 	                            <img class="p-2 col-3" src="/img/<%= img[0] %>">
 	                            <div class="col">
 		                            <a href="/product/<%= id %>" class="cart-product-name">
-		                                <%= name %>
+		                                <%= name %> ${option}
 		                            </a>
 		                            <span class="ml-2">x</span>
 		                            <span class="qty">1</span>
 		                        </div>
 	                            <span class="cart-product-price col-3"><%= price %>€</span>
-	                            <form class="form-remove-cart col-1" action="/remove-cart" method="post" product_id="<%= id %>">
+	                            <form class="form-remove-cart col-1" action="/remove-cart" method="post" product_id="<%= id %>" product_option="${option}">
 	                                <button type="submit" name="remove-cart" class="close" aria-label="Close">
 	                                    <span aria-hidden="true">&times;</span>
 	                                </button>
@@ -264,9 +280,12 @@
 	                    }
 	                	// on ajoute le produit ...
 	                	$('div.cart-total').before(cart_product)
-	                	$('form.form-remove-cart[product_id=<%= id %>]').submit(function () {
+
+					    // Pour supprimer un objet du panier
+					    $(`.cart-product[product_id=<%= id %>][product_option="${option}"] form`).submit(function () {
 					        console.log("remove");
 					        var product_id = $(this).attr('product_id');
+					        var product_option = $(this).attr('product_option');
 					        var nb = parseFloat($('.cart-dropdown span').text());
 					        var div_empty = `<div class="cart-empty row align-items-center"> 
 					                                <span class="m-5 col"> Aucun produit dans le panier ...</span>
@@ -274,10 +293,11 @@
 
 					        $.post("/remove-cart", {
 					            id: product_id, 
+					            option: product_option
 					        })
 					        .done( function (data) {
 					            // on modifie le panier dynamiquement
-					            $('div.cart-product[product_id='+product_id+']').remove(); 
+					            $('div.cart-product[product_id='+product_id+'][product_option='+product_option+']').remove(); 
 					            $('.cart-dropdown span').text(nb-1);
 
 					            // s'il n'y a plus rien dans le panier, on supprime le total et on ajoute le texte de vide

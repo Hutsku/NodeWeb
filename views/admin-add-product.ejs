@@ -50,7 +50,7 @@
                         <div class="invalid-feedback">Veuillez rentrer un prix valide (ex: 12.99)</div>
                     </div>
                     <div class="available">
-                        <label class="title my-2"> Type </label> <% type="clothe"%>
+                        <label class="title my-2"> Type </label>
                         <br/>
                         <label class="checkbox-inline"><input type="radio" name="type" value="clothe" id="t1" checked > Vêtement </label>
                         <label class="checkbox-inline ml-3"><input type="radio" name="type" value="poster" id="t2" %> > Poster </label>
@@ -183,6 +183,8 @@
             var name = $('input[name="name"]');
             var description = $('textarea[name="description"]');
             var price = $('input[name="price"]');
+            var type = $('input[name="type"]:checked');
+            var composition = $('input[name="composition"]');
             var size = $('input[name="size"]');
             var printing = $('input[name="printing"]');
             var category = $('input[name="category"]:checked');
@@ -212,6 +214,12 @@
             else {
                 price.removeClass('is-invalid').addClass('is-valid');
             }
+            if (!composition.val()) {
+                composition.removeClass('is-valid').addClass('is-invalid');
+                return false;
+            } else {
+                composition.removeClass('is-invalid').addClass('is-valid');
+            }
             if (!size.val()) {
                 size.removeClass('is-valid').addClass('is-invalid');
                 return false;
@@ -234,9 +242,12 @@
                 name: name.val(),
                 description: description.val(),
                 price: price.val(),
+                price: price.val(),
+                composition: composition.val(),
                 size: size.val(),
                 printing: printing.val(),
                 category: category.val(),
+                type: type.val(),
                 available: available.val()
             })
             .done( function (data) {

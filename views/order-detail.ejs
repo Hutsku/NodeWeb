@@ -31,6 +31,7 @@
                             <thead>
                                 <tr>
                                     <th class="p-1" scope="col">Nom</th>
+                                    <th class="p-1" scope="col">Option</th>
                                     <th class="p-1" scope="col">Quantité</th>
                                     <th class="p-1" scope="col">Prix TTC</th>
                                 </tr>
@@ -40,6 +41,7 @@
                                 for (var i=0; i< products.length; i++) { %>
                                     <tr>
                                         <td><a href="/product/<%= products[i].id %>"><%= products[i].name %></a></td>
+                                        <td><%= products[i].option %></td>
                                         <td><%= products[i].nb %></td>
                                         <td><%= products[i].price %>€</td>
                                     </tr>

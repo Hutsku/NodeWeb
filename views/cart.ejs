@@ -33,12 +33,12 @@
                             for (var i=0; i < session.cart.products.length; i++) { 
                                 var price_product = parseFloat(session.cart.products[i].price);
                                 var cart_qty = parseInt(session.cart.products[i].cart_qty); %>
-                                <div class="cart-product row align-items-center" product_id="<%= session.cart.products[i].id %>">
+                                <div class="cart-product row align-items-center" product_id="<%= session.cart.products[i].id %>" product_option="<%= session.cart.products[i].option %>">
                                 	<div class="cart-product-img p-2 col-3">
                                 		<img class="w-100" src="/img/<%= session.cart.products[i].img %>">
                                 	</div>
-                                	<div class="cart-product-name col-md-5 col">
-                                		<a href="/product/<%= session.cart.products[i].id %>"><%- session.cart.products[i].name %></a>
+                                	<div class="cart-product-name col-md-5 col" product_name='<%- session.cart.products[i].name %>'>
+                                		<a href="/product/<%= session.cart.products[i].id %>"><%- session.cart.products[i].name %> <%- session.cart.products[i].option %></a>
                                 	</div>
                                 	<div class="w-100 d-md-none d-block"></div>
                                 	<div class="cart-product-qty col-md-2 offset-md-0 offset-3 col-4">
@@ -49,7 +49,7 @@
                                         <% price_total += price_product*cart_qty %>
                                 	</div>
                                 	<div class="product-remove col-md-1 col-1">
-                                    <form class="form-remove-cart col-1" action="/remove-cart" method="post" product_id="<%= session.cart.products[i].id %>">
+                                    <form class="form-remove-cart col-1" action="/remove-cart" method="post" product_id="<%= session.cart.products[i].id %>" product_option="<%= session.cart.products[i].option %>">
                                 		<button type="submit" class="close" aria-label="Close">
                                         	<span aria-hidden="true">&times;</span>
                                     	</button>
@@ -179,9 +179,10 @@
         // actualise lorsque on supprime un produit
         $('form.form-remove-cart').submit(function () {
             var product_id = $(this).attr('product_id');
+            var product_option = $(this).attr('product_option');
 
             // on modifie la page dynamiquement
-            var element = $('.cart-pannel-main div.cart-product[product_id='+product_id+']'); 
+            var element = $(`.cart-pannel-main div.cart-product[product_id=${product_id}][product_option=${product_option}]`);
             element.prev().remove();
             element.remove();
 
@@ -200,7 +201,6 @@
             $('.price-sub-total').text(function () {
                 var sub_price = 0;
                 $('.cart-pannel-main .cart-product-price').each(function () {
-                    console.log(parseFloat($(this).text()));
                     sub_price += parseFloat($(this).text());
                 });
                 return sub_price.toFixed(2)+'€';
@@ -221,16 +221,18 @@
                 var product = $(this);
                 new_cart.push({
                     id: product.attr('product_id'), 
-                    name: product.find('.cart-product-name a').text(),
+                    option: product.attr('product_option'), 
+                    name: product.find('.cart-product-name').attr('product_name'),
                     price: product.find('.cart-product-price').attr('product_price'),
                     cart_qty: product.find('.cart-product-qty input').val(),
+                    img: product.find('img').attr('src').split('/')[2],
                 });
             });
 
             $.post("/valid-cart", {
                 cart: JSON.stringify(new_cart), // on converti l'objet pour bien le passer
                 subtotal_cost: <%= price_total %>,
-                shipping_price: <%= shipping_cost %>,
+                shipping_cost: <%= shipping_cost %>,
                 total_cost: <%= price_final %>
             }).done( function (data) {
                 if (data == "badCart") {
@@ -260,7 +262,8 @@
                 var product = $(this);
                 new_cart.push({
                     id: product.attr('product_id'), 
-                    name: product.find('.cart-product-name a').text(),
+                    option: product.attr('product_option'), 
+                    name: product.find('.cart-product-name').attr('product_name'),
                     price: product.find('.cart-product-price').attr('product_price'),
                     cart_qty: product.find('.cart-product-qty input').val(),
                     img: product.find('img').attr('src').split('/')[2],
