@@ -14,7 +14,7 @@
     "mysql": "latest",
     "stripe": "latest",
     "multer": "latest",
-    "email-templates": "latest",
+    "email-templates": "latest"
   },
   "repository": {
     "type": "git",
