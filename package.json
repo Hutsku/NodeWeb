@@ -11,7 +11,10 @@
     "ejs": "latest",
     "express": "latest",
     "express-session": "latest",
-    "mysql": "latest"
+    "mysql": "latest",
+    "stripe": "latest",
+    "multer": "latest",
+    "email-templates": "latest",
   },
   "repository": {
     "type": "git",

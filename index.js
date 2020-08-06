@@ -41,13 +41,16 @@ var transport_mailtrap = {
   }
 };
 var transport_outlook = {
-  host: "smtp-mail.outlook.com",
-  secureConnection: false,
-  port: 587,
-  auth: {
-    user: "arouxel@outlook.fr", 
-    pass: "z$&!*o%QP8E,Xhe"  
-  }
+    host: "smtp-mail.outlook.com",
+    secureConnection: false,
+    port: 587,
+    tls: {
+        ciphers:'SSLv3'
+    },
+    auth: {
+        user: "arouxel@outlook.fr", 
+        pass: "z$&!*o%QP8E,Xhe"  
+    }
 };
 
 // Build-up the mail object
