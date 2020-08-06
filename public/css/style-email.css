@@ -1,0 +1,11 @@
+#name, .order-title {
+	font-weight: 700;
+}
+.order-title {
+	font-size: 20px;
+}
+
+.order-separator {
+	border-top: 1px solid lightgrey;
+	padding: 10px;
+}

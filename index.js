@@ -1,6 +1,5 @@
 // Variables d'initalisation de Node
 const path = require('path');
-const fs = require('fs');
 var express = require('express');
 var session = require('express-session');
 var bodyParser = require("body-parser");
@@ -64,28 +63,10 @@ const email = new Email({
     // uncomment below to send emails in development/test env:
     send: true,
     preview: false,
-    transport: transport_mailtrap,
+    transport: transport_outlook,
 });
 
-// Send email with the template
-email.send({
-    template: 'test',
-    message: {
-        to: 'arouxel.trash@outlook.fr'
-    },
-    locals: {
-        name: 'Jean'
-    }
-})
-.then(console.log)
-.catch(console.error);
-
 /* ============================================================================= */
-
-/*// init mailjet
-var mailjetApi = '3fd803f3c9719849951a788982dbfe72';
-var mailjetSecretKeys = '9b4e9cabdf8f2c58ee2221d34a6d8bf0';
-const mailjet = require ('node-mailjet').connect(mailjetApi, mailjetSecretKeys)*/
 
 //var client = redis.createClient();
 var app = express();
@@ -206,69 +187,17 @@ function checkAdmin(email) {
 
 // ---------------------------- EMAIL ----------------------- 
 
-var subscriptionTemplate = 1323172;
-var commandTemplate = 1323206;
-function sendEmailSubscription(email, name) {
-    // Send email via mailjet
-    mailjet
-    .post("send", {'version': 'v3.1'})
-    .request({
-      "Messages":[
-            {
-            "TemplateLanguage": true,
-            "To": [{
-                "Email": email,
-                "Name": name
-            }],
-            "TemplateID": subscriptionTemplate,
-            "Variables": {
-                'name': name,
-                }
-            }
-        ]
+// Envoit un email avec le template et les paramètres specifiés
+function sendEmail(template, emailTo, parameter) {
+    email.send({
+        template: template,
+        message: {
+            to: emailTo
+        },
+        locals: parameter,
     })
-    .then(function (result) {
-        console.log(result.body)
-    })
-    .catch(function (err) {
-        console.log(err)
-
-    })
-}
-
-function sendEmailCommand(email, name, infos) {
-    // Send email via mailjet
-    console.log(infos.products)
-    mailjet
-    .post("send", {'version': 'v3.1'})
-    .request({
-      "Messages":[
-            {
-            "TemplateLanguage": true,
-            "To": [{
-                "Email": email,
-                "Name": name
-            }],
-            "TemplateID": commandTemplate,
-            "Variables": {
-                name: name,
-                products: infos.products,
-                shipping_cost: infos.shipping_cost,
-                subtotal_cost: infos.subtotal_cost,
-                total_cost: infos.total_cost,
-                shipping_address: infos.shipping_address,
-                billing_address: infos.billing_address,
-                order_id: infos.order_id
-                }
-            }
-        ]
-    })
-    .then(function (result) {
-        console.log(result.body)
-    })
-    .catch(function (err) {
-        console.log(err)
-    })
+    .then(console.log)
+    .catch(console.error);
 }
 
 // ================================================ ROUTES ===============================================
@@ -407,6 +336,35 @@ app.get('/', function(req, res) {
 
 .get('/contact', function(req, res) {
     res.render('contact.ejs', {session: req.session});
+})
+
+.get('/test-dev', function (req, res) {
+    res.render('test/html.ejs', {
+        session: req.session,
+        name: 'Jean Dupont',
+        shipping_address: "28 rue de l'avignou",
+        billing_address: "28 rue de l'avignou",
+        subtotal_cost: 44.67,
+        shipping_cost: 6.00,
+        total_cost: 50.97,
+        order_id: 27,
+        products: [{
+            id: '43',
+            option: 'M',
+            name: '"Fight Club" - Affiche',
+            price: '1.26',
+            cart_qty: '2',
+            img: 'img2-1.jpg'
+        },
+        {
+            id: '42',
+            option: '',
+            name: '"Fight Club" - Affiche (Special Edition)',
+            price: '3.26',
+            cart_qty: '1',
+            img: 'img2-1.jpg'
+        }],
+    });
 })
 
 .get('/gilbert', function (req, res) {
@@ -903,17 +861,16 @@ app.get('/', function(req, res) {
 
             if (!rows.length) {
                 // on envoit un email de confirmation de commande
-                sendEmailCommand(req.session.account.email, req.session.account.name, 
-                    {
-                        products: req.session.cart.products,
-                        subtotal_cost: subtotal_cost,
-                        shipping_cost: shipping_cost,
-                        total_cost: total_cost,
-                        shipping_address: shipping_address,
-                        billing_address: billing_address,
-                        order_id: ''
-                    }
-                );
+                sendEmail('order', req.session.account.email, {
+                    name: req.session.username,
+                    products: req.session.cart.products,
+                    subtotal_cost: subtotal_cost,
+                    shipping_cost: shipping_cost,
+                    total_cost: total_cost,
+                    shipping_address: shipping_address,
+                    billing_address: billing_address,
+                    order_id: ''
+                });
 
                 req.session.alert = "add order";
                 req.session.cart = 0;// on vide le panier
@@ -1192,8 +1149,9 @@ app.get('/', function(req, res) {
             if (!rows.length) {
                 connection.query(addUser, function(err, rows, fields) {
                     if (err) throw err;
+
                     // on envoit un email de confirmation
-                    sendEmailSubscription(email, username);
+                    sendEmail('subscribe', email, {name: username});
                     req.session.alert = "signup";
 
                     req.session.alert = "signup";
@@ -1230,11 +1188,16 @@ app.get('/', function(req, res) {
 .post('/unsubscribe', urlencodedParser, function(req, res) {
     var requestMysql = `DELETE FROM users WHERE id=${req.session.account.id}`;
     connection.query(requestMysql, function(err, rows, fields) {
+        // On envoit un email d'adieu
+        sendEmail('unsubscribe', req.session.account.email, {name: req.session.username});
+
+        // On efface les cookies
         req.session.username = '';
         req.session.logged = false;
         req.session.admin = false;
         req.session.account = false;
         req.session.alert = "unsubscribe"
+
         res.redirect('/');
     }); 
 })
