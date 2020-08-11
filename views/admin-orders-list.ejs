@@ -68,13 +68,36 @@
                                     <td>
                                         <% if (orders[i].status != "shipped") { %>
                                         <a class="btn btn-secondary mb-2 w-100" href="/admin-update-order/<%= orders[i].id %>" name="update"><%= button %></a> <% } %>
-                                        <a class="btn btn-danger w-100" href="/admin-remove-order/<%= orders[i].id %>">Supprimer</button>
+                                        <a class="btn btn-danger w-100" href="#" data-toggle="modal" data-target="#deleteOrderModal" data-id="<%= orders[i].id %>" name="delete-order">Supprimer</button>
                                     </td>
                                 </tr>
                             <% } %>
                         </tbody>
                     </table>
                     <!--<a class="btn btn-success mt-3" href="/admin-add-product" name="add">Ajouter un produit</a>-->
+                </div>
+            </div>
+
+            <!-- MODAL DELETE ORDER -->
+            <div class="modal fade" id="deleteOrderModal" tabindex="-1" role="dialog" aria-labelledby="deleteOrderModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteOrderModalLabel">Voulez-vous vraiment vous supprimer ?</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="modal-body p-4">
+                            <div> Cette commande ne sera plus visible à l'avenir sur la base de donnée. Ne supprimez que si la commande contient des informations éronnée ou semble suspicieuse, et n'oubliez pas d'envoyer un email au client pour lui expliquer la raison de la suppression.
+                            </div>
+                            <div class="form-row justify-content-center">
+                                <a href="/admin-remove-order/" class="btn btn-danger mr-2" data-dismiss="" id="buttonLink">Confirmer</a>
+                                <button type="button" class="ml-2 btn btn-secondary" data-dismiss="modal" aria-label="Close"> Annuler</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -84,6 +107,9 @@
     </body>
     
     <script type="text/javascript">
+        $('a[name="delete-order"]').click(function (){
+            $('#deleteOrderModal a#buttonLink').attr('href', `/admin-remove-order/${$(this).attr('data-id')}`);
+        })
     </script>
 
 </html>
