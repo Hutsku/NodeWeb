@@ -27,6 +27,22 @@ var upload = multer({
 // See your keys here: https://dashboard.stripe.com/account/apikeys
 const stripe = require('stripe')('sk_test_0HJaHUkSg3JE8rkO4P4weCJS00cB00h5K9');
 
+/* ============================= VAULT SETUP ===================================== */
+
+// get new instance of the client
+var vault = require("node-vault");
+
+// init vault server
+vault.init({ secret_shares: 1, secret_threshold: 1 })
+.then(function (result) {
+    var keys = result.keys;
+    // set token for all following requests
+    vault.token = result.root_token;
+    // unseal vault server
+    return vault.unseal({ secret_shares: 1, key: keys[0] })
+})
+.catch(console.error);
+
 /* ============================= EMAIL SETUP ===================================== */
 
 const Email = require('email-templates'); // include nodemailer
@@ -84,7 +100,7 @@ app.use(session({
             client: client,
             ttl: 260
         }),*/
-        cookie: { maxAge: timeCookieDefault*60*1000 }, // in millisecond
+        cookie: { maxAge: timeCookieDefault*60*1000}, // in millisecond
         resave: false,
         saveUninitialized: false
     })

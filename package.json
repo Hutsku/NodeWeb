@@ -9,12 +9,13 @@
     "body-parser": "latest",
     "bootstrap-input-spinner": "^1.13.3",
     "ejs": "latest",
+    "email-templates": "latest",
     "express": "latest",
     "express-session": "latest",
-    "mysql": "latest",
-    "stripe": "latest",
     "multer": "latest",
-    "email-templates": "latest"
+    "mysql": "latest",
+    "node-vault": "^0.9.20",
+    "stripe": "latest"
   },
   "repository": {
     "type": "git",
