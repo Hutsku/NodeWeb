@@ -32,6 +32,7 @@ const stripe = require('stripe')('sk_test_0HJaHUkSg3JE8rkO4P4weCJS00cB00h5K9');
 var options = {
   apiVersion: 'v1', // default
   endpoint: 'http://127.0.0.1:8200', // default
+  token: 's.Bra7MjCR9F2XhYBsHmDsxZZV'
 };
 // get new instance of the client
 var vault = require("node-vault")(options);
