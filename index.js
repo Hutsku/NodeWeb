@@ -37,7 +37,7 @@ var options = {
 // get new instance of the client
 var vault = require("node-vault")(options);
 
-vault.read('secret/hello')
+vault.read('secret/email')
 .then(function(data) {
     console.log(data);
 })
