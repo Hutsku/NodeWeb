@@ -30,14 +30,14 @@ const stripe = require('stripe')('sk_test_0HJaHUkSg3JE8rkO4P4weCJS00cB00h5K9');
 /* ============================= VAULT SETUP ===================================== */
 
 var options = {
-  apiVersion: 'v2', // default
+  apiVersion: 'v1',
   endpoint: 'http://127.0.0.1:8200', // default
   token: 's.Bra7MjCR9F2XhYBsHmDsxZZV'
 };
 // get new instance of the client
 var vault = require("node-vault")(options);
 
-vault.read('secret/data/email')
+vault.read('secret/email')
 .then(function(data) {
     console.log(data);
 })
