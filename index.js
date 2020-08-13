@@ -29,6 +29,11 @@ const stripe = require('stripe')('sk_test_0HJaHUkSg3JE8rkO4P4weCJS00cB00h5K9');
 
 /* ============================= VAULT SETUP ===================================== */
 
+var cred_email;
+var cred_mysql;
+var cred_admin;
+var cred_paypal;
+
 var options = {
   apiVersion: 'v1',
   endpoint: 'http://127.0.0.1:8200', // default
@@ -39,9 +44,25 @@ var vault = require("node-vault")(options);
 
 vault.read('ydogbe/email')
 .then(function(res) {
-    console.log(res.data);
-})
-.catch(console.error);
+    cred_email = res.data;
+}).catch(console.error);
+
+vault.read('ydogbe/mysql')
+.then(function(res) {
+    cred_mysql = res.data;
+}).catch(console.error);
+
+vault.read('ydogbe/admin')
+.then(function(res) {
+    cred_admin = res.data;
+}).catch(console.error);
+
+vault.read('ydogbe/paypal')
+.then(function(res) {
+    cred_paypal = res.data;
+}).catch(console.error);
+
+console.log(cred_email, cred_mysql, cred_admin, cred_paypal);
 
 /* ============================= EMAIL SETUP ===================================== */
 
