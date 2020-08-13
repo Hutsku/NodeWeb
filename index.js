@@ -34,10 +34,6 @@ var options = {
   endpoint: 'http://127.0.0.1:8200', // default
 };
 
-// get new instance of the client
-var vault = require("node-vault")(options);
-console.log(vault.read('secret/hello').catch(console.error))
-/*
 // init vault server
 vault.init({ secret_shares: 1, secret_threshold: 1 })
 .then(function (result) {
@@ -47,9 +43,15 @@ vault.init({ secret_shares: 1, secret_threshold: 1 })
     // unseal vault server
     return vault.unseal({ secret_shares: 1, key: keys[0] })
 })
-.catch(console.error);*/
+.catch(console.error);
 
-
+// get new instance of the client
+var vault = require("node-vault")(options);
+vault.read('secret/hello')
+.then(function(data) {
+    console.log(data);
+})
+.catch(console.error))
 
 /* ============================= EMAIL SETUP ===================================== */
 
