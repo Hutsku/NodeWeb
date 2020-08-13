@@ -45,6 +45,7 @@ var vault = require("node-vault")(options);
 vault.read('ydogbe/email')
 .then(function(res) {
     cred_email = res.data;
+    console.log(cred_email)
 }).catch(console.error);
 
 vault.read('ydogbe/mysql')
@@ -61,8 +62,6 @@ vault.read('ydogbe/paypal')
 .then(function(res) {
     cred_paypal = res.data;
 }).catch(console.error);
-
-console.log(cred_email, cred_mysql, cred_admin, cred_paypal);
 
 /* ============================= EMAIL SETUP ===================================== */
 
