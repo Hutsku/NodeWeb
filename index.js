@@ -36,7 +36,7 @@ var options = {
 
 // get new instance of the client
 var vault = require("node-vault")(options);
-console.log(vault.read('secret/hello'))
+console.log(vault.read('secret/hello').catch(console.error))
 /*
 // init vault server
 vault.init({ secret_shares: 1, secret_threshold: 1 })
