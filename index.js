@@ -51,7 +51,7 @@ vault.read('secret/hello')
 .then(function(data) {
     console.log(data);
 })
-.catch(console.error))
+.catch(console.error);
 
 /* ============================= EMAIL SETUP ===================================== */
 
