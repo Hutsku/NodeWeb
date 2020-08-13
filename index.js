@@ -33,6 +33,8 @@ var options = {
   apiVersion: 'v1', // default
   endpoint: 'http://127.0.0.1:8200', // default
 };
+// get new instance of the client
+var vault = require("node-vault")(options);
 
 // init vault server
 vault.init({ secret_shares: 1, secret_threshold: 1 })
@@ -45,8 +47,6 @@ vault.init({ secret_shares: 1, secret_threshold: 1 })
 })
 .catch(console.error);
 
-// get new instance of the client
-var vault = require("node-vault")(options);
 vault.read('secret/hello')
 .then(function(data) {
     console.log(data);
