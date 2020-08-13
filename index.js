@@ -38,8 +38,8 @@ var options = {
 var vault = require("node-vault")(options);
 
 vault.read('ydogbe/email')
-.then(function(data) {
-    console.log(data);
+.then(function(res) {
+    console.log(res.data);
 })
 .catch(console.error);
 
