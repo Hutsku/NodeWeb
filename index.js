@@ -120,6 +120,7 @@ console.log('Récuperation des email admin');
     .then(function(res) {
         // Liste des email (utilisateur) ayant accès au droit admin (gestion des articles et commandes)
         admin_user = res.data; 
+        console.log('email admin ok');
     }).catch(console.error);
 })();
 
