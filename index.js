@@ -46,7 +46,7 @@ console.log("Configuration de Multer");
 })();
 
 var email;
-console.log("Configuration de la connection SMTP")
+console.log("Configuration de la connection SMTP");
 (function email_init () {
     // setup transporter (mailtrap for test, outlook for production)
     var transport_mailtrap = {
@@ -90,7 +90,7 @@ console.log("Configuration de la connection SMTP")
 })();
 
 var connection;
-console.log("Connexion à la BDD MySQL")
+console.log("Connexion à la BDD MySQL");
 (function mysql_init () {
     vault.read('ydogbe/mysql')
     .then(function(res) {
@@ -105,7 +105,7 @@ console.log("Connexion à la BDD MySQL")
 })();
 
 var stripe;
-console.log("Configuration de stripe (secret key)")
+console.log("Configuration de stripe (secret key)");
 (function stripe_init () {
     vault.read('ydogbe/stripe')
     .then(function(res) {
@@ -114,7 +114,7 @@ console.log("Configuration de stripe (secret key)")
 })();
 
 var admin_user;
-console.log('Récuperation des email admin')
+console.log('Récuperation des email admin');
 (function adminUser_init () {
     vault.read('ydogbe/admin')
     .then(function(res) {
@@ -125,7 +125,7 @@ console.log('Récuperation des email admin')
 
 var app;
 var urlencodedParser;
-console.log("Création de l'app et configuration des cookies de session")
+console.log("Création de l'app et configuration des cookies de session");
 (function app_init () {
     // init app et configure les cookies de session
     app = express();
