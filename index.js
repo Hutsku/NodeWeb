@@ -1221,6 +1221,10 @@ app.get('/', function(req, res) {
 app.use(function(req, res, next){
     res.setHeader('Content-Type', 'text/plain');
     res.status(404).send('Page introuvable !');
+
+    // On met en place les variable de dev pour le frontend
+    req.session.debug = config.debug;
+    req.session.production = config.production;
 });
 
 // On ouvre le serveur sur le port 8080

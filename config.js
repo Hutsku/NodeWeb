@@ -42,4 +42,7 @@ config.cookies = {
     saveUninitialized: false
 }
 
+config.debug      = true;
+config.production = false;
+
 module.exports = config;
