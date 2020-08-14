@@ -120,7 +120,7 @@ console.log("Création de l'app et configuration des cookies de session");
         // On met en place les variable de dev pour le frontend
         req.session.debug      = config.debug;
         req.session.production = config.production;
-        console.log(req.session);
+        console.log(req.session.debug);
 
         next();
     });
