@@ -111,7 +111,7 @@ console.log("Création de l'app et configuration des cookies de session");
     app = express();
     urlencodedParser = bodyParser.urlencoded({ extended: false });
 
-    app.use(session(config.cookies);
+    app.use(session(config.cookies));
     app.use(express.static(__dirname + '/public'));
     app.use('/scripts', express.static(__dirname + '/node_modules/'));
     app.set('view engine', 'ejs');  
