@@ -119,8 +119,7 @@ console.log('Récuperation des email admin');
     vault.read('ydogbe/admin')
     .then(function(res) {
         // Liste des email (utilisateur) ayant accès au droit admin (gestion des articles et commandes)
-        admin_user = res.data; 
-        console.log(admin_user);
+        admin_user = Object.values(res.data);
     }).catch(console.error);
 })();
 
@@ -225,7 +224,6 @@ function refreshCart(session) {
 // ---------------------------- EMAIL ----------------------- 
 
 function checkAdmin(email) {
-    console.log(admin_user);
     return admin_user.includes(email)
 }
 
