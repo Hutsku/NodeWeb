@@ -115,6 +115,13 @@ console.log("Création de l'app et configuration des cookies de session");
     app.use(express.static(__dirname + '/public'));
     app.use('/scripts', express.static(__dirname + '/node_modules/'));
     app.set('view engine', 'ejs');  
+    
+    app.use(function(req, res){
+        // On met en place les variable de dev pour le frontend
+        req.session.debug      = config.debug;
+        req.session.production = config.production;
+        console.log(req.session);
+    });
 })();
 
 // ============================================= GLOBAL FUNCTIONS ========================================
@@ -1225,7 +1232,7 @@ app.use(function(req, res, next){
     // On met en place les variable de dev pour le frontend
     req.session.debug      = config.debug;
     req.session.production = config.production;
-    console.log(session);
+    console.log(req.session);
 });
 
 // On ouvre le serveur sur le port 8080
