@@ -57,7 +57,7 @@ console.log("Configuration de la connection SMTP");
 
         // Build-up the email object
         email = new Email({
-            views: config.email.views
+            views: config.email.views,
             message: {
                 from: config.email.from
             },
