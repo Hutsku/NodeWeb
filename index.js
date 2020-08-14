@@ -115,7 +115,7 @@ console.log("Création de l'app et configuration des cookies de session");
     app.use(express.static(__dirname + '/public'));
     app.use('/scripts', express.static(__dirname + '/node_modules/'));
     app.set('view engine', 'ejs');  
-    
+
     app.use(function(req, res){
         // On met en place les variable de dev pour le frontend
         req.session.debug      = config.debug;
