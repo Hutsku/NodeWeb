@@ -1232,4 +1232,5 @@ app.use(function(req, res, next){
 
 // On ouvre le serveur sur le port 8080
 console.log('Ouverture du serveur sur le port 8080')
+console.log('===================================================')
 app.listen(8080, 'localhost');
