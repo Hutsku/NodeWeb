@@ -26,7 +26,7 @@ const Email    = require('email-templates'); // include nodemailer
 var mysql      = require('mysql');
 
 var upload;
-console.log("Configuration de Multer")
+console.log("Configuration de Multer");
 (function multer_init() {
     var storage = multer.diskStorage({
       destination: function (req, file, cb) {
@@ -43,7 +43,7 @@ console.log("Configuration de Multer")
             next(err);
         }
     }).any();
-})()
+})();
 
 var email;
 console.log("Configuration de la connection SMTP")
