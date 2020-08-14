@@ -50,7 +50,7 @@ console.log("Configuration de la connection SMTP");
     vault.read('ydogbe/email')
     .then(function(res) {
         // edit the transporter with real credentials
-        var transport_gmail.auth = {
+        transport_gmail.auth = {
             user: res.data.user, 
             pass: res.data.password  
         }
