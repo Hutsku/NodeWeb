@@ -116,11 +116,13 @@ console.log("Création de l'app et configuration des cookies de session");
     app.use('/scripts', express.static(__dirname + '/node_modules/'));
     app.set('view engine', 'ejs');  
 
-    app.use(function(req, res){
+    app.use(function(req, res, next){
         // On met en place les variable de dev pour le frontend
         req.session.debug      = config.debug;
         req.session.production = config.production;
         console.log(req.session);
+
+        next();
     });
 })();
 
