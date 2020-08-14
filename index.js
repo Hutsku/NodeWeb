@@ -1223,8 +1223,9 @@ app.use(function(req, res, next){
     res.status(404).send('Page introuvable !');
 
     // On met en place les variable de dev pour le frontend
-    req.session.debug = config.debug;
+    req.session.debug      = config.debug;
     req.session.production = config.production;
+    console.log(session);
 });
 
 // On ouvre le serveur sur le port 8080
