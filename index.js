@@ -45,7 +45,7 @@ console.log("Configuration de Multer")
     }).any();
 })()
 
-const email;
+var email;
 console.log("Configuration de la connection SMTP")
 (function email_init () {
     // setup transporter (mailtrap for test, outlook for production)
