@@ -20,3 +20,36 @@
 .images input {
 	display:none;
 }
+
+div.orders-list-content div.tab {
+	text-align: center;
+}
+div.orders-list-content ul.tab-switch {
+	text-align: center;
+	margin: auto;
+	max-width: 700px;
+}
+div.orders-list-content ul.tab-switch li {
+	border-bottom: 5px solid #f8f9fa;
+	margin: 0;
+	width: 30%;	
+	height: 50px;
+	padding-top: 10px;	
+	font-weight: 400;
+
+	cursor: pointer;
+	transition: 0.2s;
+}
+div.orders-list-content ul.tab-switch li:hover {
+	border-bottom: 5px solid lightgrey;	
+}
+div.orders-list-content ul.tab-switch li.active {
+	border-bottom: 5px solid black;	
+	font-weight: 600;
+}
+div.orders-list-content div.tab ~ div {
+	display: none;
+}
+div.orders-list-content div.tab ~ div.active {
+	display: block;
+}

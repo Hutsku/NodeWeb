@@ -66,7 +66,7 @@ function email_init (cred) {
         },
         // uncomment below to send emails in development/test env:
         send: config.email.send,
-        preview: config.email.send.preview,
+        preview: config.email.preview,
         transport: transport_gmail,
     });
     console.log("> Connection SMTP configuré.");
@@ -457,6 +457,27 @@ app.get('/', function(req, res) {
     } 
 })
 
+.get('/admin-remove-product', function(req, res) {
+    // si il n'y a pas encore cookies de panier, on en créer un
+    
+    // on vérifie que l'utilisateur est bien admin (double verification si jamais)
+    if (req.session.admin && checkAdmin(req.session.account.email)) {
+        var product_id = req.body.edit; // recupère la valeur du bouton 'edit' du formulaire
+        var removeProduct = `DELETE FROM products WHERE products.id = ${product_id}`;
+
+        connection.query(removeProduct, function(err, rows, fields) {
+            if (err) throw err;
+
+            req.session.alert = "remove product";
+            res.redirect('back');
+        });
+    }
+    else {
+        // sinon on redirige vers l'écran de connexion
+        res.send('no admin');
+    }
+})
+
 .get('/admin-orders-list', function(req, res) {
     // on vérifie que l'utilisateur est bien admin (double verification si jamais)
     if (req.session.admin && checkAdmin(req.session.account.email)) {
@@ -690,27 +711,6 @@ app.get('/', function(req, res) {
 // ============================================= POST ===================================================
 
 // ----------------------- ADMIN EDIT -------------------------------
-
-.post('/admin-remove-product', urlencodedParser, function(req, res) {
-    // si il n'y a pas encore cookies de panier, on en créer un
-    
-    // on vérifie que l'utilisateur est bien admin (double verification si jamais)
-    if (req.session.admin && checkAdmin(req.session.account.email)) {
-        var product_id = req.body.edit; // recupère la valeur du bouton 'edit' du formulaire
-        var removeProduct = `DELETE FROM products WHERE products.id = ${product_id}`;
-
-        connection.query(removeProduct, function(err, rows, fields) {
-            if (err) throw err;
-
-            req.session.alert = "remove product";
-            res.redirect('back');
-        });
-    }
-    else {
-        // sinon on redirige vers l'écran de connexion
-        res.send('no admin');
-    }
-})
 
 .post('/admin-add-product', urlencodedParser, function(req, res) {
     // si il n'y a pas encore cookies de panier, on en créer un

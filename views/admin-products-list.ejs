@@ -49,16 +49,37 @@
                                     <td><%= products[i].category %></td>
                                     <td><%= products[i].id %></td>
                                     <td>
-                                        <a class="btn btn-secondary mb-2 w-100" href="/admin-edit-product/<%= products[i].id %>" name="edit">Modifier</a>
-                                        <form action="/admin-remove-product" method="post" product_id="<%= products[i].id %>">
-                                            <button class="btn btn-danger w-100" type="submit" name="edit" value="<%= products[i].id %>">Supprimer</button>
-                                        </form>
+                                    <a class="btn btn-secondary mb-2 w-100" href="/admin-edit-product/<%= products[i].id %>" name="edit">Modifier</a>
+                                    <a class="btn btn-danger w-100" href="#" data-toggle="modal" data-target="#deleteProductModal" data-id="<%= products[i].id %>" name="delete-product">Supprimer</a>
                                     </td>
                                 </tr>
                             <% } %>
                         </tbody>
                     </table>
                     <a class="btn btn-success mt-3" href="/admin-add-product" name="add">Ajouter un produit</a>
+                </div>
+            </div>
+            <!-- MODAL DELETE ORDER -->
+            <div class="modal fade" id="deleteProductModal" tabindex="-1" role="dialog" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteOrderModalLabel">Voulez-vous vraiment vous supprimer ?</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="modal-body p-4">
+                            <div> Ce produit ne sera plus visible sur le site ou la BDD. Si vous voulez simplement rendre le produit indisponible, vous pouvez modifier cela dans ses paramètre.<br/>
+                            Assurez-vous d'avoir livré toutes vos commandes avant de supprimer ce produit pour des soucis techniques.
+                            </div>
+                            <div class="form-row justify-content-center pt-3">
+                                <a href="/admin-remove-product/" class="btn btn-danger mr-2" data-dismiss="" id="buttonLink">Confirmer</a>
+                                <button type="button" class="ml-2 btn btn-secondary" data-dismiss="modal" aria-label="Close"> Annuler</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -68,6 +89,9 @@
     </body>
     
     <script type="text/javascript">
+        $('a[name="delete-product"]').click(function (){
+            $('#deleteProductModal a#buttonLink').attr('href', `/admin-remove-product/${$(this).attr('data-id')}`);
+        });
     </script>
 
 </html>

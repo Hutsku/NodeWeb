@@ -25,67 +25,74 @@
                 </span>
             </div>
             <div class="new-product-content container-fluid px-4">
+                <div class="images pb-3">
+                    <label class="title my-2"> Image(s) </label>
+                    <div class="img-preview">
+                    </div>
+                    <label class="btn btn-primary m-0 mt-3" for="files">Ajouter une image</label>
+                    <input type="file" id="files" name="images" accept="image/*" >
+                    <a href="#" class="btn btn-secondary mt-3" id="clear"> Supprimer </a>
+                </div>
+                <div class="d-flex flex-wrap">
+                    <div class="pr-sm-4">
+                        <div class="name">
+                            <label class="title my-2"> Nom </label>
+                            <input type="text" placeholder="Nom" class="form-control col" name="name" value="<%= name %>">
+                            <div class="invalid-feedback">Veuillez rentrer un nom</div>
+                        </div>
+                        <div class="description">
+                            <label class="title my-2"> Description </label>
+                            <textarea class="form-control col" placeholder="Ajouter une description ici ..." rows="7" name="description"><%= description %></textarea>
+                            <div class="invalid-feedback">Veuillez rentrer une description</div>
+                        </div>
+                    </div>
+                    <div class="pr-sm-4">
+                        <div class="price">
+                            <label class="title my-2"> Prix </label>
+                            <input type="text" placeholder="12.99" class="form-control col" name="price" value="<%= price %>">
+                            <div class="invalid-feedback">Veuillez rentrer un prix valide (ex: 12.99)</div>
+                        </div>
+                        <div class="available">
+                            <label class="title my-2"> Type </label>
+                            <br/>
+                            <label class="checkbox-inline"><input type="radio" name="type" value="clothe" id="t1" <% if (type=="clothe") { %> checked <% } %> > Vêtement </label>
+                            <label class="checkbox-inline ml-3"><input type="radio" name="type" value="poster" id="t2" <% if (type=="poster") { %> checked <% } %> > Poster </label>
+                        </div>
+
+                        <div class="type-clothe <% if (type!="clothe") { %> hide <% } %>">
+                            <div class="size">
+                                <label class="title my-2"> Composition </label>
+                                <input type="text" placeholder="Composition du vêtement" class="form-control col" name="composition" value="<%= composition %>">
+                            </div>
+                        </div>
+                        <div class="type-poster <% if (type!="poster") { %> hide <% } %>">
+                            <div class="size">
+                                <label class="title my-2"> Format </label>
+                                <input type="text" placeholder="A3" class="form-control col" name="size" value="<%= size %>">
+                            </div>
+                            <div class="printing">
+                                <label class="title my-2"> Poids </label>
+                                <input type="text" placeholder="250mg" class="form-control col" name="printing" value="<%= printing %>">
+                                <div class="invalid-feedback">veuillez rentrer un poids</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="category">
+                            <label class="title my-2"> Categorie(s) </label>
+                            <br/>
+                            <label class="checkbox-inline"><input type="checkbox" value="all" disabled checked name="category"> Tout </label>
+                        </div>
+                        <div class="available">
+                            <label class="title my-2"> Disponible </label>
+                            <br/>
+                            <label class="checkbox-inline"><input type="radio" name="available" value="1" id="a1" <% if (available == 1) { %> checked <% } %> > Oui </label>
+                            <label class="checkbox-inline ml-3"><input type="radio" name="available" value="2" id="a2" <% if (available == 2) { %> checked <% } %> > Précommande </label>
+                            <label class="checkbox-inline ml-3"><input type="radio" name="available" value="0" id="a3" <% if (!available) { %> checked <% } %> > Non </label>
+                        </div>
+                    </div>
+                </div>
                 <form action="/admin-edit-product" method="post">
-                    <div class="images">
-                        <label class="title my-2"> Image(s) </label>
-                        <div class="img-preview">
-                        </div>
-                        <label class="btn btn-primary m-0 mt-3" for="files">Ajouter une image</label>
-                        <input type="file" id="files" name="images" accept="image/*" >
-                        <a href="#" class="btn btn-secondary mt-3" id="clear"> Annuler </a>
-                    </div>
-                    <div class="name">
-                        <label class="title my-2"> Nom </label>
-                        <input type="text" placeholder="Nom" class="form-control col-md-3 col" name="name" value="<%= name %>">
-                        <div class="invalid-feedback">Veuillez rentrer un nom</div>
-                    </div>
-                    <div class="description">
-                        <label class="title my-2"> Description </label>
-                        <textarea class="form-control col-md-3 col" placeholder="Ajouter une description ici ..." rows="5" name="description"><%= description %></textarea>
-                        <div class="invalid-feedback">Veuillez rentrer une description</div>
-                    </div>
-                    <div class="price">
-                        <label class="title my-2"> Price </label>
-                        <input type="text" placeholder="12.99" class="form-control col-md-3 col" name="price" value="<%= price %>">
-                        <div class="invalid-feedback">Veuillez rentrer un prix valide (ex: 12.99)</div>
-                    </div>
-                    <div class="available">
-                        <label class="title my-2"> Type </label>
-                        <br/>
-                        <label class="checkbox-inline"><input type="radio" name="type" value="clothe" id="t1" <% if (type=="clothe") { %> checked <% } %> > Vêtement </label>
-                        <label class="checkbox-inline ml-3"><input type="radio" name="type" value="poster" id="t2" <% if (type=="poster") { %> checked <% } %> > Poster </label>
-                    </div>
-
-                    <div class="type-clothe <% if (type!="clothe") { %> hide <% } %>">
-                        <div class="size">
-                            <label class="title my-2"> Composition </label>
-                            <input type="text" placeholder="Composition du vêtement" class="form-control col-md-3 col" name="composition" value="<%= composition %>">
-                        </div>
-                    </div>
-                    <div class="type-poster <% if (type!="poster") { %> hide <% } %>">
-                        <div class="size">
-                            <label class="title my-2"> Format </label>
-                            <input type="text" placeholder="A3" class="form-control col-md-3 col" name="size" value="<%= size %>">
-                        </div>
-                        <div class="printing">
-                            <label class="title my-2"> Poids </label>
-                            <input type="text" placeholder="250mg" class="form-control col-md-3 col" name="printing" value="<%= printing %>">
-                            <div class="invalid-feedback">veuillez rentrer un poids</div>
-                        </div>
-                    </div>
-
-                    <div class="category">
-                        <label class="title my-2"> Categorie(s) </label>
-                        <br/>
-                        <label class="checkbox-inline"><input type="checkbox" value="all" disabled checked name="category"> Tout </label>
-                    </div>
-                    <div class="available">
-                        <label class="title my-2"> Disponible </label>
-                        <br/>
-                        <label class="checkbox-inline"><input type="radio" name="available" value="1" id="a1" <% if (available) { %> checked <% } %> > Oui </label>
-                        <label class="checkbox-inline ml-3"><input type="radio" name="available" value="0" id="a2" <% if (!available) { %> checked <% } %> > Non </label>
-                    </div>
-
                     <button class="btn btn-success my-4" type="submit"> Modifier le produit </button>
                 </form>
             </div>

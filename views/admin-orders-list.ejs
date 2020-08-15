@@ -20,7 +20,20 @@
 
         <main class="bg-light pt-5 mt-3">
             <div class="orders-list-content container-fluid p-4">
-                <div class="table-order text-center w-100">
+               <div class="tab mb-3">
+                    <ul class="tab-switch list-inline">
+                        <li class="list-inline-item active" target="table-order">
+                            Commandes                           
+                        </li>
+                        <li class="list-inline-item" target="table-preorder">
+                            Précommandes
+                        </li>
+                        <li class="list-inline-item" target="table-history">
+                            Historique
+                        </li>
+                    </ul>
+                </div>
+                <div class="table-order text-center w-100 active">
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -51,30 +64,88 @@
                                         var text = "Envoyée";
                                         var button = "";
                                         break;
-                                } %>
-                                <tr>
-                                    <td><%= orders[i].name %></td>
-                                    <td><%= orders[i].price %>€</td>
-                                    
-                                    <td style="color:<%= color %>;"><%= text %></td>
-                                    <td>
-                                        <% var products = JSON.parse(orders[i].products);
-                                        for (var j=0; j< products.length; j++) { %>
-                                            <p><%= products[j].name %> <%= products[j].option %> x<%= products[j].nb %></p>
-                                        <% } %>
-                                    </td>
-                                    <td><%= orders[i].address %></td>
-                                    <td><a href="/order-detail/<%= orders[i].id %>">Voir plus de détail</a></td>
-                                    <td>
-                                        <% if (orders[i].status != "shipped") { %>
-                                        <a class="btn btn-secondary mb-2 w-100" href="/admin-update-order/<%= orders[i].id %>" name="update"><%= button %></a> <% } %>
-                                        <a class="btn btn-danger w-100" href="#" data-toggle="modal" data-target="#deleteOrderModal" data-id="<%= orders[i].id %>" name="delete-order">Supprimer</button>
-                                    </td>
-                                </tr>
+                                } 
+
+                                if (orders[i].status != 'shipped') { %>
+                                    <tr>
+                                        <td><%= orders[i].name %></td>
+                                        <td><%= orders[i].price %>€</td>
+                                        
+                                        <td style="color:<%= color %>;"><%= text %></td>
+                                        <td>
+                                            <% var products = JSON.parse(orders[i].products);
+                                            for (var j=0; j< products.length; j++) { %>
+                                                <p><%= products[j].name %> <%= products[j].option %> x<%= products[j].nb %></p>
+                                            <% } %>
+                                        </td>
+                                        <td><%= orders[i].address %></td>
+                                        <td><a href="/order-detail/<%= orders[i].id %>">Voir plus de détail</a></td>
+                                        <td>
+                                            <% if (orders[i].status != "shipped") { %>
+                                            <a class="btn btn-secondary mb-2 w-100" href="/admin-update-order/<%= orders[i].id %>" name="update"><%= button %></a> <% } %>
+                                            <a class="btn btn-danger w-100" href="#" data-toggle="modal" data-target="#deleteOrderModal" data-id="<%= orders[i].id %>" name="delete-order">Supprimer</a>
+                                        </td>
+                                    </tr>
+                                <% } %>
                             <% } %>
                         </tbody>
                     </table>
-                    <!--<a class="btn btn-success mt-3" href="/admin-add-product" name="add">Ajouter un produit</a>-->
+                </div>
+
+                <div class="table-preorder text-center w-100">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th class="p-1" scope="col">Utilisateur</th>
+                                <th class="p-1" scope="col">Montant</th>
+                                <th class="p-1" scope="col">Statut</th>
+                                <th class="p-1" scope="col">Produits</th>
+                                <th class="p-1" scope="col">Adresse</th>
+                                <th class="p-1" scope="col">Détail</th>
+                                <th class="p-1" scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-history text-center w-100">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th class="p-1" scope="col">Utilisateur</th>
+                                <th class="p-1" scope="col">Montant</th>
+                                <th class="p-1" scope="col">Produits</th>
+                                <th class="p-1" scope="col">Adresse</th>
+                                <th class="p-1" scope="col">Détail</th>
+                                <th class="p-1" scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (var i=0; i< orders.length; i++) { 
+                                if (orders[i].status == 'shipped') { %>
+                                    <tr>
+                                        <td><%= orders[i].name %></td>
+                                        <td><%= orders[i].price %>€</td>
+                                        <td>
+                                            <% var products = JSON.parse(orders[i].products);
+                                            for (var j=0; j< products.length; j++) { %>
+                                                <p><%= products[j].name %> <%= products[j].option %> x<%= products[j].nb %></p>
+                                            <% } %>
+                                        </td>
+                                        <td><%= orders[i].address %></td>
+                                        <td><a href="/order-detail/<%= orders[i].id %>">Voir plus de détail</a></td>
+                                        <td>
+                                            <% if (orders[i].status != "shipped") { %>
+                                            <a class="btn btn-secondary mb-2 w-100" href="/admin-update-order/<%= orders[i].id %>" name="update"><%= button %></a> <% } %>
+                                            <a class="btn btn-danger w-100" href="#" data-toggle="modal" data-target="#deleteOrderModal" data-id="<%= orders[i].id %>" name="delete-order">Supprimer</a>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            <% } %>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -92,7 +163,7 @@
                         <div class="modal-body p-4">
                             <div> Cette commande ne sera plus visible à l'avenir sur la base de donnée. Ne supprimez que si la commande contient des informations éronnée ou semble suspicieuse, et n'oubliez pas d'envoyer un email au client pour lui expliquer la raison de la suppression.
                             </div>
-                            <div class="form-row justify-content-center">
+                            <div class="form-row justify-content-center pt-3">
                                 <a href="/admin-remove-order/" class="btn btn-danger mr-2" data-dismiss="" id="buttonLink">Confirmer</a>
                                 <button type="button" class="ml-2 btn btn-secondary" data-dismiss="modal" aria-label="Close"> Annuler</button>
                             </div>
@@ -109,7 +180,18 @@
     <script type="text/javascript">
         $('a[name="delete-order"]').click(function (){
             $('#deleteOrderModal a#buttonLink').attr('href', `/admin-remove-order/${$(this).attr('data-id')}`);
-        })
+        });
+
+        // on switch de panneau
+        $("ul.tab-switch li").click(function() {
+            $("ul.tab-switch li").removeClass("active");
+            $(this).addClass("active");
+
+            var pannel = $(this).attr("target");
+            console.log($("div.payout-left div."+pannel))
+            $("div.tab ~ div").removeClass("active");
+            $("div."+pannel).addClass("active");
+        });
     </script>
 
 </html>

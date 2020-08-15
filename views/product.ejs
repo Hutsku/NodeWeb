@@ -135,13 +135,17 @@
 							      	</select>
 							    <% }
 
-						      	if (!available) { %>
-			    				<button class="btn btn-primary col-7" disabled=true type="submit" name="add-cart">
-			    					Indisponible à l'achat
-			    				</button>
-			    				<% } else { %>
+						      	if (available == 1) { %>
 			    				<button class="btn btn-primary col-7" type="submit" name="add-cart">
 			    					Ajouter au panier <i class="fas fa-cart-arrow-down"></i>
+			    				</button>
+			    				<% } else if (available == 2) { %>
+			    				<button class="btn btn-primary col-7" type="submit" name="add-cart">
+			    					Précommander <i class="fas fa-cart-arrow-down"></i>
+			    				</button>
+			    				<% } else { %>
+			    				<button class="btn btn-primary col-7" disabled=true type="submit" name="add-cart">
+			    					Indisponible à l'achat
 			    				</button>
 			    				<% } %>
 			    			</form>
