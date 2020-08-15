@@ -1,8 +1,14 @@
 
-// ================================ INITALIZATION =================================
+// ============================================= INITALIZATION ============================================
 
 console.log('Initalisation du site web ...')
 var config = require('./config.js');
+
+// Si le serveur tourne en local, récupère les cred d'un fichier local. (pas de requête vault)
+if (config.local_test) {
+    console.log('/!\\ LE SITE EST EN VERSION TEST LOCAL /!\\');
+    var cred = require('./local_credentials.js');
+}
 
 // get new instance of the client
 console.log('Configuration de vault')
@@ -21,8 +27,7 @@ const Email    = require('email-templates'); // include nodemailer
 var mysql      = require('mysql');
 
 var upload;
-console.log("Configuration de Multer");
-(function multer_init() {
+function multer_init() {
     var storage = multer.diskStorage({
       destination: function (req, file, cb) {
         cb(null, path.resolve(__dirname, './public/img/'))
@@ -38,75 +43,63 @@ console.log("Configuration de Multer");
             next(err);
         }
     }).any();
-})();
+    console.log("> Multer configuré.");
+};
 
 var email;
-console.log("Configuration de la connection SMTP");
-(function email_init () {
+function email_init (cred) {
     // setup transporter (mailtrap for test, outlook for production)
     var transport_mailtrap = config.email.mailtrap;
     var transport_gmail    = config.email.gmail;
 
-    vault.read('ydogbe/email')
-    .then(function(res) {
-        // edit the transporter with real credentials
-        transport_gmail.auth = {
-            user: res.data.user, 
-            pass: res.data.password  
-        }
+    // edit the transporter with real credentials
+    transport_gmail.auth = {
+        user: cred.user, 
+        pass: cred.password  
+    }
 
-        // Build-up the email object
-        email = new Email({
-            views: config.email.views,
-            message: {
-                from: config.email.from
-            },
-            // uncomment below to send emails in development/test env:
-            send: config.email.send,
-            preview: config.email.send.preview,
-            transport: transport_gmail,
-        });
-    }).catch(console.error);
-})();
+    // Build-up the email object
+    email = new Email({
+        views: config.email.views,
+        message: {
+            from: config.email.from
+        },
+        // uncomment below to send emails in development/test env:
+        send: config.email.send,
+        preview: config.email.send.preview,
+        transport: transport_gmail,
+    });
+    console.log("> Connection SMTP configuré.");
+};
 
 var connection;
-console.log("Connexion à la BDD MySQL");
-(function mysql_init () {
-    vault.read('ydogbe/mysql')
-    .then(function(res) {
-        // Créer la connection avec la BDD mysql.
-        connection = mysql.createConnection({
-            host     : 'localhost',
-            user     : res.data.user,
-            password : res.data.password,
-            database : 'ydogbe'
-        });
-    }).catch(console.error);
-})();
+function mysql_init (cred) {
+    // Créer la connection avec la BDD mysql.
+    connection = mysql.createConnection({
+        host     : 'localhost',
+        user     : cred.user,
+        password : cred.password,
+        database : 'ydogbe'
+    });
+    console.log("> BDD MySQL connecté.");
+};
 
 var stripe;
-console.log("Configuration de stripe (secret key)");
-(function stripe_init () {
-    vault.read('ydogbe/stripe')
-    .then(function(res) {
-        stripe = Stripe(res.data.secret); // test key
-    }).catch(console.error);
-})();
+function stripe_init (cred) {
+    stripe = Stripe(cred.secret); // test key
+    console.log("> Stripe configuré (secret key).");
+};
 
 var admin_user;
-console.log('Récuperation des email admin');
-(function adminUser_init () {
-    vault.read('ydogbe/admin')
-    .then(function(res) {
-        // Liste des email (utilisateur) ayant accès au droit admin (gestion des articles et commandes)
-        admin_user = Object.values(res.data);
-    }).catch(console.error);
-})();
+function adminUser_init (cred) {
+    // Liste des email (utilisateur) ayant accès au droit admin (gestion des articles et commandes)
+    admin_user = cred;
+    console.log('> Comptes admin reconnus.');
+};
 
 var app;
 var urlencodedParser;
-console.log("Création de l'app et configuration des cookies de session");
-(function app_init () {
+function app_init () {
     // init app et configure les cookies de session
     app = express();
     urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -122,7 +115,43 @@ console.log("Création de l'app et configuration des cookies de session");
         req.session.production = config.production;
         next();
     });
-})();
+    console.log("> Création de l'app et cookies de session configurés.");
+};
+
+// ---------------------- LAUNCH INIT -------------------
+
+// Si on est en test local, on prend les id sur le fichier. Sinon, on utilsie vault
+if (config.local_test) {
+    email_init(cred.email);
+    mysql_init(cred.mysql);
+    stripe_init(cred.stripe);
+    adminUser_init(cred.admin);
+} 
+else {
+    vault.read('ydogbe/email')
+    .then(function(res) {
+        email_init(res.data);
+    }).catch(console.error);
+
+    vault.read('ydogbe/mysql')
+    .then(function(res) {
+        mysql_init(res.data);
+    }).catch(console.error);
+
+    vault.read('ydogbe/stripe')
+    .then(function(res) {
+        stripe_init(res.data);
+    }).catch(console.error);
+
+    vault.read('ydogbe/admin')
+    .then(function(res) {
+        adminUser_init(Object.values(res.data));
+    }).catch(console.error);
+}
+
+// init the other functionnality (without vault)
+multer_init();
+app_init();
 
 // ============================================= GLOBAL FUNCTIONS ========================================
 
@@ -1232,5 +1261,4 @@ app.use(function(req, res, next){
 
 // On ouvre le serveur sur le port 8080
 console.log('Ouverture du serveur sur le port 8080')
-console.log('===================================================')
 app.listen(8080, 'localhost');

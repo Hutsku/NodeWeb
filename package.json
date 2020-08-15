@@ -11,7 +11,7 @@
     "ejs": "latest",
     "email-templates": "latest",
     "express": "latest",
-    "express-session": "latest",
+    "express-session": "^1.17.1",
     "multer": "latest",
     "mysql": "latest",
     "node-vault": "^0.9.20",
