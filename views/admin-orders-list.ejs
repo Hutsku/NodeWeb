@@ -66,7 +66,9 @@
                                         break;
                                 } 
 
-                                if (orders[i].status != 'shipped') { %>
+                                if (orders[i].status != 'shipped' && !orders[i].preordered) { 
+                                    console.log(orders[i])
+                                %>
                                     <tr>
                                         <td><%= orders[i].name %></td>
                                         <td><%= orders[i].price %>€</td>
@@ -106,6 +108,47 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <% for (var i=0; i< orders.length; i++) { 
+                                switch (orders[i].status) {
+                                    case "waiting":
+                                        var color = "orange";
+                                        var text = "En attente";
+                                        var button = "Confirmer";
+                                        break;
+                                    case "confirmed":
+                                        var color = "green";
+                                        var text = "En préparation";
+                                        var button = "Envoyer";
+                                        break;
+                                    case "shipped":
+                                        var color = "blue";
+                                        var text = "Envoyée";
+                                        var button = "";
+                                        break;
+                                } 
+
+                                if (orders[i].status != 'shipped' && orders[i].preordered) { %>
+                                    <tr>
+                                        <td><%= orders[i].name %></td>
+                                        <td><%= orders[i].price %>€</td>
+                                        
+                                        <td style="color:<%= color %>;"><%= text %></td>
+                                        <td>
+                                            <% var products = JSON.parse(orders[i].products);
+                                            for (var j=0; j< products.length; j++) { %>
+                                                <p><%= products[j].name %> <%= products[j].option %> x<%= products[j].nb %></p>
+                                            <% } %>
+                                        </td>
+                                        <td><%= orders[i].address %></td>
+                                        <td><a href="/order-detail/<%= orders[i].id %>">Voir plus de détail</a></td>
+                                        <td>
+                                            <% if (orders[i].status != "shipped") { %>
+                                            <a class="btn btn-secondary mb-2 w-100" href="/admin-update-order/<%= orders[i].id %>" name="update"><%= button %></a> <% } %>
+                                            <a class="btn btn-danger w-100" href="#" data-toggle="modal" data-target="#deleteOrderModal" data-id="<%= orders[i].id %>" name="delete-order">Supprimer</a>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            <% } %>
                         </tbody>
                     </table>
                 </div>

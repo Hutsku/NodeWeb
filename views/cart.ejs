@@ -33,7 +33,7 @@
                             for (var i=0; i < session.cart.products.length; i++) { 
                                 var price_product = parseFloat(session.cart.products[i].price);
                                 var cart_qty = parseInt(session.cart.products[i].cart_qty); %>
-                                <div class="cart-product row align-items-center" product_id="<%= session.cart.products[i].id %>" product_option="<%= session.cart.products[i].option %>">
+                                <div class="cart-product row align-items-center" product_id="<%= session.cart.products[i].id %>" product_option="<%= session.cart.products[i].option %>" product_available="<%= session.cart.products[i].available %>">
                                 	<div class="cart-product-img p-2 col-3">
                                 		<img class="w-100" src="/img/<%= session.cart.products[i].img %>">
                                 	</div>
@@ -226,6 +226,7 @@
                     price: product.find('.cart-product-price').attr('product_price'),
                     cart_qty: product.find('.cart-product-qty input').val(),
                     img: product.find('img').attr('src').split('/')[2],
+                    available: product.attr('product_available')
                 });
             });
 
@@ -267,6 +268,7 @@
                     price: product.find('.cart-product-price').attr('product_price'),
                     cart_qty: product.find('.cart-product-qty input').val(),
                     img: product.find('img').attr('src').split('/')[2],
+                    available: product.attr('product_available')
                 });
             });
 
@@ -280,7 +282,6 @@
                     console.log("error occured")
                 }
                 else {
-                    console.log(JSON.stringify(new_cart))
                     location.assign("/payout");
                 }
             });

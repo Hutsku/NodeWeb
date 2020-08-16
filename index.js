@@ -52,6 +52,9 @@ function email_init (cred) {
     var transport_mailtrap = config.email.mailtrap;
     var transport_gmail    = config.email.gmail;
 
+    var transporter = transport_gmail;
+    if (config.email.test) transporter = transport_mailtrap;
+
     // edit the transporter with real credentials
     transport_gmail.auth = {
         user: cred.user, 
@@ -67,7 +70,7 @@ function email_init (cred) {
         // uncomment below to send emails in development/test env:
         send: config.email.send,
         preview: config.email.preview,
-        transport: transport_gmail,
+        transport: transporter,
     });
     console.log("> Connection SMTP configuré.");
 };
@@ -243,8 +246,104 @@ function sendEmail(template, emailTo, parameter) {
         },
         locals: parameter,
     })
-    .then(console.log)
+    .then(console.log('Email send'))
     .catch(console.error);
+}
+
+// --------------------------- ORDER ------------------------
+
+function sendOrder(product_list, infos, req, res) {
+    if (!product_list.length) {return ;}
+
+    // on calcule le prix totale depuis la DB (pour plus de securité)
+    var correct_subtotal = 0;
+    connection.query('SELECT * FROM products', function(err, rows, fields) {
+        if (err) throw err;
+        for (var i=0; i<rows.length; i++) {
+            for (var j=0; j<product_list.length; j++) {
+                if (product_list[j].id == rows[i].id) {
+                    correct_subtotal += product_list[j].nb * rows[i].price;
+                }
+            }
+        }
+
+        // On corrige si besoin les vrais prix
+        infos.subtotal_cost = correct_subtotal;
+        infos.total_cost    = (correct_subtotal+infos.shipping_cost).toFixed(2);
+
+        // requête MySQL
+        var addOrder = `INSERT INTO orders (id, date, total_cost, subtotal_cost, shipping_cost, state, user_id, products, shipping_address, billing_address, payment_method, shipping_method) 
+                   VALUES (NULL, NOW(), ${infos.total_cost}, ${infos.subtotal_cost}, ${infos.shipping_cost}, 'waiting', ${infos.user_id}, '${JSON.stringify(product_list)}', '${infos.shipping_address}', 
+                   '${infos.billing_address}', '${infos.payment_method}', '${infos.shipping_method}')`;
+        connection.query(addOrder, function(err, rows, fields) {
+            if (err) throw err;
+
+            if (!rows.length) {
+                // on envoit un email de confirmation de commande
+                sendEmail('order', req.session.account.email, {
+                    name: req.session.username,
+                    products: product_list,
+                    subtotal_cost: infos.subtotal_cost,
+                    shipping_cost: infos.shipping_cost,
+                    total_cost: infos.total_cost,
+                    shipping_address: infos.shipping_address,
+                    billing_address: infos.billing_address,
+                    order_id: ''
+                });
+
+                req.session.alert = "add order";
+                req.session.cart = 0;// on vide le panier
+                res.send('ok');
+            }
+        });
+    });
+}
+
+function sendPreOrder(product_list, infos, req, res) {
+    if (!product_list.length) {return;}
+    
+    // on calcule le prix totale depuis la DB (pour plus de securité)
+    var correct_subtotal = 0;
+    connection.query('SELECT * FROM products', function(err, rows, fields) {
+        if (err) throw err;
+        for (var i=0; i<rows.length; i++) {
+            for (var j=0; j<product_list.length; j++) {
+                if (product_list[j].id == rows[i].id) {
+                    correct_subtotal += product_list[j].nb * rows[i].price;
+                }
+            }
+        }
+
+        // On corrige si besoin les vrais prix
+        infos.subtotal_cost = correct_subtotal;
+        infos.total_cost    = (correct_subtotal+infos.shipping_cost).toFixed(2);
+
+        // requête MySQL
+        var addOrder = `INSERT INTO orders (id, date, total_cost, subtotal_cost, shipping_cost, state, user_id, products, shipping_address, billing_address, payment_method, shipping_method, preordered) 
+                   VALUES (NULL, NOW(), ${infos.total_cost}, ${infos.subtotal_cost}, ${infos.shipping_cost}, 'waiting', ${infos.user_id}, '${JSON.stringify(product_list)}', '${infos.shipping_address}', 
+                   '${infos.billing_address}', '${infos.payment_method}', '${infos.shipping_method}', '1')`;
+        connection.query(addOrder, function(err, rows, fields) {
+            if (err) throw err;
+
+            if (!rows.length) {
+                // on envoit un email de confirmation de commande
+                sendEmail('preorder', req.session.account.email, {
+                    name: req.session.username,
+                    products: product_list,
+                    subtotal_cost: infos.subtotal_cost,
+                    shipping_cost: infos.shipping_cost,
+                    total_cost: infos.total_cost,
+                    shipping_address: infos.shipping_address,
+                    billing_address: infos.billing_address,
+                    order_id: ''
+                });
+
+                req.session.alert = "add order";
+                req.session.cart = 0;// on vide le panier
+                res.send('ok');
+            }
+        });
+    });
 }
 
 // ================================================ ROUTES ===============================================
@@ -329,7 +428,6 @@ app.get('/', function(req, res) {
 })
 
 .get('/cart', function(req, res) {
-    console.log(req.session.cart);
     res.render('cart.ejs', {session: req.session});
 })
 
@@ -502,6 +600,7 @@ app.get('/', function(req, res) {
                         products: rows[i].products,
                         address: rows[i].shipping_address,
                         payment: rows[i].payment_method,
+                        preordered: rows[i].preordered
                     })
                 }
 
@@ -847,12 +946,12 @@ app.get('/', function(req, res) {
 
 .post('/valid-cart', urlencodedParser, function(req, res) {
     // on remplace le panier par celui envoyé (en le convertissant)
-    console.log(req.body['cart'])
     req.session.cart.products = JSON.parse(req.body['cart']);
     req.session.cart.subtotal_cost = req.body.subtotal_cost;
     req.session.cart.shipping_cost = req.body.shipping_cost;
     req.session.cart.total_cost = req.body.total_cost;
 
+    console.log(req.session.cart);
     res.send('ok')
     //res.render('cart.ejs', {session: req.session});
 })
@@ -882,74 +981,50 @@ app.get('/', function(req, res) {
 })
 
 .post('/add-order', urlencodedParser, function(req, res) {
+    console.log(req.session.cart);
+
     // On recupère les infos
-    var payment_method = req.body.payment_method
-    var billing_address = safeQuote(req.body.billing_address);
-    var shipping_address = safeQuote(req.session.cart.shipping_address.string);
-    var shipping_method = req.session.cart.shipping_method
-    var shipping_cost = parseFloat(req.session.cart.shipping_cost);
-    var user_id = req.session.account.id;
-
-    // on refait une liste des produits simplifiée
-    var products_obj = [];
-    for (var i=0; i<req.session.cart.products.length; i++) {
-        products_obj.push({
-            id: parseInt(req.session.cart.products[i].id),
-            name: escapeQuote(req.session.cart.products[i].name),
-            option: req.session.cart.products[i].option,
-            nb: parseInt(req.session.cart.products[i].cart_qty),
-            price: parseFloat(req.session.cart.products[i].cart_qty * req.session.cart.products[i].price)
-        })
+    var infos = {
+        payment_method: req.body.payment_method,
+        billing_address: safeQuote(req.body.billing_address),
+        shipping_address: safeQuote(req.session.cart.shipping_address.string),
+        shipping_method: req.session.cart.shipping_method,
+        shipping_cost: parseFloat(req.session.cart.shipping_cost),
+        user_id: req.session.account.id,
     }
-    var str_products = JSON.stringify(products_obj);
 
-    // on calcule le prix totale depuis la DB (pour plus de securité)
-    var total_cost = 0;
-    connection.query('SELECT * FROM products', function(err, rows, fields) {
-        if (err) throw err;
-        for (var i=0; i<rows.length; i++) {
-            for (var j=0; j<products_obj.length; j++) {
-                if (products_obj[j].id == rows[i].id) {
-                    total_cost += products_obj[j].nb * rows[i].price;
-                }
-            }
+    // on refait une liste des produits simplifiée ainsi que identifier les preco
+    var order_products_list = [];
+    var preorder_products_list = [];
+    for (var i=0; i<req.session.cart.products.length; i++) {
+        var product = req.session.cart.products[i];
+
+        // Si le produit est disponible en commande, on l'ajoute à la liste 
+        if (product.available == 1) {
+            order_products_list.push({
+                id: parseInt(product.id),
+                name: escapeQuote(product.name),
+                option: product.option,
+                nb: parseInt(product.cart_qty),
+                price: parseFloat(product.cart_qty * product.price)
+            });
         }
 
-        var subtotal_cost = total_cost
-        total_cost = (total_cost+shipping_cost).toFixed(2);
-        req.session.cart.subtotal_cost = total_cost;
-        req.session.cart.total_cost = total_cost + req.session.shipping_cost; // on en profite pour mettre à jour si jamais
+        // Si le produit est en précommande, on l'ajoute à la liste 
+        else if (product.available == 2) {
+            preorder_products_list.push({
+                id: parseInt(product.id),
+                name: escapeQuote(product.name),
+                option: product.option,
+                nb: parseInt(product.cart_qty),
+                price: parseFloat(product.cart_qty * product.price)
+            });
+        }
+    }
 
-        // requête MySQL
-        var addOrder = `INSERT INTO orders (id, date, total_cost, subtotal_cost, shipping_cost, state, user_id, products, shipping_address, billing_address, payment_method, shipping_method) 
-                   VALUES (NULL, NOW(), ${total_cost}, ${subtotal_cost}, ${shipping_cost}, 'waiting', ${user_id}, '${str_products}', '${shipping_address}', 
-                   '${billing_address}', '${payment_method}', '${shipping_method}')`;
-
-        connection.query(addOrder, function(err, rows, fields) {
-            if (err) throw err;
-
-            if (!rows.length) {
-                // on envoit un email de confirmation de commande
-                sendEmail('order', req.session.account.email, {
-                    name: req.session.username,
-                    products: req.session.cart.products,
-                    subtotal_cost: subtotal_cost,
-                    shipping_cost: shipping_cost,
-                    total_cost: total_cost,
-                    shipping_address: shipping_address,
-                    billing_address: billing_address,
-                    order_id: ''
-                });
-
-                req.session.alert = "add order";
-                req.session.cart = 0;// on vide le panier
-                res.send('ok'); // on recharge la page
-            }
-            else {
-                res.send('badOrder');
-            }
-        });
-    });
+    // On envoit la requête mysql
+    sendOrder(order_products_list, infos, req, res);
+    sendPreOrder(preorder_products_list, infos, req, res);
 })
 
 // ------------------------ ACCOUNT EDIT ---------------------------

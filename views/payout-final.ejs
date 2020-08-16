@@ -404,12 +404,7 @@
 			            	payment_method: 'card',
 			            })
 			            .done( function (data) {
-			                if (data == "badOrder") {
-			                    console.log("order error");
-			                }
-			                else {
-			                    location.assign("/payment-success");
-			                }
+		                    location.assign("/payment-success");
 			            });
 					}
 				}
