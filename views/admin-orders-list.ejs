@@ -67,16 +67,14 @@
                                 } 
 
                                 if (orders[i].status != 'shipped' && !orders[i].preordered) { 
-                                    console.log(orders[i])
-                                %>
+                                    var products = JSON.parse(orders[i].products); %>
                                     <tr>
                                         <td><%= orders[i].name %></td>
                                         <td><%= orders[i].price %>€</td>
                                         
                                         <td style="color:<%= color %>;"><%= text %></td>
                                         <td>
-                                            <% var products = JSON.parse(orders[i].products);
-                                            for (var j=0; j< products.length; j++) { %>
+                                            <% for (var j=0; j< products.length; j++) { %>
                                                 <p><%= products[j].name %> <%= products[j].option %> x<%= products[j].nb %></p>
                                             <% } %>
                                         </td>

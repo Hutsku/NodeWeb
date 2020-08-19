@@ -5,9 +5,16 @@ console.log('Initalisation du site web ...')
 var config = require('./config.js');
 
 // Si le serveur tourne en local, récupère les cred d'un fichier local. (pas de requête vault)
+var path_stripe = 'stripe'; 
+var path_paypal = 'paypal';
 if (config.local_test) {
     console.log('/!\\ LE SITE EST EN VERSION TEST LOCAL /!\\');
     var cred = require('./local_credentials.js');
+}
+if (!config.production) {
+    console.log("/!\\ LE SITE N'EST PAS EN PRODUCTION /!\\ - Les payements sont désactivés ");
+    var path_stripe = 'stripe_test';
+    var path_paypal = 'paypal_test';
 }
 
 // get new instance of the client
@@ -124,11 +131,14 @@ function app_init () {
 // ---------------------- LAUNCH INIT -------------------
 
 // Si on est en test local, on prend les id sur le fichier. Sinon, on utilsie vault
+var secret_stripe, secret_paypal;
 if (config.local_test) {
     email_init(cred.email);
     mysql_init(cred.mysql);
-    stripe_init(cred.stripe);
+    stripe_init(cred[path_stripe]);
     adminUser_init(cred.admin);
+    secret_stripe = cred[path_stripe].public;
+    secret_paypal = cred[path_paypal].client_id;
 } 
 else {
     vault.read('ydogbe/email')
@@ -141,14 +151,20 @@ else {
         mysql_init(res.data);
     }).catch(console.error);
 
-    vault.read('ydogbe/stripe')
+    vault.read(`ydogbe/${path_stripe}`)
     .then(function(res) {
         stripe_init(res.data);
+        secret_stripe = res.data.public;
     }).catch(console.error);
 
     vault.read('ydogbe/admin')
     .then(function(res) {
         adminUser_init(Object.values(res.data));
+    }).catch(console.error);
+
+    vault.read(`ydogbe/${path_stripe}`)
+    .then(function(res) {
+        secret_paypal = res.data.client_id;
     }).catch(console.error);
 }
 
@@ -788,6 +804,8 @@ app.get('/', function(req, res) {
             res.render('payout-final.ejs', {
                 session: req.session, 
                 client_secret: paymentIntent.client_secret, 
+                cred_stripe: secret_stripe,
+                cred_paypal: secret_paypal,
                 total_cost: total_cost,
                 subtotal_cost: subtotal_cost,
                 shipping_cost: shipping_cost,

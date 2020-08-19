@@ -209,13 +209,12 @@
 
 <!---------------------------- GLOBAL SCRIPTS -------------------------------->
 <script src="jquery.countryselector.js"></script>
-<script src="https://www.paypal.com/sdk/js?client-id=AdLbFjUFxlf2azMI6_BTzfiXtZNdnoKBW5yRoexLDY6DZJFK2Fw6Vd17TahRpzK-QhdGe1_h2xIicuvf&currency=EUR&components=buttons,funding-eligibility"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=<%- cred_paypal %>&currency=EUR&components=buttons,funding-eligibility"></script>
 <script>
     $(document).ready(function() {
         alert('Les payements ne sont pas encore disponible, merci de votre comprehension.');
     });
     
-
     // on met en place la ligne sur le bandeau
     $('.line').css({
         width: function () {
@@ -260,7 +259,7 @@
 
 	/* ================================ STRIPE ================================== */
 
-	var stripe = Stripe('pk_test_yPzxYfltlnyWe55PR7jjw4PX00vkHy4ywN');
+	var stripe = Stripe('<%- cred_stripe %>');
 	// Create an instance of Elements.
 	var elements = stripe.elements();
 
