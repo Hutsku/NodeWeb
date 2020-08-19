@@ -30,7 +30,7 @@ config.email = {
 	from: 'ydogbe.store@gmail.com',
 	send: true,
 	preview: false,
-	test: true,
+	test: false,
 }
 
 var timeCookieDefault = 30 // en minute

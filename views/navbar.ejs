@@ -213,6 +213,12 @@
             var quoteTitle = 'Compte effacé';
             break;
 
+        case 'payment disabled':
+            var type = 'danger';
+            var quote = 'Les paiements ne sont pas encore activés, merci de votre compréhension.';
+            var quoteTitle = 'Attention !';
+            break;
+
         } %>
         <div class="notif-container row w-100 justify-content-center">
             <div class="alert alert-<%= type %> alert-dismissible fade show col-8" role="alert">

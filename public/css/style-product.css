@@ -63,3 +63,8 @@
     height: 100%;
     left: 0;
 }
+
+.dis-preco {
+	font-size: 13px;
+	color: orange;
+}

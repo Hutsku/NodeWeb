@@ -154,7 +154,11 @@
                             <div class="row justify-content-between">
                                 <a href="/payout-shipping" class="btn btn-secondary m-3 px-4">Retour</a>
                                 <button type="submit" id="submit-payment" class="btn btn-success m-3 px-4" data-dismiss="">
-                                <div class="paypal-payment hide" id="paypal-button-container"></div>Payer <%= total_cost %>€</button>
+                                    <div class="d-none loader-container align-items-center justify-content-center">
+                                        Veuillez patientez ...<div class="loader ml-3"></div>
+                                    </div>
+                                    <div class="paypal-payment hide" id="paypal-button-container"></div>Valider le paiement
+                                </button>
                             </div>
                     </div>
     			</div>
@@ -210,11 +214,7 @@
 <!---------------------------- GLOBAL SCRIPTS -------------------------------->
 <script src="jquery.countryselector.js"></script>
 <script src="https://www.paypal.com/sdk/js?client-id=<%- cred_paypal %>&currency=EUR&components=buttons,funding-eligibility"></script>
-<script>
-    $(document).ready(function() {
-        alert('Les payements ne sont pas encore disponible, merci de votre comprehension.');
-    });
-    
+<script>    
     // on met en place la ligne sur le bandeau
     $('.line').css({
         width: function () {
@@ -364,6 +364,8 @@
 		// on desactive le bouton en attendant la finalisation de la requête
         $('#submit-payment').prop('disabled', true);
         $('.paypal-payment').addClass('hide');
+        $('.loader-container').removeClass('d-none'); // on affiche le loader
+        //return;
 
 		// if payment -> card (Stripe)
 		if (paymentMethod == 'pm2') {
@@ -391,8 +393,9 @@
 					// Show error to your customer (e.g., insufficient funds)
 					console.log(result.error.message);
 
-					// On reactivele bouton
+					// On reactive le bouton
 					$('#submit-payment').prop('disabled', false);
+                    $('.loader-container').addClass('d-none'); // on enlève le loader
 					//location.assign("/payment-cancel");
 				} else {
 					// The payment has been processed!

@@ -17,12 +17,8 @@
             <%- include('navbar') %>
         </header>
 
-        <main class="bg-light py-5">
-            <div class="jumbotron bg-light m-0 w-100 text-center">
-                <a class="logo-img" href="/mainpage">
-                    <img class="col-md-5" src="/img/logo1.png">
-                </a>
-            </div>
+        <main class="bg-light py-5 mt-3">
+			<%- include('jumbo') %>
     		<div class="container-fluid row m-0">
     			<div class="product-left col-md-7 px-md-5">
     				<div id="carouselProduct" class="carousel slide" data-ride="carousel">
@@ -52,10 +48,16 @@
 					<!------------------------- MOBILE ONLY ------------------------------->
 	    			<div class="info-product d-md-none d-block">
 	    				<div class="w-100 border-bottom my-4"></div>
-		    			<span class="desc mb-3 ml">
+		    			<span class="desc">
 		    				<%= description %>
 		    			</span>
-		    			<% if (type == "clothe") { %>
+		    			<% if (available == 2) { %>
+		    			<div class="m-0 dis-preco py-3">
+	    					Ce produit est en précommande. Livraison après la date de sortie spécifiée.
+	    				</div>
+	    				<% }
+		    			
+		    			if (type == "clothe") { %>
 			    			<div class="composition mb-1">
 			    				<span>Composition </span>
 			    				<span><%= composition %></span>
@@ -91,7 +93,13 @@
 			    			<span class="row desc mb-3">
 			    				<%= description %>
 			    			</span>
-			    			<% if (type == "clothe") { %>
+			    			<% if (available == 2) { %>
+			    			<span class="row dis-preco mb-3">
+		    					Ce produit est en précommande. Livraison après la date de sortie spécifiée.
+		    				</span>
+		    				<% } 
+
+			    			if (type == "clothe") { %>
 				    			<div class="row composition mb-1">
 				    				<span>Composition </span>
 				    				<span><%= composition %></span>
@@ -177,13 +185,17 @@
 					<small class="storage-info <%= class_available %> ml-2"><i class="fas fa-box"></i> <%= text_available %></small>
 				</div>
 
-		      	<% if (!available) { %>
-				<button class="btn btn-primary col text-truncate" disabled=true type="submit" name="add-cart">
-					Indisponible à l'achat
+		      	<% if (available == 1) { %>
+				<button class="btn btn-primary col-7" type="submit" name="add-cart">
+					Ajouter au panier <i class="fas fa-cart-arrow-down"></i>
+				</button>
+				<% } else if (available == 2) { %>
+				<button class="btn btn-primary col-7" type="submit" name="add-cart">
+					Précommander <i class="fas fa-cart-arrow-down"></i>
 				</button>
 				<% } else { %>
-				<button class="btn btn-primary col text-truncate" type="submit" name="add-cart">
-					Ajouter au panier <i class="fas fa-cart-arrow-down"></i>
+				<button class="btn btn-primary col-7" disabled=true type="submit" name="add-cart">
+					Indisponible à l'achat
 				</button>
 				<% } %>
 			</form>

@@ -1,0 +1,32 @@
+<div class="d-flex disclaimer w-100 align-items-center justify-content-center px-2">
+	<i class="fas fa-exclamation-triangle"></i>
+	<div class="disclaimer-text mx-2">
+		<span> Le site est actuellement en travaux. La mise en page est susceptible de changer et les fonctionnalités pas forcément disponibles. 
+		</span>
+	</div>
+	<i class="fas fa-exclamation-triangle"></i>
+</div>
+<div class="bg-light m-0 w-100 text-center">
+    <a class="logo-img" href="/mainpage">
+        <img class="col-md-5" src="/img/logo1.png">
+    </a>
+</div>
+
+<script type="text/javascript">
+	$( document ).ready(function() {
+		var text = $('.disclaimer-text span')
+		if ((text.width() - $('.disclaimer-text').width()) >1) {
+			var scroll = 1.1*(text.width() - $('.disclaimer-text').width());
+			function loop () {
+				text.css({left:0});
+				setTimeout(function() {
+					text.animate({left: `-${scroll}px`}, 7000, function () { 
+						setTimeout(function() {loop()}, 1000) 
+					});
+				}, 1000);
+
+			}
+			loop();
+		}
+	});
+</script>

@@ -6,12 +6,42 @@ main {
 	min-height: 90vh;
 }
 
+.disclaimer {
+	background-color: black;
+	height: 50px;
+	color: white;
+
+	font-size: 13px;
+	text-transform: uppercase;
+}
+.disclaimer .disclaimer-text {
+	display: inline-block; /* important */
+  	white-space: nowrap;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+
+  	transition: 0.3;
+}
+.disclaimer .disclaimer-text span {
+	position: relative;
+	left: 0;
+	/*transition: 3s;
+	transition-timing-function: linear;*/
+}
+/*.disclaimer .disclaimer-text span:hover {
+	left: -100px;
+}*/
+
+.disclaimer .fas {
+	color: yellow;
+}
+
 .hide {
 	display: none;
 }
 
 .navbar-brand img {
-	height:35px;
+	height:38px;
 }
 
 .navbar-collapse {
@@ -64,7 +94,7 @@ li.nav-item {
 
 /* NOTIF CONTAINER */
 .notif-container {
-	z-index: 15;
+	z-index: 1021;
 	top: 70px;
 	position: fixed;
 }

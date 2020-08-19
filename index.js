@@ -758,6 +758,8 @@ app.get('/', function(req, res) {
         return false;
     }
 
+    if (!config.production) req.session.alert = 'payment disabled'; 
+
     // On recalcule le prix exacte de la commande
     // on refait une liste des produits simplifiée
     var cart = req.session.cart.products;
@@ -791,7 +793,6 @@ app.get('/', function(req, res) {
         req.session.subtotal_cost = subtotal_cost;
 
         amount = Math.round(total_cost*100); // on converti en valeur prise en charge par stripe
-        console.log(total_cost)
 
         // On prépare le payement carte via Stripe
         stripe.paymentIntents.create(
@@ -809,7 +810,7 @@ app.get('/', function(req, res) {
                 total_cost: total_cost,
                 subtotal_cost: subtotal_cost,
                 shipping_cost: shipping_cost,
-                user: req.session.account
+                user: req.session.account,
             });
         });
     });
